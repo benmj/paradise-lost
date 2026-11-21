@@ -35,10 +35,13 @@ const HOST = process.env.HOST || '127.0.0.1';
 const BASE_URL = (process.env.BASE_URL || `http://localhost:${Number(process.env.PORT) || 8107}`).replace(/\/$/, '');
 const ACCESS_TEAM = process.env.ACCESS_TEAM || '';
 const ACCESS_AUD = process.env.ACCESS_AUD || '';
+// Gmail ignores dots, +tags and googlemail.com, so Google may return a different spelling than the one listed.
+const canon = (e) => { e = String(e || '').toLowerCase().trim(); const [l, d] = e.split('@'); return d === 'gmail.com' || d === 'googlemail.com' ? `${l.split('+')[0].replace(/\./g, '')}@gmail.com` : e; };
 const list = (v) => new Set(String(v || '').toLowerCase().split(',').map((e) => e.trim()).filter(Boolean));
+const canonList = (v) => new Set([...list(v)].map(canon));
 const USERS = list(process.env.USERS);
-const ADMINS = list(process.env.ADMINS);
-const ALLOWLIST = list(process.env.ALLOWLIST);   // google mode: these users (and admins) chat on the hosted key; everyone else brings their own
+const ADMINS = canonList(process.env.ADMINS);
+const ALLOWLIST = canonList(process.env.ALLOWLIST);   // google mode: these users (and admins) chat on the hosted key; everyone else brings their own
 const DIST = path.resolve(process.env.DIST_DIR || path.join(import.meta.dirname, 'dist'));
 const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(import.meta.dirname, 'data-local'));
 const IS_LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE_URL);
@@ -55,7 +58,7 @@ if (!MODE) throw new Error('set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (publi
 if (MODE === 'access' && !ACCESS_TEAM) throw new Error('access mode needs ACCESS_TEAM');
 if (MODE === 'google' && backend !== 'api') console.warn('[chat] no ANTHROPIC_API_KEY: only readers with their own key can chat in public (google) mode');
 // Hosted key: everyone in dev/access mode, allowlisted users and admins in google mode.
-const hostedFor = (u) => Boolean(u) && (MODE !== 'google' ? true : backend === 'api' && (u.admin || ALLOWLIST.has(u.email)));
+const hostedFor = (u) => Boolean(u) && (MODE !== 'google' ? true : backend === 'api' && (u.admin || ALLOWLIST.has(canon(u.email))));
 const ownKey = (req) => { const k = String(req.headers['x-user-api-key'] || '').trim(); return /^sk-ant-[A-Za-z0-9_-]{20,300}$/.test(k) ? k : ''; };
 
 const book = loadBook(path.join(DIST, 'data.js'));
@@ -89,7 +92,7 @@ async function accessKey(kid) {
 }
 const cookies = (req) => Object.fromEntries(String(req.headers.cookie || '').split(';').map((c) => c.trim().split('='))
   .filter((p) => p[0]).map(([k, ...v]) => [k, v.join('=')]));
-const withFlags = (u) => ({ ...u, admin: ADMINS.has(u.email) });
+const withFlags = (u) => ({ ...u, admin: ADMINS.has(canon(u.email)) });
 const known = (email, name) => withFlags(db.userByEmail(email) || db.login(email, name));
 
 // → user, { denied: email } (access mode, not on the list), or null.
