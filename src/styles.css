@@ -547,3 +547,10 @@ body.plain figure.dore { display: none; }
 .acct-who { margin: 0 0 8px; font-weight: 600; word-break: break-all; }
 .acct-note { margin: 0 0 16px; font-size: 16px; color: var(--ink-soft); }
 .acct-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* bring your own key */
+.keybox .keyform { display: flex; gap: 8px; margin: 10px 0 6px; flex-wrap: wrap; }
+.keybox .keyform input { flex: 1 1 200px; min-width: 0; font: 16px/1.2 ui-monospace, Menlo, monospace; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: inherit; }
+.keybox .keynote { font-size: 13px; line-height: 1.5; color: var(--ink-faint); margin: 4px 0 0; }
+.keybox .keynote a, .linkbtn { color: var(--crimson); }
+.linkbtn { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }

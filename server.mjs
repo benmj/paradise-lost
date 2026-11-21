@@ -17,6 +17,7 @@
 //   GOOGLE_CLIENT_ID  GOOGLE_CLIENT_SECRET  SESSION_SECRET (generated into DATA_DIR if absent)
 //   ACCESS_TEAM  ACCESS_AUD  USERS=a@x.com,b@y.com  (access mode: who may enter)
 //   ADMINS=you@example.com  (may read /api/admin/usage)
+//   ALLOWLIST=a@x.com,b@y.com  (google mode: use the hosted ANTHROPIC_API_KEY; everyone else pastes their own)
 //   ANTHROPIC_API_KEY  PL_MODEL=claude-haiku-5-5  PL_MAX_OUTPUT_TOKENS=700
 //   USER_DAILY_USD=0.15  MONTHLY_USD=25   estimated spend caps (see lib/llm.mjs)
 //   DEV_USER=someone@example.com   local testing only: refused unless BASE_URL is localhost
@@ -37,6 +38,7 @@ const ACCESS_AUD = process.env.ACCESS_AUD || '';
 const list = (v) => new Set(String(v || '').toLowerCase().split(',').map((e) => e.trim()).filter(Boolean));
 const USERS = list(process.env.USERS);
 const ADMINS = list(process.env.ADMINS);
+const ALLOWLIST = list(process.env.ALLOWLIST);   // google mode: these users (and admins) chat on the hosted key; everyone else brings their own
 const DIST = path.resolve(process.env.DIST_DIR || path.join(import.meta.dirname, 'dist'));
 const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(import.meta.dirname, 'data-local'));
 const IS_LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE_URL);
@@ -51,7 +53,10 @@ const auth = makeAuth({ secret: sessionSecret(DATA_DIR), baseUrl: BASE_URL, clie
 const MODE = DEV_USER ? 'dev' : auth.enabled ? 'google' : ACCESS_AUD ? 'access' : '';
 if (!MODE) throw new Error('set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (public), ACCESS_AUD (Cloudflare Access) or DEV_USER (local)');
 if (MODE === 'access' && !ACCESS_TEAM) throw new Error('access mode needs ACCESS_TEAM');
-if (MODE === 'google' && backend !== 'api') console.warn('[chat] no ANTHROPIC_API_KEY: chat is off in public (google) mode');
+if (MODE === 'google' && backend !== 'api') console.warn('[chat] no ANTHROPIC_API_KEY: only readers with their own key can chat in public (google) mode');
+// Hosted key: everyone in dev/access mode, allowlisted users and admins in google mode.
+const hostedFor = (u) => Boolean(u) && (MODE !== 'google' ? true : backend === 'api' && (u.admin || ALLOWLIST.has(u.email)));
+const ownKey = (req) => { const k = String(req.headers['x-user-api-key'] || '').trim(); return /^sk-ant-[A-Za-z0-9_-]{20,300}$/.test(k) ? k : ''; };
 
 const book = loadBook(path.join(DIST, 'data.js'));
 const MAX_RUNNING = 4;
@@ -155,9 +160,10 @@ function sameOrigin(req) {
 
 // ---------------- account, state, admin ----------------
 const meInfo = (u) => {
-  const chatOn = backend === 'api' || MODE !== 'google';
-  const left = u && chatOn ? Math.max(0, USER_DAILY_MICRO - db.spentToday(u.id, today())) / USER_DAILY_MICRO : 0;
-  return { user: u ? { email: u.email, name: u.name, admin: u.admin } : null, signIn: MODE === 'google', chat: chatOn, chatLeft: Math.round(left * 100) / 100 };
+  const hosted = hostedFor(u);
+  const left = hosted && backend === 'api' ? Math.max(0, USER_DAILY_MICRO - db.spentToday(u.id, today())) / USER_DAILY_MICRO : 0;
+  // chat: 'hosted' (our key, capped) or 'byok' (the reader pastes their own Anthropic key)
+  return { user: u ? { email: u.email, name: u.name, admin: u.admin } : null, signIn: MODE === 'google', chat: hosted ? 'hosted' : 'byok', chatLeft: Math.round(left * 100) / 100 };
 };
 function cleanState(b) {
   const out = { t: Date.now() };
@@ -230,13 +236,16 @@ async function apiRoutes(req, res, url, user) {
 // ---------------- chat ----------------
 async function chat(req, res, user) {
   if (!sameOrigin(req)) return json(res, 403, { error: 'cross-site request refused' });
-  if (!user) return json(res, 401, { error: 'Sign in with Google to ask the reader.', signIn: true });
-  if (MODE === 'google' && backend !== 'api') return json(res, 503, { error: 'The reader is switched off on this copy.' });
+  const key = ownKey(req);
+  const hosted = !key && hostedFor(user);
+  if (!key && !hosted) return json(res, 401, { error: 'Add your own Anthropic API key to ask the reader. It stays in this browser.', needKey: true });
   const body = await readJson(req);
   const ctx = buildContext(book, body.context);
   const messages = checkMessages(body.messages);
-  if (limited(`chat:${user.id}`, 8, 60_000)) return json(res, 429, { error: 'A little slower: wait a moment before the next question.' });
-  if (backend === 'api') {
+  const who = user ? `user:${user.id}` : `ip:${req.headers['cf-connecting-ip'] || req.socket.remoteAddress}`;
+  if (limited(`chat:${who}`, 8, 60_000)) return json(res, 429, { error: 'A little slower: wait a moment before the next question.' });
+  const meter = hosted && backend === 'api';   // only the hosted key is metered; a reader's own key is billed to them
+  if (meter) {
     if (db.spentToday(user.id, today()) >= USER_DAILY_MICRO) return json(res, 429, { error: "You've used today's questions for the reader. They reset at midnight UTC." });
     if (db.spentSince(monthStart()) >= MONTHLY_MICRO) return json(res, 429, { error: "The reader has used this month's budget and is resting until next month. Reading and notes still work." });
   }
@@ -249,16 +258,17 @@ async function chat(req, res, user) {
   const beat = setInterval(() => res.write(': beat\n\n'), 15_000);
   const started = Date.now();
   let chars = 0;
-  const job = streamReply({ system: SYSTEM, context: ctx.text, messages, onText: (t) => { chars += t.length; event({ t }); } });
+  const job = streamReply({ key, system: SYSTEM, context: ctx.text, messages, onText: (t) => { chars += t.length; event({ t }); } });
   res.on('close', () => job.cancel());
   try {
     const usage = await job.done;
-    if (backend === 'api') db.addUsage(user.id, today(), usage, costMicro(usage));
+    if (meter) db.addUsage(user.id, today(), usage, costMicro(usage));
     event({ done: true });
-    console.log(`[chat] user ${user.id} ${ctx.label} · ${messages.length} msg · ${chars} chars · in ${usage.input}+${usage.cacheWrite}w+${usage.cacheRead}r out ${usage.output} · ${((Date.now() - started) / 1000).toFixed(1)} s`);
+    console.log(`[chat] ${key ? 'byok' : 'hosted'} ${who} ${ctx.label} · ${messages.length} msg · ${chars} chars · in ${usage.input}+${usage.cacheWrite}w+${usage.cacheRead}r out ${usage.output} · ${((Date.now() - started) / 1000).toFixed(1)} s`);
   } catch (e) {
-    console.warn(`[chat] ${ctx.label}: ${e.message}`);
-    if (!res.destroyed) event({ error: e.cancelled ? 'stopped' : 'The reader could not answer just now. Try again.' });
+    console.warn(`[chat] ${ctx.label}: ${key ? `byok HTTP ${e.status || '?'}` : e.message}`);   // never log the key or the provider's body for a reader's key
+    const bad = key && (e.status === 401 || e.status === 403);
+    if (!res.destroyed) event({ error: e.cancelled ? 'stopped' : bad ? 'Anthropic rejected that key. Check it in the account menu.' : key && e.status === 429 ? 'Your Anthropic account is rate limited or out of credit.' : 'The reader could not answer just now. Try again.', ...(bad ? { needKey: true } : {}) });
   } finally {
     clearInterval(beat);
     running--;

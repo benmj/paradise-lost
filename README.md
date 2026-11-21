@@ -5,7 +5,8 @@
   - One page app (plain HTML, CSS and JS) in a restrained Doré-inspired print look: all fifty of Gustave Doré's 1866 engravings placed at their lines, IM Fell and EB Garamond, crimson accents.
   - For each book: a **Guide** (argument, setting, sections, people), **Read** (the full text with glosses, famous passages and line numbers) and **Listen** (YouTube recitations and audiobooks).
   - **Ask the Reader**: a chat about the passage you have open. `server.mjs` builds the context from the poem and streams the reply from the Anthropic API.
-  - **Accounts** (public mode): Google sign-in, SQLite for users, reading place and usage. Reading needs no account; chat and a saved place do. Chat spend is capped per user per day and per month.
+  - **Accounts** (public mode): Google sign-in, SQLite for users, reading place and usage. Reading needs no account; a saved place needs sign-in.
+  - **Who pays for chat:** readers bring their own Anthropic API key (kept in their browser, sent per question, never stored). Only an allowlist and the admins use the host's key, capped per user per day and per month.
   - One Node process with no npm dependencies (Node 22.5+, Python 3 to build).
   ```
   browser ─► (proxy) ─► node server.mjs ─┬─► dist/ (static)
@@ -25,12 +26,14 @@ node --disable-warning=ExperimentalWarning server.mjs
 ```
 
 - **Try it locally:** `DEV_USER=you@example.com node server.mjs`, then open `http://localhost:8107`. Chat uses `claude -p` on your own login if you have Claude Code, or the API if `ANTHROPIC_API_KEY` is set.
-- **Public:** set `BASE_URL` (https), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `ANTHROPIC_API_KEY`. Put any reverse proxy in front (`deploy/Caddyfile.example`; keep streaming on). Docker: `Dockerfile`; systemd: `deploy/paradise.service.example`.
-- **No key:** public mode turns chat off; everything else works.
+- **Public:** set `BASE_URL` (https), `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Readers chat with their own key. To cover some people yourself, also set `ANTHROPIC_API_KEY` and `ALLOWLIST=a@x.com,b@y.com`. Put any reverse proxy in front (`deploy/Caddyfile.example`; keep streaming on). Docker: `Dockerfile`; systemd: `deploy/paradise.service.example`.
+- **Bring your own key:** a reader without a hosted-key seat sees a key box in the chat. The key goes in `localStorage` and an `X-User-Api-Key` header on each question; the server uses it for that request only and never logs or stores it. Its cost is billed to the reader's own Anthropic account and is not counted against your caps.
 - **Admin:** `ADMINS=you@example.com`, then `/api/admin/usage` shows users, daily spend and top users.
 - **Private mode:** `ACCESS_AUD` and `ACCESS_TEAM` gate the whole site behind Cloudflare Access instead of Google sign-in (the author's setup before going public).
 
 ## Cost control
+
+Applies to the hosted key only (allowlist and admins); readers using their own key are not metered.
 
 - Chat spend is estimated from the API's token counts (`PL_PRICE_IN`, `PL_PRICE_OUT` in USD per million tokens) and stored per user per day.
 - `USER_DAILY_USD` (default 0.15) stops one user; `MONTHLY_USD` (default 25) pauses chat for everyone until next month.

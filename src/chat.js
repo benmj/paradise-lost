@@ -1,7 +1,12 @@
 // "Ask the Reader": a chat about the book, passage or character open.
 // Phone: a sheet over the page that stays above the keyboard. Wide screens: a sidebar beside it.
 // The server holds the text; this only says which book, line or character the talk is about.
+window.PLKey = {
+  get() { try { return localStorage.getItem("pl_key") || ""; } catch { return ""; } },
+  set(k) { try { k ? localStorage.setItem("pl_key", k) : localStorage.removeItem("pl_key"); } catch {} },
+};
 (function () {
+  const getKey = () => window.PLKey.get();
   const $ = (s, el = document) => el.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const store = {
@@ -92,7 +97,7 @@
   }
   function msgHtml(m, i) {
     if (m.role === "user") return `<div class="msg user"><div class="bubble">${userHtml(m.content)}</div></div>`;
-    if (m.signin) return `<div class="msg error"><p>${esc(m.error)}</p><a class="chip" href="/auth/login?back=/">Sign in with Google</a></div>`;
+    if (m.needKey) return `<div class="msg error keybox"><p>${esc(m.error)}</p><form class="keyform" autocomplete="off"><input type="password" name="k" placeholder="sk-ant-…" aria-label="Anthropic API key" autocapitalize="off" autocorrect="off" spellcheck="false" required><button class="chip" type="submit">Save key and ask</button></form><p class="keynote">Your key is saved only in this browser and sent only to answer your questions; the server never stores it. A question costs about a cent. <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get a key</a>${getKey() ? ` · <button type="button" class="linkbtn" data-forget>Forget my key</button>` : ""}</p></div>`;
     if (m.error) return `<div class="msg error"><p>${esc(m.error)}</p><button type="button" class="chip" data-retry="${i}">Try again</button></div>`;
     return `<div class="msg reader"><div class="md">${md(m.content)}</div></div>`;
   }
@@ -108,6 +113,15 @@
     if (!messages.length) return renderEmpty();
     log.innerHTML = messages.map(msgHtml).join("");
     log.querySelectorAll("[data-retry]").forEach((b) => b.addEventListener("click", retry));
+    log.querySelectorAll(".keyform").forEach((f) => f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const k = f.k.value.trim();
+      if (!/^sk-ant-[A-Za-z0-9_-]{20,}$/.test(k)) { f.k.setCustomValidity("That doesn't look like an Anthropic key (sk-ant-…)"); f.k.reportValidity(); return; }
+      window.PLKey.set(k);
+      retry();
+    }));
+    log.querySelectorAll(".keyform input").forEach((i) => i.addEventListener("input", () => i.setCustomValidity("")));
+    log.querySelectorAll("[data-forget]").forEach((b) => b.addEventListener("click", () => { window.PLKey.set(""); messages = messages.filter((m) => !m.error); render(); }));
   }
   const nearBottom = () => log.scrollHeight - log.scrollTop - log.clientHeight < 80;
   const toBottom = (smooth) => log.scrollTo({ top: log.scrollHeight, behavior: smooth && !reduce ? "smooth" : "auto" });
@@ -141,8 +155,8 @@
     messages.push({ role: "user", content: text });
     input.value = "";
     autosize();
-    if (window.ME && window.ME.signIn && !window.ME.user) {
-      messages.push({ role: "assistant", content: "", error: "Sign in with Google to ask the reader. Reading, notes and plates need no account.", signin: true });
+    if (window.ME && window.ME.chat === "byok" && !getKey()) {
+      messages.push({ role: "assistant", content: "", error: "To ask the reader, add your own Anthropic API key. Reading, notes and plates need nothing.", needKey: true });
       render();
       toBottom(true);
       return;
@@ -175,15 +189,14 @@
     try {
       const res = await fetch("api/chat", {
         method: "POST", signal: busy.signal, credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(getKey() ? { "X-User-Api-Key": getKey() } : {}) },
         body: JSON.stringify({ context: ctx.payload, messages: history }),
       });
       if (!res.ok || !res.body) {
         let msg = `The reader could not answer (${res.status}).`;
-        let signin = false;
-        try { const j = await res.json(); msg = j.error || msg; signin = Boolean(j.signIn); } catch {}
-        if (!signin && (res.status === 401 || res.status === 403)) msg = "Your sign-in has expired. Reload the page to sign in again.";
-        throw Object.assign(new Error(msg), { signin });
+        let needKey = false;
+        try { const j = await res.json(); msg = j.error || msg; needKey = Boolean(j.needKey); } catch {}
+        throw Object.assign(new Error(msg), { needKey });
       }
       const reader = res.body.getReader(), dec = new TextDecoder();
       let buf = "", finished = false;
@@ -199,7 +212,7 @@
           if (!data) continue;
           const ev = JSON.parse(data);
           if (ev.t) { reply.content += ev.t; if (!frame) frame = requestAnimationFrame(paint); }
-          if (ev.error) throw new Error(ev.error);
+          if (ev.error) throw Object.assign(new Error(ev.error), { needKey: Boolean(ev.needKey) });
           if (ev.done) finished = true;
         }
       }
@@ -210,7 +223,7 @@
         if (reply.content.trim()) messages.push({ role: "assistant", content: reply.content.trim() + " …" });
       } else {
         if (reply.content.trim()) messages.push(reply);
-        messages.push({ role: "assistant", content: "", signin: Boolean(e.signin), error: e.message === "Failed to fetch" || e.message === "Load failed" ? "Couldn't reach the reader. Check the connection and try again." : e.message });
+        messages.push({ role: "assistant", content: "", needKey: Boolean(e.needKey), error: e.message === "Failed to fetch" || e.message === "Load failed" ? "Couldn't reach the reader. Check the connection and try again." : e.message });
       }
     } finally {
       if (frame) cancelAnimationFrame(frame);

@@ -76,9 +76,11 @@
   }
   const dlg = $("#acct-dlg");
   $("#acct").addEventListener("click", () => {
+    $("#acct-key").hidden = !window.PLKey.get();
     $("#acct-who").textContent = window.ME && window.ME.user ? `${window.ME.user.name || "Signed in"} · ${window.ME.user.email}` : "";
     dlg.showModal();
   });
+  $("#acct-key").addEventListener("click", () => { window.PLKey.set(""); $("#acct-key").hidden = true; });
   $("#acct-close").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
   $("#acct-out").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }).catch(() => {}); location.reload(); });
