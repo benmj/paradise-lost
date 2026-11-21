@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4eedf" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121014" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Paradise Lost">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Paradise Lost</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <button id="back" class="icon-btn" aria-label="Back" title="Back" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <a href="#/" id="title" class="topbar-title">Paradise Lost</a>
+  <button id="plain" class="icon-btn" aria-label="Plain text" title="Plain text: hide notes" aria-pressed="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14M5 10.5h14M5 14.5h14M5 18.5h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+  </button>
+  <a id="signin" class="topbar-link" href="/auth/login?back=/" hidden>Sign in</a>
+  <button id="acct" class="icon-btn acct" aria-label="Account" title="Account" hidden></button>
+  <button id="theme" class="icon-btn" aria-label="Light or dark" title="Light or dark">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16a4 4 0 0 1 0-8a4 4 0 0 0 0-8z" fill="currentColor"/></svg>
+  </button>
+  <div class="progress" id="progress" hidden></div>
+</header>
+<main id="app"></main>
+<div class="note-card" id="note-card" role="dialog" aria-labelledby="nc-word" hidden>
+  <div class="nc-head">
+    <div class="nc-word" id="nc-word"></div>
+    <button type="button" class="icon-btn" id="nc-close" aria-label="Close note" title="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <p id="nc-text"></p>
+  <button type="button" class="nc-ask" id="nc-ask">Ask the Reader ›</button>
+</div>
+<dialog id="lb" class="lb" aria-label="Plate">
+  <button type="button" class="icon-btn" id="lb-close" aria-label="Close">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <img id="lb-img" alt="">
+  <p id="lb-cap"></p>
+</dialog>
+<dialog id="acct-dlg" class="acct-dlg">
+  <p class="acct-who" id="acct-who"></p>
+  <p class="acct-note">Your email, reading place and question counts are stored so your place follows you. Nothing else.</p>
+  <div class="acct-actions">
+    <button type="button" class="chip" id="acct-out">Sign out</button>
+    <button type="button" class="chip" id="acct-del">Delete my data</button>
+    <button type="button" class="chip" id="acct-close">Close</button>
+  </div>
+</dialog>
+<script src="data.js"></script>
+<script src="art.js"></script>
+<script src="chat.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

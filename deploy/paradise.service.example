@@ -1,0 +1,13 @@
+[Unit]
+Description=Paradise Lost reading guide
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/paradise-lost
+EnvironmentFile=/etc/paradise-lost.env
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning server.mjs
+Restart=always
+User=paradise
+
+[Install]
+WantedBy=multi-user.target

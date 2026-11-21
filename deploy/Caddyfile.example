@@ -1,0 +1,6 @@
+# Any reverse proxy works; set BASE_URL to the public https address so cookies are Secure.
+paradise.example.com {
+	reverse_proxy 127.0.0.1:8107 {
+		flush_interval -1   # lets chat stream
+	}
+}

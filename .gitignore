@@ -1,0 +1,7 @@
+dist/
+shots/
+node_modules
+.DS_Store
+art/raw/
+data-local/
+.env

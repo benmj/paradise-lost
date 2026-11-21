@@ -1,0 +1,293 @@
+{
+  "n": 1,
+  "title": "Hell and the Rally of the Fallen",
+  "setting": "Hell: the burning lake, then the plain where Pandemonium rises",
+  "summary": "Milton states his subject, the Fall of Man, and calls on the Muse. Satan and his angels lie stunned on a lake of fire after their defeat in Heaven; Satan rouses Beelzebub, then the whole host, and resolves to carry on the war by fraud. The devils build their palace, Pandemonium, and gather there for a council.",
+  "sections": [
+    {
+      "from": 1,
+      "to": 26,
+      "title": "The invocation",
+      "note": "Milton names his subject, man’s first disobedience, and calls on the Heavenly Muse and the Holy Spirit to lift his song above the classical poets. Notice the first sentence runs sixteen lines before reaching its verb, ‘Sing.’"
+    },
+    {
+      "from": 27,
+      "to": 49,
+      "title": "Who caused the Fall",
+      "note": "The poet asks what moved Adam and Eve to fall and answers at once: the ‘infernal Serpent,’ Satan, already cast out of Heaven for his rebellion."
+    },
+    {
+      "from": 50,
+      "to": 83,
+      "title": "Satan wakes on the burning lake",
+      "note": "After nine days stunned in the fiery gulf, Satan looks round at Hell, a furnace that gives no light, and finds Beelzebub weltering beside him."
+    },
+    {
+      "from": 84,
+      "to": 124,
+      "title": "Satan’s first speech to Beelzebub",
+      "note": "Satan barely recognises his changed companion, then declares that nothing is lost while the will to revenge survives. The broken opening line shows him shaken before the defiance takes hold."
+    },
+    {
+      "from": 125,
+      "to": 191,
+      "title": "Beelzebub’s doubt and Satan’s answer",
+      "note": "Beelzebub wonders whether God has left them strong only so they can suffer and serve. Satan replies that their one task now is to turn God’s good into evil, and proposes they make for the dry plain."
+    },
+    {
+      "from": 192,
+      "to": 241,
+      "title": "Satan rises from the lake",
+      "note": "The narrator measures Satan’s vast bulk against Titans and the whale Leviathan, and adds that he rises only because Heaven permits it. Satan and Beelzebub fly to the burning shore."
+    },
+    {
+      "from": 242,
+      "to": 282,
+      "title": "‘Farewell, happy fields’",
+      "note": "Satan greets his new kingdom and claims the mind can make its own Heaven or Hell. Beelzebub urges him to rouse the fallen legions with the voice they know."
+    },
+    {
+      "from": 283,
+      "to": 330,
+      "title": "Satan calls his legions",
+      "note": "With a shield like the moon and a spear like a ship’s mast, Satan walks to the shore and shouts to the angels lying ‘thick as autumnal leaves’: ‘Awake, arise, or be for ever fallen!’"
+    },
+    {
+      "from": 331,
+      "to": 375,
+      "title": "The fallen angels rise",
+      "note": "The host springs up like a plague of locusts and gathers on the plain. The narrator explains that these spirits will later be worshipped on earth as the false gods of the heathen world."
+    },
+    {
+      "from": 376,
+      "to": 521,
+      "title": "The catalogue of devils",
+      "note": "The Muse names the chief devils by the idols they will become: Moloch, Chemos, Baal and Ashtaroth, Thammuz, Dagon, Rimmon, the gods of Egypt, Belial and finally the Greek gods. It is Milton’s answer to Homer’s catalogue of ships."
+    },
+    {
+      "from": 522,
+      "to": 621,
+      "title": "The standard raised and the host reviewed",
+      "note": "Satan’s banner goes up, the army marches to flutes, and he surveys it with swelling pride. The famous portrait of him as a darkened sun follows, and he weeps before he can speak."
+    },
+    {
+      "from": 622,
+      "to": 669,
+      "title": "Satan addresses the host",
+      "note": "Satan blames God for hiding his strength and proposes they war by guile, perhaps against a new world God has been rumoured to create. The angels answer by drawing millions of flaming swords."
+    },
+    {
+      "from": 670,
+      "to": 751,
+      "title": "The building of Pandemonium",
+      "note": "Mammon’s crew mines a hill of gold, and a palace rises ‘like an exhalation’ to music. Its architect is Mulciber, whose fall from Heaven the Greeks told as a myth."
+    },
+    {
+      "from": 752,
+      "to": 798,
+      "title": "The council convenes",
+      "note": "Heralds summon the devils to Pandemonium; the crowd swarms like bees and shrinks to fit the hall, while the great lords sit at full size in secret conclave."
+    }
+  ],
+  "glosses": [
+    {
+      "line": 7,
+      "word": "Oreb",
+      "note": "Horeb, another name for Mount Sinai, where Moses (the ‘shepherd’ of line 8) received the Law."
+    },
+    {
+      "line": 11,
+      "word": "Siloa’s brook",
+      "note": "The pool of Siloam, a spring near the Temple in Jerusalem (the ‘oracle of God’ of line 12)."
+    },
+    {
+      "line": 15,
+      "word": "Aonian mount",
+      "note": "Mount Helicon in Boeotia, home of the classical Muses; Milton means to soar above pagan poetry."
+    },
+    {
+      "line": 21,
+      "word": "Dove-like",
+      "note": "The Spirit of God ‘moved upon the face of the waters’ at creation (Genesis 1:2), pictured as a dove brooding on an egg."
+    },
+    {
+      "line": 81,
+      "word": "Beelzebub",
+      "note": "A Philistine god (2 Kings 1); the name was taken to mean ‘lord of flies’ and in the Gospels is a name for the prince of devils."
+    },
+    {
+      "line": 199,
+      "word": "Briareos",
+      "note": "A hundred-handed giant; Typhon was a monster said to live in a cave in Cilicia near Tarsus. Both fought against Jove."
+    },
+    {
+      "line": 201,
+      "word": "Leviathan",
+      "note": "The great sea creature of Job 41; the tale of sailors mooring to a sleeping whale they take for an island comes from medieval bestiaries."
+    },
+    {
+      "line": 288,
+      "word": "Tuscan artist",
+      "note": "Galileo, who studied the moon through his telescope (‘optic glass’) near Florence; Milton visited him in 1638."
+    },
+    {
+      "line": 294,
+      "word": "ammiral",
+      "note": "Flagship, the admiral’s vessel."
+    },
+    {
+      "line": 303,
+      "word": "Vallombrosa",
+      "note": "A wooded valley near Florence; the name means ‘shady valley.’"
+    },
+    {
+      "line": 307,
+      "word": "Busiris",
+      "note": "A legendary tyrant of Egypt, here made the Pharaoh whose charioteers drowned pursuing the Israelites (the ‘sojourners of Goshen’) through the Red Sea."
+    },
+    {
+      "line": 339,
+      "word": "Amram’s son",
+      "note": "Moses, who called down the plague of locusts on Egypt (Exodus 10)."
+    },
+    {
+      "line": 353,
+      "word": "Rhene or the Danaw",
+      "note": "The Rhine and the Danube, crossed by the barbarian tribes who overran the Roman Empire."
+    },
+    {
+      "line": 405,
+      "word": "Gehenna",
+      "note": "The valley of Hinnom outside Jerusalem, where children were burned to Moloch; its name became a word for Hell."
+    },
+    {
+      "line": 422,
+      "word": "Baalim",
+      "note": "Plural of Baal; with Ashtaroth (plural of Ashtoreth) these are general names for the male and female gods of Canaan."
+    },
+    {
+      "line": 444,
+      "word": "uxorious king",
+      "note": "Solomon, whose many foreign wives led him to build shrines to their gods (1 Kings 11)."
+    },
+    {
+      "line": 446,
+      "word": "Thammuz",
+      "note": "A Syrian god identified with Adonis; women mourned his death each year, when the river Adonis ran red with soil washed from Lebanon."
+    },
+    {
+      "line": 460,
+      "word": "grunsel-edge",
+      "note": "Threshold. When the captured Ark was placed in Dagon’s temple, his image fell and broke on it (1 Samuel 5)."
+    },
+    {
+      "line": 467,
+      "word": "Rimmon",
+      "note": "A god of Damascus; the leper Naaman, once his worshipper, was cured and turned to the God of Israel, while King Ahaz copied a Syrian altar (2 Kings 5 and 16)."
+    },
+    {
+      "line": 484,
+      "word": "rebel king",
+      "note": "Jeroboam, who led the northern tribes away from Judah and set up golden calves at Bethel and Dan (1 Kings 12)."
+    },
+    {
+      "line": 502,
+      "word": "flown",
+      "note": "Swollen, flushed."
+    },
+    {
+      "line": 508,
+      "word": "Javan’s issue",
+      "note": "The Greeks, said to descend from Javan, grandson of Noah; Milton treats their gods as devils too."
+    },
+    {
+      "line": 550,
+      "word": "Dorian mood",
+      "note": "The Dorian mode, a grave, steadying style of Greek music associated with Spartan soldiers."
+    },
+    {
+      "line": 580,
+      "word": "Uther’s son",
+      "note": "King Arthur. The names that follow come from Italian romances of Charlemagne’s wars with the Saracens."
+    },
+    {
+      "line": 609,
+      "word": "amerced",
+      "note": "Punished by being deprived of."
+    },
+    {
+      "line": 690,
+      "word": "admire",
+      "note": "Wonder, be astonished."
+    },
+    {
+      "line": 728,
+      "word": "cressets",
+      "note": "Iron baskets of burning fuel, used as lamps."
+    },
+    {
+      "line": 740,
+      "word": "Mulciber",
+      "note": "A Latin name for Vulcan, the smith of the gods, whom Jove threw out of heaven onto the island of Lemnos."
+    },
+    {
+      "line": 756,
+      "word": "Pandemonium",
+      "note": "Milton’s coinage from Greek: ‘all the demons.’"
+    },
+    {
+      "line": 797,
+      "word": "Frequent",
+      "note": "Crowded."
+    }
+  ],
+  "famous": [
+    {
+      "from": 1,
+      "to": 26,
+      "why": "The opening sentence states the poem’s whole argument and ends with its purpose: to ‘justify the ways of God to men.’"
+    },
+    {
+      "from": 61,
+      "to": 64,
+      "why": "‘No light; but rather darkness visible’ is one of the great paradoxes in English, a fire that only shows how dark Hell is."
+    },
+    {
+      "from": 105,
+      "to": 109,
+      "why": "‘What though the field be lost? All is not lost’ is the voice of heroic defiance that makes Satan so magnetic in these early books."
+    },
+    {
+      "from": 254,
+      "to": 263,
+      "why": "‘The mind is its own place’ and ‘Better to reign in Hell than serve in Heaven’ are Satan’s most quoted claims, and the poem will slowly test both."
+    },
+    {
+      "from": 301,
+      "to": 304,
+      "why": "The fallen angels ‘thick as autumnal leaves that strow the brooks in Vallombrosa’ is an epic simile with a long ancestry in Homer, Virgil and Dante."
+    },
+    {
+      "from": 740,
+      "to": 746,
+      "why": "Mulciber’s fall ‘from morn to noon … from noon to dewy eve’ is so lovely that Milton has to stop and call it a fable: ‘Thus they relate, erring.’"
+    }
+  ],
+  "themes": [
+    "Satan’s heroic rhetoric is at once thrilling and hollow: his words bear ‘semblance of worth, not substance.’",
+    "Even in rebellion the devils act only by God’s permission, and their evil will be turned to good.",
+    "The pagan gods of the ancient world are unmasked as fallen angels in disguise.",
+    "Milton claims to surpass classical epic by telling a truer and greater story."
+  ],
+  "characters": [
+    "narrator",
+    "muse",
+    "satan",
+    "beelzebub",
+    "moloch",
+    "belial",
+    "mammon",
+    "mulciber"
+  ],
+  "art": "Satan rising upright from the burning lake, the flames parting and rolling back on either side, his vast shield hanging on his shoulders like the moon."
+}

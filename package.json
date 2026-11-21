@@ -1,0 +1,16 @@
+{
+  "name": "paradise-lost",
+  "version": "0.2.0",
+  "private": true,
+  "description": "An illustrated reading guide to Milton's Paradise Lost, with Doré's plates and an ask-the-reader chat.",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "build": "python3 scripts/build.py",
+    "start": "node --disable-warning=ExperimentalWarning server.mjs",
+    "check": "python3 scripts/check-guide.py",
+    "shots": "node scripts/shots.mjs"
+  },
+  "devDependencies": { "playwright": "^1.48.0" }
+}

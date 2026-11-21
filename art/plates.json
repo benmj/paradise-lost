@@ -1,0 +1,402 @@
+[
+ {
+  "plate": 1,
+  "book": 1,
+  "line": 45,
+  "title": "Fall of the rebel angels",
+  "caption": "Hurled headlong flaming from th’ ethereal sky,",
+  "confidence": "high"
+ },
+ {
+  "plate": 2,
+  "book": 1,
+  "line": 84,
+  "title": "Satan and Beelzebub on the lake",
+  "caption": "“If thou beest he—but O how fallen! how changed",
+  "confidence": "high"
+ },
+ {
+  "plate": 3,
+  "book": 1,
+  "line": 330,
+  "title": "Satan rallies the fallen legions",
+  "caption": "Awake, arise, or be for ever fallen!”",
+  "confidence": "high"
+ },
+ {
+  "plate": 4,
+  "book": 1,
+  "line": 335,
+  "title": "Fallen legions rise from the lake",
+  "caption": "Nor did they not perceive the evil plight",
+  "confidence": "medium"
+ },
+ {
+  "plate": 5,
+  "book": 1,
+  "line": 540,
+  "title": "Ensign raised and trumpets sounded",
+  "caption": "Sonorous metal blowing martial sounds:",
+  "confidence": "medium"
+ },
+ {
+  "plate": 6,
+  "book": 2,
+  "line": 1,
+  "title": "Satan enthroned in Pandemonium",
+  "caption": "High on a throne of royal state, which far",
+  "confidence": "high"
+ },
+ {
+  "plate": 7,
+  "book": 2,
+  "line": 628,
+  "title": "Hell's serpents and dragons",
+  "caption": "Gorgons, and Hydras, and Chimeras dire.",
+  "confidence": "low"
+ },
+ {
+  "plate": 8,
+  "book": 2,
+  "line": 681,
+  "title": "Satan confronts Sin and Death",
+  "caption": "“Whence and what art thou, execrable Shape,",
+  "confidence": "medium"
+ },
+ {
+  "plate": 9,
+  "book": 2,
+  "line": 948,
+  "title": "Satan struggles through Chaos",
+  "caption": "O’er bog or steep, through strait, rough, dense, or rare,",
+  "confidence": "medium"
+ },
+ {
+  "plate": 10,
+  "book": 3,
+  "line": 372,
+  "title": "Father and Son in Heaven",
+  "caption": "Thee, Father, first they sung Omnipotent,",
+  "confidence": "medium"
+ },
+ {
+  "plate": 11,
+  "book": 3,
+  "line": 496,
+  "title": "The Paradise of Fools",
+  "caption": "The Paradise of Fools, to few unknown",
+  "confidence": "medium"
+ },
+ {
+  "plate": 12,
+  "book": 3,
+  "line": 741,
+  "title": "Satan plunges toward the earth",
+  "caption": "Throws his steep flight in many an aery wheel;",
+  "confidence": "medium"
+ },
+ {
+  "plate": 13,
+  "book": 4,
+  "line": 73,
+  "title": "Satan on Mount Niphates",
+  "caption": "Me miserable! which way shall I fly",
+  "confidence": "high"
+ },
+ {
+  "plate": 14,
+  "book": 4,
+  "line": 172,
+  "title": "Satan climbs the steep hill",
+  "caption": "Now to the ascent of that steep savage hill",
+  "confidence": "low"
+ },
+ {
+  "plate": 15,
+  "book": 4,
+  "line": 196,
+  "title": "Satan perched above Eden",
+  "caption": "Sat like a cormorant; yet not true life",
+  "confidence": "low"
+ },
+ {
+  "plate": 16,
+  "book": 4,
+  "line": 336,
+  "title": "Adam and Eve by the fountain",
+  "caption": "Still as they thirsted, scoop the brimming stream;",
+  "confidence": "medium"
+ },
+ {
+  "plate": 17,
+  "book": 4,
+  "line": 549,
+  "title": "Gabriel and guards among the rocks",
+  "caption": "Betwixt these rocky pillars Gabriel sat,",
+  "confidence": "medium"
+ },
+ {
+  "plate": 18,
+  "book": 4,
+  "line": 788,
+  "title": "Ithuriel and Zephon fly searching",
+  "caption": "Ithuriel and Zephon, with winged speed",
+  "confidence": "high"
+ },
+ {
+  "plate": 19,
+  "book": 4,
+  "line": 1015,
+  "title": "Satan flees Gabriel's guards",
+  "caption": "Murmuring, and with him fled the shades of night.",
+  "confidence": "medium"
+ },
+ {
+  "plate": 20,
+  "book": 5,
+  "line": 13,
+  "title": "Adam watches the sleeping Eve",
+  "caption": "Hung over her enamoured, and beheld",
+  "confidence": "high"
+ },
+ {
+  "plate": 21,
+  "book": 5,
+  "line": 308,
+  "title": "Adam points out Raphael approaching",
+  "caption": "Haste hither, Eve, and worth thy sight behold",
+  "confidence": "high"
+ },
+ {
+  "plate": 22,
+  "book": 5,
+  "line": 468,
+  "title": "Raphael sits with Adam and Eve",
+  "caption": "To whom the winged Hierarch replied.",
+  "confidence": "high"
+ },
+ {
+  "plate": 23,
+  "book": 6,
+  "line": 188,
+  "title": "Abdiel strikes Satan",
+  "caption": "This greeting on thy impious crest receive.",
+  "confidence": "high"
+ },
+ {
+  "plate": 24,
+  "book": 6,
+  "line": 207,
+  "title": "Battle of the angels",
+  "caption": "The horrid shock. Now storming fury rose,",
+  "confidence": "high"
+ },
+ {
+  "plate": 25,
+  "book": 6,
+  "line": 329,
+  "title": "Michael's sword wounds Satan",
+  "caption": "The griding sword with discontinuous wound",
+  "confidence": "medium"
+ },
+ {
+  "plate": 26,
+  "book": 6,
+  "line": 406,
+  "title": "Night falls after the battle",
+  "caption": "Now Night her course began, and, over Heaven",
+  "confidence": "high"
+ },
+ {
+  "plate": 27,
+  "book": 6,
+  "line": 775,
+  "title": "Messiah's ensign above the host",
+  "caption": "When the great ensign of Messiah blazed",
+  "confidence": "low"
+ },
+ {
+  "plate": 28,
+  "book": 6,
+  "line": 841,
+  "title": "Rebel host overthrown and heaped",
+  "caption": "Of Thrones and mighty Seraphim prostrate,",
+  "confidence": "low"
+ },
+ {
+  "plate": 29,
+  "book": 6,
+  "line": 864,
+  "title": "Rebels hurled from Heaven's verge",
+  "caption": "Urged them behind: Headlong themselves they threw",
+  "confidence": "medium"
+ },
+ {
+  "plate": 30,
+  "book": 7,
+  "line": 235,
+  "title": "Spirit brooding over the waters",
+  "caption": "His brooding wings the Spirit of God outspread,",
+  "confidence": "low"
+ },
+ {
+  "plate": 31,
+  "book": 7,
+  "line": 391,
+  "title": "Creation of sea creatures and birds",
+  "caption": "And God created the great whales, and each",
+  "confidence": "medium"
+ },
+ {
+  "plate": 32,
+  "book": 7,
+  "line": 412,
+  "title": "Leviathan and the sea monsters",
+  "caption": "Tempest the ocean: there leviathan,",
+  "confidence": "high"
+ },
+ {
+  "plate": 33,
+  "book": 7,
+  "line": 430,
+  "title": "Cranes and birds over the lake",
+  "caption": "Easing their flight; so steers the prudent crane",
+  "confidence": "medium"
+ },
+ {
+  "plate": 34,
+  "book": 7,
+  "line": 471,
+  "title": "Land animals rise from earth",
+  "caption": "Behemoth biggest born of earth upheaved",
+  "confidence": "medium"
+ },
+ {
+  "plate": 35,
+  "book": 8,
+  "line": 652,
+  "title": "Raphael departs for Heaven",
+  "caption": "So parted they; the Angel up to Heaven",
+  "confidence": "medium"
+ },
+ {
+  "plate": 36,
+  "book": 9,
+  "line": 71,
+  "title": "Satan above the Tigris rapids",
+  "caption": "Where Tigris, at the foot of Paradise,",
+  "confidence": "medium"
+ },
+ {
+  "plate": 37,
+  "book": 9,
+  "line": 100,
+  "title": "Satan brooding, Adam in distance",
+  "caption": "With second thoughts, reforming what was old!",
+  "confidence": "low"
+ },
+ {
+  "plate": 38,
+  "book": 9,
+  "line": 187,
+  "title": "Satan enters the sleeping serpent",
+  "caption": "Fearless unfeared he slept: in at his mouth",
+  "confidence": "medium"
+ },
+ {
+  "plate": 39,
+  "book": 9,
+  "line": 495,
+  "title": "Serpent approaches Adam and Eve",
+  "caption": "In serpent, inmate bad! and toward Eve",
+  "confidence": "medium"
+ },
+ {
+  "plate": 40,
+  "book": 9,
+  "line": 781,
+  "title": "Eve takes the fruit",
+  "caption": "Forth reaching to the fruit, she plucked, she eat!",
+  "confidence": "high"
+ },
+ {
+  "plate": 41,
+  "book": 9,
+  "line": 1112,
+  "title": "Adam and Eve sew leaf aprons",
+  "caption": "And, with what skill they had, together sewed,",
+  "confidence": "medium"
+ },
+ {
+  "plate": 42,
+  "book": 10,
+  "line": 100,
+  "title": "Adam and Eve hide from God",
+  "caption": "And from his presence hid themselves among",
+  "confidence": "medium"
+ },
+ {
+  "plate": 43,
+  "book": 10,
+  "line": 424,
+  "title": "Satan returns toward Pandemonium",
+  "caption": "Of Pandemonium; city and proud seat",
+  "confidence": "medium"
+ },
+ {
+  "plate": 44,
+  "book": 10,
+  "line": 514,
+  "title": "Satan turned serpent among devils",
+  "caption": "A monstrous serpent on his belly prone,",
+  "confidence": "high"
+ },
+ {
+  "plate": 45,
+  "book": 11,
+  "line": 247,
+  "title": "Michael with sword and Adam",
+  "caption": "As in a glistering zodiack, hung the sword,",
+  "confidence": "low"
+ },
+ {
+  "plate": 46,
+  "book": 11,
+  "line": 263,
+  "title": "Adam and Eve prostrate in grief",
+  "caption": "He added not; for Adam at the news",
+  "confidence": "low"
+ },
+ {
+  "plate": 47,
+  "book": 11,
+  "line": 729,
+  "title": "Noah builds the ark",
+  "caption": "Began to build a vessel of huge bulk;",
+  "confidence": "high"
+ },
+ {
+  "plate": 48,
+  "book": 11,
+  "line": 743,
+  "title": "The Flood",
+  "caption": "Like a dark ceiling stood; down rushed the rain",
+  "confidence": "high"
+ },
+ {
+  "plate": 49,
+  "book": 12,
+  "line": 227,
+  "title": "God gives the law at Sinai",
+  "caption": "God from the mount of Sinai, whose gray top",
+  "confidence": "low"
+ },
+ {
+  "plate": 50,
+  "book": 12,
+  "line": 648,
+  "title": "Expulsion from Eden",
+  "caption": "They, hand in hand, with wandering steps and slow,",
+  "confidence": "high"
+ }
+]
