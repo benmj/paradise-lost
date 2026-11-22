@@ -4,8 +4,10 @@
 - **Design:**
   - One page app (plain HTML, CSS and JS) in a restrained Doré-inspired print look: all fifty of Gustave Doré's 1866 engravings placed at their lines, IM Fell and EB Garamond, crimson accents.
   - For each book: a **Guide** (argument, setting, sections, people), **Read** (the full text with glosses, famous passages and line numbers) and **Listen** (YouTube recitations and audiobooks).
-  - **Ask the Reader**: a chat about the passage you have open. `server.mjs` builds the context from the poem and streams the reply from the Anthropic API.
+  - **Three ways to read:** Scroll, Page (one book-style page at a time) and Two pages (a spread with a spine, on screens 820 px and wider). Turn pages with the arrows, space, swipe or the buttons; the layout and your place carry over when you switch.
+  - **Ask the Reader**: the only AI in the app, a chat about the passage you have open. `server.mjs` builds the context from the poem and streams the reply from the Anthropic API.
   - **Accounts** (public mode): Google sign-in, SQLite for users, reading place and usage. Reading needs no account; a saved place needs sign-in.
+  - **Everything else is free and open to the public:** the guide, text, glosses, plates and listening list use no AI and need no account. Only chat is limited (own key, or the host's allowlist).
   - **Who pays for chat:** readers bring their own Anthropic API key (kept in their browser, sent per question, never stored). Only an allowlist and the admins use the host's key, capped per user per day and per month.
   - One Node process with no npm dependencies (Node 22.5+, Python 3 to build).
   ```
@@ -63,7 +65,7 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 
 - `#/`: home, with the twelve books and where you left off.
 - `#/b/N` and `#/b/N/listen`: a book's guide and its listening list.
-- `#/r/N/L`: read book N at line L. Tap a dotted word for its gloss and ❦ for a famous passage; either note card can hand the passage to Ask the Reader.
+- `#/r/N/L`: read book N at line L (in Page and Two pages, the page that holds it). Tap a dotted word for its gloss and ❦ for a famous passage; either note card can hand the passage to Ask the Reader.
 - `#/people` and `#/people/<id>`: characters.
 - `#/plates`: gallery of Doré's plates by book; tap to enlarge, the line number opens the passage.
 - `#/listen`: all recitations and audiobooks.

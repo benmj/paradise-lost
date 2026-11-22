@@ -441,8 +441,20 @@ ${GROUPS.map(([label, kinds]) => {
       if (plateAt.has(l)) html += `<figure class="dore">${pimg(plateAt.get(l))}<figcaption>${pcap(plateAt.get(l))}</figcaption></figure>`;
     });
     const next = n < 12 ? guide(n + 1) : null;
+    const pref = store.get("mode", "scroll");
+    const mode = pref === "spread" && innerWidth < 820 ? "page" : pref;
+    document.body.classList.toggle("paged", mode !== "scroll");
+    document.body.classList.toggle("mode-spread", mode === "spread");
+    const modeBtn = (m, label, icon) => `<button type="button" class="mode-btn${pref === m ? " on" : ""}${m === "spread" ? " wide-only" : ""}" data-mode="${m}" aria-pressed="${pref === m}" title="${label}">${icon}<span>${label}</span></button>`;
+    const modebar = `<div class="modebar" role="group" aria-label="Layout">
+${modeBtn("scroll", "Scroll", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10M7 9h10M7 14h10M7 19h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>')}
+${modeBtn("page", "Page", '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3.5" width="12" height="17" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8.5h6M9 12h6M9 15.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>')}
+${modeBtn("spread", "Two pages", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5C9.5 4 6.5 4 3.5 5v13.5c3-1 6-1 8.5.5 2.5-1.500 5.500-1.500 8.500-.5V5c-3-1-6-1-8.500.5zM12 5.500V19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>')}
+</div>`;
     app.innerHTML = `<div class="fade">
 ${tabs(n, "read")}
+${modebar}
+<div class="paper${mode === "spread" ? " spread" : ""}"><div class="stage"><div class="flow" id="flow">
 <header class="reader-head"><span class="eyebrow">The ${ORD[n]} Book</span><h1>${esc(g.title)}</h1>${fleuron()}</header>
 <div class="poem" id="poem">${html}</div>
 <div class="end-card">${fleuron()}
@@ -452,7 +464,18 @@ ${tabs(n, "read")}
     <a class="btn" href="#/b/${n}">Guide to Book ${ROMAN[n]}</a>
   </div>
 </div>
+</div></div>
+<nav class="pager" aria-label="Pages"><button type="button" class="pg-btn" id="pg-prev" aria-label="Previous page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="pg-count" id="pg-count" aria-live="polite"></span><button type="button" class="pg-btn" id="pg-next" aria-label="Next page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></nav>
+</div>
 </div>`;
+    $(".modebar").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-mode]");
+      if (!b || !reader) return;
+      store.set("mode", b.dataset.mode);
+      const l = reader.lastL || reader.target;
+      history.replaceState(null, "", `#/r/${reader.n}${l > 1 ? `/${l}` : ""}`);
+      route();
+    });
 
     const poem = $("#poem");
     poem.addEventListener("click", (e) => {
@@ -461,7 +484,8 @@ ${tabs(n, "read")}
       const fm = e.target.closest(".fam-mark");
       if (fm) { e.stopPropagation(); return showFamous(n, g, +fm.dataset.f, fm); }
     });
-    reader = { n, total, els: [...poem.querySelectorAll(".ln")], tops: [], lastL: 0, g, target: at, t0: performance.now() };
+    reader = { n, total, els: [...poem.querySelectorAll(".ln")], tops: [], lastL: 0, g, target: at, t0: performance.now(), paged: mode !== "scroll", spread: mode === "spread" };
+    if (reader.paged) { after = () => initPaged(at); return; }
     after = () => {
       measure();
       if (at > 1) {
@@ -479,10 +503,11 @@ ${tabs(n, "read")}
     if (!reader) return;
     reader.tops = reader.els.map((el) => el.getBoundingClientRect().top + scrollY);
   }
-  addEventListener("resize", () => { if (reader) { measure(); track(); } });
+  addEventListener("resize", () => { if (reader && !reader.paged) { measure(); track(); } });
   // Web fonts change line heights: once they load, land on the asked-for line again.
   if (document.fonts) document.fonts.ready.then(() => {
     if (!reader) return;
+    if (reader.paged) return layoutPaged();
     measure();
     const el = reader.target > 1 && performance.now() - reader.t0 < 4000 && $(`#l-${reader.target}`);
     if (el) { el.scrollIntoView({ block: "start" }); measure(); }
@@ -498,19 +523,100 @@ ${tabs(n, "read")}
     while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (r.tops[mid] <= y) lo = mid; else hi = mid - 1; }
     // At the very bottom of the page, the last line counts as read.
     const l = innerHeight + scrollY >= document.documentElement.scrollHeight - 4 ? r.total : lo + 1;
-    if (l === r.lastL) return;
+    setLine(l, scrollY > 200);
+  }
+  function setLine(l, deep) {
+    const r = reader;
+    if (!r || l === r.lastL) return;
     r.lastL = l;
     const sec = r.g.sections.find((s) => l >= s.from && l <= s.to);
-    titleEl.innerHTML = `<i>${ROMAN[r.n]}</i> · ${esc(sec && scrollY > 200 ? sec.title : r.g.title)}`;
+    titleEl.innerHTML = `<i>${ROMAN[r.n]}</i> · ${esc(sec && deep ? sec.title : r.g.title)}`;
     progress.style.width = `${(l / r.total) * 100}%`;
     CHAT.update({ l }, `Book ${ROMAN[r.n]} · line ${l}`);
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       if (!reader || reader.n !== r.n) return;
-      if (scrollY > 200 || l > 1) store.set("pos", { n: r.n, l, t: Date.now() });
+      if (deep || l > 1) store.set("pos", { n: r.n, l, t: Date.now() });
       if (l > readOf(r.n)) store.set(`read:${r.n}`, l);
       pushState();
     }, 400);
+  }
+
+
+  // ── page and two-page modes: the poem set in fixed-height columns, turned like a book ──
+  let pagedKeys = false;
+  function initPaged(at) {
+    const r = reader;
+    r.stage = $(".stage"); r.flow = $("#flow"); r.paper = $(".paper");
+    r.prev = $("#pg-prev"); r.next = $("#pg-next"); r.count = $("#pg-count");
+    r.cur = 0; r.stride = 1; r.pages = 1; r.lefts = [];
+    r.prev.addEventListener("click", () => turn(-1));
+    r.next.addEventListener("click", () => turn(1));
+    let x0 = 0, y0 = 0;
+    r.stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    r.stage.addEventListener("touchend", (e) => {
+      const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.6) turn(dx < 0 ? 1 : -1);
+    }, { passive: true });
+    if (!pagedKeys) {
+      pagedKeys = true;
+      addEventListener("keydown", (e) => {
+        const q = reader;
+        if (!q || !q.paged || e.altKey || e.ctrlKey || e.metaKey) return;
+        if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) || document.body.classList.contains("chat-sheet")) return;
+        const k = e.key;
+        if (k === "ArrowRight" || k === "PageDown" || (k === " " && !e.shiftKey)) { e.preventDefault(); turn(1); }
+        else if (k === "ArrowLeft" || k === "PageUp" || (k === " " && e.shiftKey)) { e.preventDefault(); turn(-1); }
+        else if (k === "Home") { e.preventDefault(); goPage(0); }
+        else if (k === "End") { e.preventDefault(); goPage(q.pages - 1); }
+      });
+    }
+    r.ro = new ResizeObserver(() => layoutPaged());
+    r.ro.observe(r.paper);
+    r.ro.observe(document.body);
+    layoutPaged(at);
+    if (at > 1) { const el = $(`#l-${at}`); if (el) el.classList.add("hit"); }
+  }
+  function layoutPaged(atLine) {
+    const r = reader;
+    if (!r || !r.paged || !r.stage) return;
+    const line = atLine || r.lastL || r.target || 1;
+    const title = line <= 1 && r.cur === 0;
+    scrollTo(0, 0);
+    const top = r.stage.getBoundingClientRect().top;
+    const reserve = innerWidth < 1300 ? 78 : 24;
+    const h = Math.max(280, Math.floor(innerHeight - top - 54 - reserve));
+    r.stage.style.height = h + "px";
+    r.paper.style.setProperty("--sh", h + "px");
+    const W = r.stage.clientWidth, gap = r.spread ? Math.min(72, Math.round(W * 0.06)) : 40;
+    const cw = r.spread ? (W - gap) / 2 : W;
+    r.flow.style.width = W + "px";
+    r.flow.style.columnWidth = cw + "px";
+    r.flow.style.columnGap = gap + "px";
+    r.stride = r.spread ? 2 * (cw + gap) : cw + gap;
+    r.lefts = r.els.map((el) => el.offsetLeft);
+    r.pages = Math.max(1, Math.round((r.stage.scrollWidth + gap) / r.stride));
+    if (title) goPage(0, false); else goLine(line, false);
+  }
+  const pageOfLeft = (left) => Math.max(0, Math.floor((left + 2) / reader.stride));
+  function goLine(l, smooth) { const r = reader; goPage(pageOfLeft(r.lefts[Math.min(Math.max(l, 1), r.total) - 1] || 0), smooth); }
+  function turn(d) { if (reader) goPage(reader.cur + d, true); }
+  function goPage(p, smooth) {
+    const r = reader;
+    if (!r || !r.paged) return;
+    p = Math.min(Math.max(p, 0), r.pages - 1);
+    r.cur = p;
+    r.stage.scrollTo({ left: Math.round(p * r.stride), behavior: smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto" });
+    r.prev.disabled = p === 0;
+    r.next.disabled = p === r.pages - 1;
+    const first = r.lefts.findIndex((x) => x >= p * r.stride - 2) + 1 || r.total;
+    const nextFirst = r.lefts.findIndex((x) => x >= (p + 1) * r.stride - 2);
+    const last = nextFirst < 0 ? r.total : Math.max(first, nextFirst);
+    const pg = r.spread ? `Pages ${p * 2 + 1}–${p * 2 + 2}` : `Page ${p + 1}`;
+    const of = r.spread ? r.pages * 2 : r.pages;
+    r.count.innerHTML = `<b>${pg}</b> of ${of}<small>${p === 0 && first <= 1 ? "Title" : `lines ${first}–${last}`}</small>`;
+    setLine(p === r.pages - 1 ? r.total : first, p > 0);
+    progress.style.width = `${(Math.min(last, r.total) / r.total) * 100}%`;
   }
 
   // ── note card: a gloss, or why a passage is famous ──
@@ -578,8 +684,10 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     const parts = location.hash.replace(/^#/, "").split("?")[0].split("/").filter(Boolean);
     header.classList.remove("hidden");
     closeNote();
+    if (reader && reader.ro) reader.ro.disconnect();
     reader = null;
     after = null;
+    document.body.classList.remove("paged", "mode-spread");
     plainBtn.hidden = true;
     progress.hidden = true;
     if (!parts.length) home();
