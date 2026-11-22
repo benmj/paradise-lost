@@ -246,9 +246,10 @@ main { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-
 .reader-head h1 { font-size: 30px; line-height: 1.12; }
 .reader-head .fleuron { margin-top: 16px; }
 .poem { margin: 10px 0 0; font-size: clamp(15.5px, 4.35vw, 18.5px); line-height: 1.62; }
-.ln { position: relative; padding: 0 28px 0 1.3em; text-indent: -1.3em; scroll-margin-top: 90px; }
+.poem br { display: none; }
+.ln { display: block; position: relative; padding: 0 28px 0 1.3em; text-indent: -1.3em; scroll-margin-top: 90px; }
 .ln.para { margin-top: .9em; padding-left: calc(1.3em + 1.6em); }
-.ln .n { position: absolute; right: 0; top: .28em; text-indent: 0; font: 400 12px/1 var(--caps); letter-spacing: .04em; color: var(--ink-faint); user-select: none; }
+.ln[data-n]::after { content: attr(data-n); position: absolute; right: 0; top: .28em; text-indent: 0; font: 400 12px/1 var(--caps); letter-spacing: .04em; color: var(--ink-faint); user-select: none; }
 .ln.famous-ln { box-shadow: inset 2px 0 0 var(--gold); margin-left: -12px; padding-left: calc(1.3em + 12px); }
 .ln.famous-ln.para { padding-left: calc(1.3em + 1.6em + 12px); }
 .ln.hit { animation: hit 2.2s ease both; }
@@ -263,15 +264,17 @@ main { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-
 .sec-head .lr { font: 400 12.5px/1 var(--caps); color: var(--ink-faint); letter-spacing: .06em; }
 .sec-note { margin: 6px 0 0; font: italic 400 16.5px/1.45 var(--body); color: var(--ink-soft); text-wrap: pretty; }
 .gl {
-  border: 0; padding: 0; margin: 0; background: none; color: inherit; font: inherit; cursor: pointer; text-indent: 0;
+  color: inherit; cursor: pointer; text-indent: 0;
   text-decoration: underline dotted color-mix(in srgb, var(--crimson) 75%, transparent); text-underline-offset: .22em; text-decoration-thickness: 1.5px;
 }
 .gl:hover, .gl:focus-visible, .gl.open { color: var(--crimson); outline: none; }
 .fam-mark {
-  display: inline-block; vertical-align: baseline; width: 26px; height: 22px; margin-left: .25em; border: 0; padding: 0; background: none;
+  display: inline-block; vertical-align: baseline; width: 26px; height: 22px; margin-left: .25em;
   color: var(--gold); font: 400 17px/22px var(--display); text-indent: 0; cursor: pointer; text-align: center;
 }
 .fam-mark:hover, .fam-mark:focus-visible, .fam-mark.open { color: var(--crimson); outline: none; }
+.gl-mark::before { content: "°"; }
+.fam-mark::before { content: "❦"; }
 .gl-mark { font-size: .85em; color: var(--crimson); padding: 0 .2em; text-decoration: none; }
 body.plain .sec-note, body.plain .sec .ask-here, body.plain .fam-mark { display: none; }
 body.plain .gl { text-decoration: none; pointer-events: none; }

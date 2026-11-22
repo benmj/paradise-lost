@@ -439,9 +439,9 @@ ${GROUPS.map(([label, kinds]) => {
       });
       hits.sort((a, c) => a.s - c.s);
       let out = "", k = 0;
-      hits.forEach((h) => { out += esc(text.slice(k, h.s)) + `<button type="button" class="gl" data-g="${h.i}">${esc(text.slice(h.s, h.e))}</button>`; k = h.e; });
+      hits.forEach((h) => { out += esc(text.slice(k, h.s)) + `<span class="gl" role="button" tabindex="0" data-g="${h.i}">${esc(text.slice(h.s, h.e))}</span>`; k = h.e; });
       out += esc(text.slice(k));
-      missing.forEach((i) => { out += ` <button type="button" class="gl gl-mark" data-g="${i}" aria-label="Note on ${esc(g.glosses[i].word)}">°</button>`; });
+      missing.forEach((i) => { out += ` <span class="gl gl-mark" role="button" tabindex="0" data-g="${i}" aria-label="Note on ${esc(g.glosses[i].word)}"></span>`; });
       return out;
     }
 
@@ -456,9 +456,9 @@ ${GROUPS.map(([label, kinds]) => {
       if (l === 1) cls.push("first");
       else if (paras.has(l)) cls.push("para");
       if (f !== undefined) cls.push("famous-ln");
-      const num = l % 10 === 0 || s ? `<span class="n" aria-hidden="true">${l}</span>` : "";
-      const mark = f !== undefined && g.famous[f].from === l ? `<button type="button" class="fam-mark" data-f="${f}" aria-label="Why this passage is famous" title="A famous passage">❦</button>` : "";
-      html += `<div class="${cls.join(" ")}" id="l-${l}" data-l="${l}">${lineHtml(l, text)}${mark}${num}</div>`;
+      const num = l % 10 === 0 || s ? ` data-n="${l}"` : "";
+      const mark = f !== undefined && g.famous[f].from === l ? `<span class="fam-mark" role="button" tabindex="0" data-f="${f}" aria-label="Why this passage is famous" title="A famous passage"></span>` : "";
+      html += `<span class="${cls.join(" ")}" id="l-${l}" data-l="${l}"${num}>${lineHtml(l, text)}${mark}</span><br>`;
       if (plateAt.has(l)) html += `<figure class="dore">${pimg(plateAt.get(l))}<figcaption>${pcap(plateAt.get(l))}</figcaption></figure>`;
     });
     const next = n < 12 ? guide(n + 1) : null;
@@ -483,6 +483,9 @@ ${tabs(n, "read")}
 </div>
 </div>`;
     const poem = $("#poem");
+    poem.addEventListener("keydown", (e) => {
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches(".gl, .fam-mark")) { e.preventDefault(); e.target.click(); }
+    });
     poem.addEventListener("click", (e) => {
       const gl = e.target.closest(".gl");
       if (gl) { e.stopPropagation(); return showGloss(n, g, +gl.dataset.g, gl); }
