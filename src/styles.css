@@ -254,6 +254,7 @@ main { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-
 .ln.hit { animation: hit 2.2s ease both; }
 @keyframes hit { 0%, 40% { background: color-mix(in srgb, var(--gold) 26%, transparent); } 100% { background: transparent; } }
 .ln.first { padding-left: 0; text-indent: 0; }
+.ln.first.famous-ln { padding-left: 12px; }
 .ln.first::first-letter { font: 400 2.25em/0 var(--display); color: var(--crimson); margin-right: .03em; }
 .sec { margin: 34px 0 14px; padding-top: 18px; border-top: 1px solid var(--line); }
 .sec:first-child { border-top: 0; margin-top: 10px; }
@@ -556,19 +557,21 @@ body.plain figure.dore { display: none; }
 .linkbtn { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
 
 /* ── reading layouts: scroll, page, two pages ── */
-.modebar { display: flex; justify-content: center; gap: 4px; margin: 14px auto 0; }
-.mode-btn {
-  display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px 0 11px; border: 1px solid var(--line);
-  border-radius: 17px; background: none; color: var(--ink-soft); cursor: pointer;
-  font: 400 12.5px/1 var(--caps); letter-spacing: .14em; text-transform: uppercase;
-  transition: background .15s ease, color .15s ease, border-color .15s ease;
+.layout-menu {
+  position: fixed; z-index: 12; top: calc(env(safe-area-inset-top) + 54px); right: 8px; min-width: 180px; padding: 6px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; animation: fade-only .15s ease both;
 }
-.mode-btn svg { width: 17px; height: 17px; }
-.mode-btn:hover { color: var(--ink); }
-.mode-btn.on { color: var(--crimson); border-color: color-mix(in srgb, var(--crimson) 55%, var(--line)); background: var(--card); }
-.mode-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-@media (max-width: 819px) { .mode-btn.wide-only { display: none; } }
-@media (max-width: 400px) { .mode-btn span { letter-spacing: .1em; } .mode-btn { padding: 0 11px 0 9px; } }
+.layout-menu[hidden] { display: none; }
+.lm-item {
+  display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px 0 12px; border: 0; border-radius: 7px; background: none; color: var(--ink-soft); cursor: pointer; text-align: left;
+  font: 400 13px/1 var(--caps); letter-spacing: .14em; text-transform: uppercase;
+}
+.lm-item svg { width: 20px; height: 20px; flex: none; }
+.lm-item:hover { background: var(--paper-2); color: var(--ink); }
+.lm-item.on { color: var(--crimson); }
+.lm-item:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+@media (max-width: 819px) { .lm-item.wide-only { display: none; } }
 
 .pager { display: none; }
 body.paged { overflow: hidden; }
@@ -617,5 +620,12 @@ body.mode-spread .paper::after {
 }
 body.mode-spread .reader-head { padding-top: 12%; }
 body.paged .ask-fab { bottom: calc(env(safe-area-inset-bottom) + 10px); }
-@media (prefers-reduced-motion: reduce) { .pg-btn, .mode-btn { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .pg-btn { transition: none; } }
 @media print { body.paged { overflow: visible; } }
+
+/* paged modes: the page gets the screen. No tab row; layout buttons live in the page footer. */
+body.paged .tabs { display: none; }
+body.paged .paper { margin-top: 8px; padding-top: clamp(14px, 2.4vw, 26px); }
+body.paged .pg-count { min-width: 112px; }
+body.paged .reader-head { padding-top: 12%; }
+body.mode-spread .paper::before, body.mode-spread .paper::after { top: clamp(14px, 2.4vw, 26px); }

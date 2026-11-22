@@ -93,7 +93,7 @@
   // ── shell ──
   const app = $("#app");
   document.body.insertAdjacentHTML("afterbegin", DEFS);
-  const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), progress = $("#progress");
+  const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), layoutMenu = $("#layout-menu"), progress = $("#progress");
   $("#theme").addEventListener("click", () => {
     const dark = document.documentElement.dataset.theme
       ? document.documentElement.dataset.theme === "dark"
@@ -112,12 +112,32 @@
     plainBtn.setAttribute("aria-pressed", String(on));
   }
   setPlain(store.get("plain", false));
+  function setMenu(open) {
+    layoutMenu.hidden = !open;
+    layoutBtn.setAttribute("aria-expanded", String(open));
+    if (open) {
+      const pref = store.get("mode", "scroll");
+      layoutMenu.querySelectorAll("[data-mode]").forEach((b) => { b.classList.toggle("on", b.dataset.mode === pref); b.setAttribute("aria-checked", String(b.dataset.mode === pref)); });
+    }
+  }
+  layoutBtn.addEventListener("click", (e) => { e.stopPropagation(); setMenu(layoutMenu.hidden); });
+  layoutMenu.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-mode]");
+    if (!b || !reader) return;
+    setMenu(false);
+    store.set("mode", b.dataset.mode);
+    const l = reader.lastL || reader.target;
+    history.replaceState(null, "", `#/r/${reader.n}${l > 1 ? `/${l}` : ""}`);
+    route();
+  });
+  document.addEventListener("click", (e) => { if (!layoutMenu.hidden && !layoutMenu.contains(e.target)) setMenu(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !layoutMenu.hidden) { setMenu(false); layoutBtn.focus(); } });
   plainBtn.addEventListener("click", () => {
     const on = !document.body.classList.contains("plain");
     store.set("plain", on);
     setPlain(on);
     closeNote();
-    if (reader) requestAnimationFrame(measure);
+    if (reader) requestAnimationFrame(() => (reader && reader.paged ? layoutPaged() : measure()));
   });
 
   // header peeks back on scroll up (principle 5)
@@ -394,6 +414,7 @@ ${GROUPS.map(([label, kinds]) => {
     setTitle(`<i>${ROMAN[n]}</i> · ${esc(g.title)}`, true);
     CHAT.set(bookChat(n, at > 1 ? at : 0));
     plainBtn.hidden = false;
+    layoutBtn.hidden = false;
     progress.hidden = false;
 
     const secAt = new Map(g.sections.map((s) => [s.from, s]));
@@ -445,15 +466,8 @@ ${GROUPS.map(([label, kinds]) => {
     const mode = pref === "spread" && innerWidth < 820 ? "page" : pref;
     document.body.classList.toggle("paged", mode !== "scroll");
     document.body.classList.toggle("mode-spread", mode === "spread");
-    const modeBtn = (m, label, icon) => `<button type="button" class="mode-btn${pref === m ? " on" : ""}${m === "spread" ? " wide-only" : ""}" data-mode="${m}" aria-pressed="${pref === m}" title="${label}">${icon}<span>${label}</span></button>`;
-    const modebar = `<div class="modebar" role="group" aria-label="Layout">
-${modeBtn("scroll", "Scroll", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10M7 9h10M7 14h10M7 19h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>')}
-${modeBtn("page", "Page", '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3.5" width="12" height="17" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 8.5h6M9 12h6M9 15.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>')}
-${modeBtn("spread", "Two pages", '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5C9.5 4 6.5 4 3.5 5v13.5c3-1 6-1 8.5.5 2.5-1.500 5.500-1.500 8.500-.5V5c-3-1-6-1-8.500.5zM12 5.500V19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>')}
-</div>`;
     app.innerHTML = `<div class="fade">
 ${tabs(n, "read")}
-${modebar}
 <div class="paper${mode === "spread" ? " spread" : ""}"><div class="stage"><div class="flow" id="flow">
 <header class="reader-head"><span class="eyebrow">The ${ORD[n]} Book</span><h1>${esc(g.title)}</h1>${fleuron()}</header>
 <div class="poem" id="poem">${html}</div>
@@ -468,15 +482,6 @@ ${modebar}
 <nav class="pager" aria-label="Pages"><button type="button" class="pg-btn" id="pg-prev" aria-label="Previous page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="pg-count" id="pg-count" aria-live="polite"></span><button type="button" class="pg-btn" id="pg-next" aria-label="Next page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></nav>
 </div>
 </div>`;
-    $(".modebar").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-mode]");
-      if (!b || !reader) return;
-      store.set("mode", b.dataset.mode);
-      const l = reader.lastL || reader.target;
-      history.replaceState(null, "", `#/r/${reader.n}${l > 1 ? `/${l}` : ""}`);
-      route();
-    });
-
     const poem = $("#poem");
     poem.addEventListener("click", (e) => {
       const gl = e.target.closest(".gl");
@@ -584,7 +589,7 @@ ${modebar}
     const title = line <= 1 && r.cur === 0;
     scrollTo(0, 0);
     const top = r.stage.getBoundingClientRect().top;
-    const reserve = innerWidth < 1300 ? 78 : 24;
+    const reserve = innerWidth < 820 ? 78 : 22;
     const h = Math.max(280, Math.floor(innerHeight - top - 54 - reserve));
     r.stage.style.height = h + "px";
     r.paper.style.setProperty("--sh", h + "px");
@@ -689,6 +694,8 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     after = null;
     document.body.classList.remove("paged", "mode-spread");
     plainBtn.hidden = true;
+    layoutBtn.hidden = true;
+    setMenu(false);
     progress.hidden = true;
     if (!parts.length) home();
     else if (parts[0] === "b") bookView(+parts[1], parts[2]);
