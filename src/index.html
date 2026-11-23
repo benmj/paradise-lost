@@ -55,6 +55,7 @@
   <p id="nc-text"></p>
   <div id="nc-dict" class="nc-dict" aria-live="polite" hidden></div>
   <button type="button" class="nc-ask" id="nc-dictbtn" hidden>Dictionary and etymology ›</button>
+  <div class="nc-fn" id="nc-fn" hidden></div>
   <button type="button" class="nc-ask" id="nc-ask">Ask the Reader ›</button>
 </div>
 <dialog id="lb" class="lb" aria-label="Plate">
@@ -66,8 +67,9 @@
 </dialog>
 <dialog id="acct-dlg" class="acct-dlg">
   <p class="acct-who" id="acct-who"></p>
-  <p class="acct-note">Your email and reading place are stored so your place follows you. An Anthropic key you add lives only in this browser.</p>
+  <p class="acct-note">Your email, reading place and notes (the footnotes from Ask the Reader) are stored so your place follows you. An Anthropic key you add lives only in this browser.</p>
   <div class="acct-actions">
+    <a class="chip" id="acct-notes" href="#/notes">Your notes</a>
     <button type="button" class="chip" id="acct-key" hidden>Forget my API key</button>
     <button type="button" class="chip" id="acct-out">Sign out</button>
     <button type="button" class="chip" id="acct-del">Delete my data</button>
@@ -76,6 +78,7 @@
 </dialog>
 <script src="data.js"></script>
 <script src="art.js"></script>
+<script src="notes.js"></script>
 <script src="chat.js"></script>
 <script src="app.js"></script>
 </body>

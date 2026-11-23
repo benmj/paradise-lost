@@ -289,8 +289,16 @@ main { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-
 .fam-mark:hover, .fam-mark:focus-visible, .fam-mark.open { color: var(--crimson); outline: none; }
 .gl-mark::before { content: "°"; }
 .fam-mark::before { content: "❦"; }
+/* footnote mark: an empty span; the number is drawn here, so Safari Reader's text carries no stray digits */
+.fn-mark {
+  display: inline; vertical-align: super; font: 500 .58em/1 var(--caps); letter-spacing: .02em; text-indent: 0; text-decoration: none;
+  color: var(--crimson); cursor: pointer; padding: .55em .5em; margin: -.55em -.15em -.55em .05em; border-radius: 3px;
+}
+.fn-mark::before { content: attr(data-i); }
+.fn-mark:hover, .fn-mark:focus-visible, .fn-mark.open { background: color-mix(in srgb, var(--crimson) 14%, transparent); outline: none; }
+.fn-mark:focus-visible { outline: 2px solid var(--crimson); outline-offset: 1px; }
 .gl-mark { font-size: .85em; color: var(--crimson); padding: 0 .2em; text-decoration: none; }
-body.plain .sec-note, body.plain .sec .ask-here, body.plain .fam-mark { display: none; }
+body.plain .sec-note, body.plain .sec .ask-here, body.plain .fam-mark, body.plain .fn-mark { display: none; }
 body.plain .gl { text-decoration: none; pointer-events: none; }
 body.plain .ln.famous-ln { box-shadow: none; }
 .end-card { margin: 50px 0 10px; text-align: center; }
@@ -330,6 +338,38 @@ body.dict-mode .poem .gl { text-decoration-style: dotted; }
 .poem { -webkit-touch-callout: none; }
 .dict-hint { position: fixed; z-index: 24; left: 50%; top: calc(env(safe-area-inset-top) + 58px); transform: translateX(-50%); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font: 400 14px/1.2 var(--caps); letter-spacing: .08em; white-space: nowrap; box-shadow: var(--shadow); }
 .dict-hint[hidden] { display: none; }
+.note-card .nc-fn { max-height: min(52vh, 420px); overflow-y: auto; margin: 6px 6px 0 0; overscroll-behavior: contain; }
+.nc-fn[hidden], .note-card p[hidden], .note-card .nc-ask[hidden] { display: none; }
+.fn-item { padding: 8px 0 4px; }
+.fn-item + .fn-item { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 12px; }
+.fn-ref { display: block; font: 400 13px/1.3 var(--caps); letter-spacing: .14em; color: var(--crimson); text-decoration: none; margin: 0 0 3px; }
+.fn-item blockquote, .fn-quote { margin: 0 0 8px; padding: 2px 0 2px 12px; border-left: 2px solid var(--gold); font: italic 400 17px/1.45 var(--display); color: var(--ink); }
+.fn-item ul, .fn-notes { margin: 0 0 4px; padding: 0 0 0 1.1em; }
+.fn-item li, .fn-notes li { font-size: 16.5px; line-height: 1.45; margin: 0 0 6px; text-wrap: pretty; }
+.fn-item li small, .fn-notes li small { display: block; font-size: 14px; font-style: italic; color: var(--ink-soft); }
+.fn-actions { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.fn-actions .nc-ask { min-height: 40px; }
+.fn-actions .fn-rm { color: var(--ink-soft); }
+.fn-page .fn-tools { margin: 18px 0 6px; }
+.fnl { list-style: decimal; margin: 0; padding: 0 0 0 1.5em; }
+.fnl > li { padding: 12px 0 8px 4px; border-top: 1px solid var(--line); }
+.fnl > li::marker { font: 400 15px var(--caps); color: var(--crimson); }
+.fn-top { margin: 0; }
+.fn-top .fn-ref { display: inline-block; }
+.fn-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.fn-more { font: 400 14px/1.3 var(--caps); letter-spacing: .1em; color: var(--crimson); text-decoration: none; padding: 10px 0; }
+.fn-del { font: 400 14px/1.3 var(--caps); letter-spacing: .1em; color: var(--ink-soft); background: none; border: 0; cursor: pointer; padding: 10px 0; }
+.fn-del:hover, .fn-more:hover { text-decoration: underline; }
+.fn-empty { text-align: center; padding: 34px 0 10px; }
+.fn-empty p { max-width: 24em; margin: 12px auto; text-wrap: pretty; }
+/* chat: what an answer added to the notebook */
+.fn-chips { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 8px 0 2px; }
+.fn-chip { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line)); border-radius: 999px; background: var(--card); font: 400 13.5px/1.2 var(--caps); letter-spacing: .05em; overflow: hidden; }
+.fn-chip a { color: var(--ink); text-decoration: none; padding: 7px 4px 7px 11px; }
+.fn-chip button { font: inherit; color: var(--crimson); background: none; border: 0; padding: 7px 11px 7px 6px; cursor: pointer; min-height: 32px; }
+.fn-chip button:hover, .fn-chip a:hover { text-decoration: underline; }
+.fn-chip.undone { padding: 7px 11px; color: var(--ink-faint); border-style: dashed; }
+.fn-book { font: 400 13.5px/1.2 var(--caps); letter-spacing: .05em; color: var(--crimson); text-decoration: none; padding: 7px 2px; }
 @media (min-width: 980px) { body.chat-side .note-card { left: calc(50% - 210px); } }
 
 /* ── characters ── */
@@ -584,6 +624,7 @@ body.plain figure.dore { display: none; }
 .acct-who { margin: 0 0 8px; font-weight: 600; word-break: break-all; }
 .acct-note { margin: 0 0 16px; font-size: 16px; color: var(--ink-soft); }
 .acct-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.acct-actions a.chip { text-decoration: none; display: inline-block; }
 
 /* bring your own key */
 .keybox .keyform { display: flex; gap: 8px; margin: 10px 0 6px; flex-wrap: wrap; }

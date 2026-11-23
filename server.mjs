@@ -171,12 +171,37 @@ const meInfo = (u) => {
   // chat: 'hosted' (our key, capped) or 'byok' (the reader pastes their own Anthropic key)
   return { user: u ? { email: u.email, name: u.name, admin: u.admin } : null, signIn: MODE === 'google', chat: hosted ? 'hosted' : 'byok', chatLeft: Math.round(left * 100) / 100 };
 };
-function cleanState(b) {
+// The reader's footnotes (src/notes.js): at most 200, every field length-limited and range-checked.
+const NOTE_LIMITS = { quote: 240, note: 260, question: 160 };
+const str = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
+function cleanNotes(arr) {
+  const out = new Map();
+  for (const f of Array.isArray(arr) ? arr.slice(0, 400) : []) {
+    if (!f || !Number.isInteger(f.book) || f.book < 1 || f.book > 12) continue;
+    const b = book.books[f.book - 1];
+    if (!Number.isInteger(f.line) || !Number.isInteger(f.to) || f.line < 1 || f.line > b.lines.length || f.to < f.line || f.to > Math.min(b.lines.length, f.line + 40)) continue;
+    const notes = (Array.isArray(f.notes) ? f.notes.slice(0, 3) : []).map((x) => ({
+      note: str(x && x.note, NOTE_LIMITS.note), question: str(x && x.question, NOTE_LIMITS.question),
+      when: Number.isInteger(x && x.when) && x.when >= 0 && x.when < 4e12 ? x.when : 0,
+    })).filter((x) => x.note);
+    if (!notes.length) continue;
+    const id = `${f.book}.${f.line}-${f.to}`;
+    if (out.has(id)) continue;
+    out.set(id, { id, book: f.book, line: f.line, to: f.to, quote: str(f.quote, NOTE_LIMITS.quote), notes, when: Number.isInteger(f.when) && f.when >= 0 && f.when < 4e12 ? f.when : notes[0].when });
+  }
+  return [...out.values()].sort((a, c) => c.when - a.when).slice(0, 200);
+}
+function cleanState(b, old) {
   const out = { t: Date.now() };
   const p = b && b.pos;
   if (p && Number.isInteger(p.n) && p.n >= 1 && p.n <= 12 && Number.isInteger(p.l) && p.l >= 1 && p.l <= 9000) out.pos = { n: p.n, l: p.l };
   out.read = {};
   for (let n = 1; n <= 12; n++) { const v = b && b.read && b.read[n]; if (Number.isInteger(v) && v > 0 && v <= 9000) out.read[n] = v; }
+  // notes: absent from an older client's PUT means "unchanged"
+  if (b && Array.isArray(b.notes)) {
+    out.notes = cleanNotes(b.notes);
+    out.nt = Number.isInteger(b.nt) && b.nt >= 0 && b.nt <= Date.now() + 864e5 ? b.nt : Date.now();
+  } else if (old && old.notes) { out.notes = old.notes; out.nt = old.nt || 0; }
   return out;
 }
 function redirect(res, url, setCookie) { send(res, 302, '', { Location: url, 'Cache-Control': 'no-store', ...(setCookie ? { 'Set-Cookie': setCookie } : {}) }); }
@@ -214,7 +239,7 @@ async function apiRoutes(req, res, url, user) {
     if (req.method === 'GET') return json(res, 200, db.getState(user.id));
     if (req.method === 'PUT') {
       if (!sameOrigin(req)) return json(res, 403, { error: 'cross-site request refused' });
-      db.setState(user.id, cleanState(await readJson(req, 8 * 1024)));
+      db.setState(user.id, cleanState(await readJson(req, 400 * 1024), db.getState(user.id)));
       return json(res, 200, { ok: true });
     }
   }

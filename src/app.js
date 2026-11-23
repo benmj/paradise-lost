@@ -46,13 +46,16 @@
     const read = {};
     for (let n = 1; n <= 12; n++) { const v = store.get(`read:${n}`, 0); if (v) read[n] = v; }
     const p = store.get("pos", null);
-    return { pos: p ? { n: p.n, l: p.l } : undefined, read };
+    return { pos: p ? { n: p.n, l: p.l } : undefined, read, notes: NOTES.all(), nt: NOTES.stamp() };
   };
   let pushTimer = 0;
   function pushState() {
     if (!(window.ME && window.ME.user)) return;
     clearTimeout(pushTimer);
-    pushTimer = setTimeout(() => api("/api/state", { method: "PUT", body: JSON.stringify(localState()) }).catch(() => {}), 1500);
+    pushTimer = setTimeout(() => {
+      const st = localState();
+      api("/api/state", { method: "PUT", body: JSON.stringify(st) }).then((r) => { if (r.ok) store.set("notes-s", st.nt); }).catch(() => {});
+    }, 1500);
   }
   async function loadAccount() {
     let me;
@@ -70,6 +73,12 @@
       const mine = store.get("pos", null);
       for (let n = 1; n <= 12; n++) if ((s.read || {})[n] > store.get(`read:${n}`, 0)) store.set(`read:${n}`, s.read[n]);
       if (s.pos && (!mine || (s.t || 0) > (mine.t || 0))) store.set("pos", { ...s.pos, t: s.t || Date.now() });
+      // Notes: the server's copy wins when only it changed since the last sync, both are merged when both changed.
+      const synced = store.get("notes-s", 0), theirs = s.nt || 0;
+      if (Array.isArray(s.notes) && theirs > synced) {
+        if (NOTES.stamp() > synced) NOTES.replace(NOTES.merge(NOTES.all(), s.notes), Date.now());
+        else { NOTES.replace(s.notes, theirs); store.set("notes-s", theirs); }
+      }
       pushState();
       if (location.hash === "" || location.hash === "#/") route();
     } catch {}
@@ -82,11 +91,16 @@
   });
   $("#acct-key").addEventListener("click", () => { window.PLKey.set(""); $("#acct-key").hidden = true; });
   $("#acct-close").addEventListener("click", () => dlg.close());
+  $("#acct-notes").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
   $("#acct-out").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }).catch(() => {}); location.reload(); });
   $("#acct-del").addEventListener("click", async () => {
     if ($("#acct-del").dataset.sure !== "1") { $("#acct-del").dataset.sure = "1"; $("#acct-del").textContent = "Tap again to delete"; return; }
     await api("/api/account/delete", { method: "POST" }).catch(() => {});
+    // the account's notes went with it; the copy in this browser goes too
+    NOTES.clear();
+    clearTimeout(pushTimer);
+    try { localStorage.removeItem("notes-s"); } catch {}
     location.reload();
   });
 
@@ -239,6 +253,7 @@ ${pg ? `<section class="block"><a class="continue" href="#/r/${pos.n}/${pos.l}">
 </section>
 <section class="block links">
   ${PLATES.length ? `<a class="link-row" href="#/plates"><div><b>Doré’s plates</b><small>${PLATES.length} engravings from the 1866 edition, each at its lines</small></div><span class="go" aria-hidden="true">›</span></a>` : ""}
+  <a class="link-row" href="#/notes"><div><b>Your notes</b><small>${NOTES.count() ? `${NOTES.count()} footnote${NOTES.count() === 1 ? "" : "s"} saved from Ask the Reader` : "Passages you ask the Reader about build up here as footnotes"}</small></div><span class="go" aria-hidden="true">›</span></a>
   <a class="link-row" href="#/people"><div><b>Characters</b><small>Satan, Adam and Eve, the angels, Sin and Death</small></div><span class="go" aria-hidden="true">›</span></a>
   <a class="link-row" href="#/listen"><div><b>Listen</b><small>The poem read aloud, recitations on YouTube, audiobooks</small></div><span class="go" aria-hidden="true">›</span></a>
 </section>
@@ -405,6 +420,24 @@ ${GROUPS.map(([label, kinds]) => {
 </div>`;
   }
 
+  // ── the reader's footnotes: a superscript mark (an empty span, its number drawn by CSS) at the end of a footnoted passage ──
+  const fnMark = (fs) => `<span class="fn-mark" role="button" tabindex="0" data-fn="${fs.map((f) => f.id).join(" ")}" data-i="${fs.map((f) => f.i).join(",")}" aria-label="Your ${fs.length > 1 ? "footnotes" : "footnote"} ${fs.map((f) => f.i).join(", ")} on ${fs.map((f) => ref(f.book, f.line, f.to)).join(", ")}"></span>`;
+  function refreshMarks() {
+    const poem = reader && $("#poem");
+    if (!poem) return;
+    poem.querySelectorAll(".fn-mark").forEach((m) => m.remove());
+    NOTES.ofBook(reader.n).forEach((fs, l) => { const el = $(`#l-${l}`, poem); if (el) el.insertAdjacentHTML("beforeend", fnMark(fs)); });
+    if (reader.paged) layoutPaged();
+    else measure();
+  }
+  let notesOpen = false;
+  NOTES.subscribe(() => {
+    pushState();
+    refreshMarks();
+    if (notesOpen) renderNotes();
+    if (cardFn) showFootnotes(cardFn.filter((id) => NOTES.all().some((f) => f.id === id)));
+  });
+
   // ── the reader ──
   let reader = null;   // { n, tops: [], els: [], secs, total, lastL }
   function readView(n, at) {
@@ -427,6 +460,7 @@ ${GROUPS.map(([label, kinds]) => {
     const famAt = new Map();
     g.famous.forEach((f, i) => { for (let l = f.from; l <= f.to; l++) if (!famAt.has(l)) famAt.set(l, i); });
     const paras = b.paras && b.paras.length > 5 ? new Set(b.paras) : new Set();
+    const fnAt = NOTES.ofBook(n);
 
     // A line with its glossed words as buttons (first match of each word; the rest escaped).
     function lineHtml(l, text) {
@@ -462,7 +496,7 @@ ${GROUPS.map(([label, kinds]) => {
       if (f !== undefined) cls.push("famous-ln");
       const num = l % 10 === 0 || s ? ` data-n="${l}"` : "";
       const mark = f !== undefined && g.famous[f].from === l ? `<span class="fam-mark" role="button" tabindex="0" data-f="${f}" aria-label="Why this passage is famous" title="A famous passage"></span>` : "";
-      html += `<span class="${cls.join(" ")}" id="l-${l}" data-l="${l}"${num}>${lineHtml(l, text)}${mark}</span><br>`;
+      html += `<span class="${cls.join(" ")}" id="l-${l}" data-l="${l}"${num}>${lineHtml(l, text)}${mark}${fnAt.has(l) ? fnMark(fnAt.get(l)) : ""}</span><br>`;
       if (plateAt.has(l)) html += `<figure class="dore">${pimg(plateAt.get(l))}<figcaption>${pcap(plateAt.get(l))}</figcaption></figure>`;
     });
     const next = n < 12 ? guide(n + 1) : null;
@@ -488,7 +522,7 @@ ${tabs(n, "read")}
 </div>`;
     const poem = $("#poem");
     poem.addEventListener("keydown", (e) => {
-      if ((e.key === "Enter" || e.key === " ") && e.target.matches(".gl, .fam-mark")) { e.preventDefault(); e.target.click(); }
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches(".gl, .fam-mark, .fn-mark")) { e.preventDefault(); e.target.click(); }
     });
     poem.addEventListener("click", (e) => {
       // Read-along open: a tap in the number margin of a line plays from there.
@@ -501,6 +535,8 @@ ${tabs(n, "read")}
       }
       const gl = e.target.closest(".gl");
       if (gl) { e.stopPropagation(); const hit = wordAtPoint(e.clientX, e.clientY); return showGloss(n, g, +gl.dataset.g, gl, hit && gl.contains(hit.node) ? hit.word : ""); }
+      const fn = e.target.closest(".fn-mark");
+      if (fn) { e.stopPropagation(); return showFootnotes(fn.dataset.fn.split(" "), fn); }
       const fm = e.target.closest(".fam-mark");
       if (fm) { e.stopPropagation(); return showFamous(n, g, +fm.dataset.f, fm); }
     });
@@ -937,21 +973,26 @@ ${tabs(n, "read")}
   listenBtn.addEventListener("click", () => (pl.open ? plClose() : plOpen()));
 
   // ── note card: a gloss, or why a passage is famous ──
-  const card = $("#note-card"), ncWord = $("#nc-word"), ncText = $("#nc-text"), ncAsk = $("#nc-ask");
+  const card = $("#note-card"), ncWord = $("#nc-word"), ncText = $("#nc-text"), ncAsk = $("#nc-ask"), ncFn = $("#nc-fn");
   const ncDict = $("#nc-dict"), ncDictBtn = $("#nc-dictbtn");
-  let cardAsk = "", cardFrom = null, cardDict = null;
-  function openNote(word, text, ask, from, dict) {
+  let cardAsk = "", cardFrom = null, cardDict = null, cardFn = null;
+  // dict: {word, line} shows the Dictionary button; html: the card holds the reader's footnotes instead of a one-paragraph note
+  function openNote(word, text, ask, from, dict, html) {
     if (dictAbort) dictAbort.abort();
     cardDict = dict || null;
     ncDictBtn.hidden = !dict;
-    ncText.hidden = false;
     ncDict.hidden = true;
     card.classList.remove("dict");
     if (cardFrom) cardFrom.classList.remove("open");
     cardFrom = from || null;
+    cardFn = null;
     if (cardFrom) cardFrom.classList.add("open");
     ncWord.innerHTML = word;
-    ncText.textContent = text;
+    ncText.textContent = text || "";
+    ncText.hidden = Boolean(html);
+    ncAsk.hidden = Boolean(html);
+    ncFn.hidden = !html;
+    ncFn.innerHTML = html || "";
     cardAsk = ask;
     card.hidden = false;
     card.style.animation = "none";
@@ -964,6 +1005,7 @@ ${tabs(n, "read")}
     card.hidden = true;
     if (cardFrom) cardFrom.classList.remove("open");
     cardFrom = null;
+    cardFn = null;
   }
   function showGloss(n, g, i, el, tapped) {
     const x = g.glosses[i];
@@ -975,6 +1017,34 @@ ${tabs(n, "read")}
     const ls = lines(n, f.from, Math.min(f.to, f.from + 3));
     openNote(`<small>A famous passage · ${ref(n, f.from, f.to)}</small>${esc(ls[0].replace(/[,;:.]$/, ""))}…`, f.why, `${quoteFor(ls)}\n\nWhy is this passage (${ref(n, f.from, f.to)}) so admired? Walk me through it.`, el);
   }
+  function showFootnotes(ids, from) {
+    const fs = NOTES.sorted().filter((f) => ids.includes(f.id));
+    if (!fs.length) return closeNote();
+    const nums = new Map();
+    NOTES.sorted().filter((f) => f.book === fs[0].book).forEach((f, i) => nums.set(f.id, i + 1));
+    const many = fs.length > 1;
+    const html = fs.map((f) => `<section class="fn-item" data-id="${esc(f.id)}">${many ? `<b class="fn-ref">${ref(f.book, f.line, f.to)}</b>` : ""}
+<blockquote>${esc(f.quote)}</blockquote>
+<ul>${f.notes.map((x) => `<li>${esc(x.note)}${x.question ? `<small>Asked: ${esc(x.question)}</small>` : ""}</li>`).join("")}</ul>
+<div class="fn-actions"><button type="button" class="nc-ask" data-fn-ask="${esc(f.id)}">Ask the Reader about this passage ›</button><button type="button" class="nc-ask fn-rm" data-fn-rm="${esc(f.id)}">Remove</button></div></section>`).join("");
+    const mark = from || (reader && $(`.fn-mark[data-fn~="${CSS.escape(fs[0].id)}"]`)) || null;
+    const first = fs[0];
+    openNote(`<small>Your notes · ${fs.map((f) => ref(f.book, f.line, f.to)).join(", ")}</small>Footnote${many ? "s" : ""} ${fs.map((f) => nums.get(f.id)).join(", ")}`, "", "", mark, null, html);
+    cardFn = fs.map((f) => f.id);
+    ncFn.scrollTop = 0;
+    return first;
+  }
+  ncFn.addEventListener("click", (e) => {
+    const rm = e.target.closest("[data-fn-rm]"), ask = e.target.closest("[data-fn-ask]");
+    if (!rm && !ask) return;
+    e.stopPropagation();
+    if (rm) { NOTES.remove(rm.dataset.fnRm); return; }
+    const f = NOTES.all().find((x) => x.id === ask.dataset.fnAsk);
+    if (!f) return;
+    const ls = lines(f.book, f.line, Math.min(f.to, f.line + 5));
+    closeNote();
+    CHAT.ask(`${quoteFor(ls)}\n\nWhat should I notice about this passage (${ref(f.book, f.line, f.to)})?`);
+  });
   $("#nc-close").addEventListener("click", closeNote);
   ncAsk.addEventListener("click", () => { const a = cardAsk; closeNote(); CHAT.ask(a); });
   ncDictBtn.addEventListener("click", () => { if (cardDict) openDict(cardDict.word, cardDict.line, cardFrom); });
@@ -1098,6 +1168,49 @@ ${tabs(n, "read")}
     ncDict.scrollTop = 0;
   }
 
+  // ── the notebook: every footnote, by book in line order ──
+  function notesView() {
+    setTitle("Your notes", true);
+    CHAT.set({ ...POEM, label: "Your notes" });
+    notesOpen = true;
+    renderNotes();
+  }
+  let sureClear = false;
+  function renderNotes() {
+    const fs = NOTES.sorted();
+    const books = [...new Set(fs.map((f) => f.book))];
+    const body = fs.length ? `<div class="btn-row fn-tools"><button type="button" class="btn primary" id="fn-copy">Copy as Markdown</button><button type="button" class="btn" id="fn-clear">${sureClear ? "Tap again to clear" : "Clear"}</button></div>
+${books.map((n) => `<section class="block">${head(`Book ${ROMAN[n]} · ${esc(guide(n).title)}`)}<ol class="fnl">${fs.filter((f) => f.book === n).map((f) => `<li id="fn-${esc(f.id)}"><div class="fn-top"><a class="fn-ref" href="#/r/${f.book}/${f.line}">${ref(f.book, f.line, f.to)}</a></div>
+<blockquote class="fn-quote">${esc(f.quote)}</blockquote>
+<ul class="fn-notes">${f.notes.map((x) => `<li>${esc(x.note)}${x.question ? `<small>Asked: ${esc(x.question)}</small>` : ""}</li>`).join("")}</ul>
+<div class="fn-row"><a class="fn-more" href="#/r/${f.book}/${f.line}">Read in context ›</a><button type="button" class="fn-del" data-rm="${esc(f.id)}" aria-label="Remove the footnote on ${ref(f.book, f.line, f.to)}">Remove</button></div></li>`).join("")}</ol></section>`).join("")}`
+      : `<div class="fn-empty">${fleuron()}<p>Nothing here yet.</p><p class="note">When the Reader’s answer cites lines, such as (IV.288), the passage is saved here as a footnote with the sentence that mentions it. It also shows as a small mark in the text.</p><p><a class="btn" href="#/r/1">Start reading</a></p></div>`;
+    app.innerHTML = `<div class="fade fn-page">
+<section class="people-head"><span class="eyebrow">From Ask the Reader</span><h1>Your notes</h1>
+<p class="sec-note" style="text-align:center">${fs.length ? `${fs.length} footnote${fs.length === 1 ? "" : "s"}, in the order of the poem. Kept in this browser${window.ME && window.ME.user ? " and in your account" : ""}.` : "Footnotes build up as you ask about lines."}</p></section>
+${body}</div>`;
+    const copy = $("#fn-copy");
+    if (copy) copy.addEventListener("click", async () => {
+      const text = NOTES.markdown();
+      let ok = false;
+      try { await navigator.clipboard.writeText(text); ok = true; } catch {
+        const t = document.createElement("textarea");
+        t.value = text; t.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(t); t.select();
+        try { ok = document.execCommand("copy"); } catch {}
+        t.remove();
+      }
+      copy.textContent = ok ? "Copied" : "Could not copy";
+      setTimeout(() => { if (copy.isConnected) copy.textContent = "Copy as Markdown"; }, 2000);
+    });
+    const clr = $("#fn-clear");
+    if (clr) clr.addEventListener("click", () => {
+      if (!sureClear) { sureClear = true; renderNotes(); $("#fn-clear").focus(); return; }
+      sureClear = false;
+      NOTES.clear();
+    });
+    app.querySelectorAll("[data-rm]").forEach((b) => b.addEventListener("click", () => NOTES.remove(b.dataset.rm)));
+  }
+
   function platesView() {
     setTitle("Doré’s plates", true);
     CHAT.set({ ...POEM, label: "Doré’s plates" });
@@ -1127,6 +1240,8 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     const parts = location.hash.replace(/^#/, "").split("?")[0].split("/").filter(Boolean);
     header.classList.remove("hidden");
     closeNote();
+    notesOpen = false;
+    sureClear = false;
     if (pl.open && !(parts[0] === "r" && +parts[1] === pl.n)) plClose(true);
     if (reader && reader.ro) reader.ro.disconnect();
     reader = null;
@@ -1145,6 +1260,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     else if (parts[0] === "people") parts[1] ? personView(parts[1]) : peopleView();
     else if (parts[0] === "listen") listenView();
     else if (parts[0] === "plates") platesView();
+    else if (parts[0] === "notes") notesView();
     else notFound();
     scrollTo(0, 0);
     if (after) requestAnimationFrame(after);

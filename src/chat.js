@@ -99,7 +99,14 @@ window.PLKey = {
     if (m.role === "user") return `<div class="msg user"><div class="bubble">${userHtml(m.content)}</div></div>`;
     if (m.needKey) return `<div class="msg error keybox"><p>${esc(m.error)}</p><form class="keyform" autocomplete="off"><input type="password" name="k" placeholder="sk-ant-…" aria-label="Anthropic API key" autocapitalize="off" autocorrect="off" spellcheck="false" required><button class="chip" type="submit">Save key and ask</button></form><p class="keynote">Your key is saved only in this browser and sent only to answer your questions; the server never stores it. A question costs about a cent. <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get a key</a>${getKey() ? ` · <button type="button" class="linkbtn" data-forget>Forget my key</button>` : ""}</p></div>`;
     if (m.error) return `<div class="msg error"><p>${esc(m.error)}</p><button type="button" class="chip" data-retry="${i}">Try again</button></div>`;
-    return `<div class="msg reader"><div class="md">${md(m.content)}</div></div>`;
+    return `<div class="msg reader"><div class="md">${md(m.content)}</div>${noteChips(m, i)}</div>`;
+  }
+  // Footnotes this answer added to the reader's notebook, each with an Undo.
+  function noteChips(m, i) {
+    if (!m.fn || !m.fn.length) return "";
+    return `<div class="fn-chips" role="group" aria-label="Saved to your notes">${m.fn.map((f, k) => f.undone
+      ? `<span class="fn-chip undone">Removed from notes · ${esc(f.label)}</span>`
+      : `<span class="fn-chip"><a class="ref" href="#/r/${f.id.split(".")[0]}/${f.id.split(".")[1].split("-")[0]}" title="Read this passage">Saved to notes · ${esc(f.label)}</a><button type="button" data-undo="${i}:${k}" aria-label="Undo: remove ${esc(f.label)} from your notes">Undo</button></span>`).join("")}<a class="ref fn-book" href="#/notes">Your notes ›</a></div>`;
   }
   // A message about a passage starts with "> " lines: the passage shows as a quote inside the bubble.
   const br = (t) => esc(t).replace(/\n/g, "<br>");
@@ -112,6 +119,15 @@ window.PLKey = {
   function render() {
     if (!messages.length) return renderEmpty();
     log.innerHTML = messages.map(msgHtml).join("");
+    log.querySelectorAll("[data-undo]").forEach((b) => b.addEventListener("click", () => {
+      const [i, k] = b.dataset.undo.split(":").map(Number);
+      const f = messages[i] && messages[i].fn && messages[i].fn[k];
+      if (!f) return;
+      window.NOTES.undo(f);
+      f.undone = true;
+      save();
+      render();
+    }));
     log.querySelectorAll("[data-retry]").forEach((b) => b.addEventListener("click", retry));
     log.querySelectorAll(".keyform").forEach((f) => f.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -217,6 +233,12 @@ window.PLKey = {
         }
       }
       if (!reply.content.trim()) throw new Error("The reader had nothing to say. Try asking another way.");
+      // Line citations in the answer become footnotes in the reader's notebook (no extra AI call).
+      try {
+        const asked = [...history].reverse().find((h) => h.role === "user");
+        const fn = window.NOTES.capture(reply.content, asked ? asked.content : "");
+        if (fn.length) reply.fn = fn;
+      } catch {}
       messages.push(reply);
     } catch (e) {
       if (e.name === "AbortError") {

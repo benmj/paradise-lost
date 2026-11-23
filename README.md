@@ -8,6 +8,7 @@
   - **Read-along:** a Listen button in the Read view plays the LibriVox reading inline and lights the word being read. See "Read-along".
   - **Ask the Reader**: the only AI in the app, a chat about the passage you have open. `server.mjs` builds the context from the poem and streams the reply from the Anthropic API.
   - **Dictionary:** an online dictionary with etymology. Tap any word (Dictionary button in the Read bar, or press and hold) for Milton's sense first, then Wiktionary senses ranked "In Milton's day" before "Today". See "Dictionary".
+  - **Reader's notebook:** line citations in an answer become curated footnotes, marked in the poem and collected at `#/notes`. No extra AI calls. See "Notes".
   - **Accounts** (public mode): Google sign-in, SQLite for users, reading place and usage. Reading needs no account; a saved place needs sign-in.
   - **Everything else is free and open to the public:** the guide, text, glosses, plates and listening list use no AI and need no account. Only chat is limited (own key, or the host's allowlist).
   - **Who pays for chat:** readers bring their own Anthropic API key (kept in their browser, sent per question, never stored). Only an allowlist and the admins use the host's key, capped per user per day and per month.
@@ -15,7 +16,7 @@
   ```
   browser ─► (proxy) ─► node server.mjs ─┬─► dist/ (static)
                                           ├─► /auth/* ─► Google
-                                          ├─► /api/state, /api/me ─► SQLite
+                                          ├─► /api/state (place, notes), /api/me ─► SQLite
                                           ├─► /api/dict ─► en.wiktionary.org (cached)
                                           └─► /api/chat ─► Anthropic API (key's owner pays)
   ```
@@ -56,7 +57,7 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 | `data/characters.json` | 22 people of the poem, with first appearance and a key passage |
 | `data/audio/book-NN.json` | Read-along word timings per book, from `scripts/align.py`; copied to `dist/audio/` |
 | `data/listen.json` | YouTube recitations, LibriVox readings and recommended audiobooks |
-| `src/` | The app: `index.html`, `app.js` (routes, reader, account), `chat.js`, `art.js` (SVG fallback art), `styles.css`, service worker, icons |
+| `src/` | The app: `index.html`, `app.js` (routes, reader, account), `chat.js`, `notes.js` (footnote capture, curation, export), `art.js` (SVG fallback art), `styles.css`, service worker, icons |
 | `art/web/NN.jpg`, `art/plates.json` | Doré's fifty plates (720 px JPEGs) and each one's book, line, title and mapping confidence |
 | `lib/dict.mjs` | Dictionary lookup: Milton spellings, Wiktionary parse, sense ranking, cache |
 | `data/lexicon.json` | Curated Milton lexicon (354 entries), from `scripts/lexicon.py` |
@@ -67,6 +68,22 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 | `lib/db.mjs` | SQLite: users, state, usage |
 | `server.mjs` | Static files, `/auth/*`, `/api/*`, auth modes |
 | `deploy/` | Examples for a reverse proxy and systemd |
+
+## Notes
+
+The reader's notebook: what people ask about builds into footnotes likely to help the next reader.
+
+- **Capture:** when an answer finishes streaming, `src/notes.js` finds line citations in it, client side, with no AI call. Forms: `(IV.288)`, `IX.780–784`, `Book IV, line 288`, `Book II, lines 1–5`.
+- **Footnote:** `{id, book, line, to, quote, notes:[{note, question, when}], when}`. `id` is `book.line-to`. `quote` is the first 25 words of the passage. Each `note` is the sentence of the answer that holds the citation, markdown stripped, with `question` the reader's ask. (A flat note/question/when is stored as the first entry of `notes`.)
+- **Curation:**
+  - One footnote per book and line range; later answers add notes, newest first, at most 3 per footnote.
+  - A sentence that nearly repeats a stored one is dropped (word overlap after stop words and stemming).
+  - Lines that do not exist are ignored; ranges are capped at 40 lines.
+  - A citation of a passage the reader pasted into the question is ignored.
+- **Chat:** under the answer, a "Saved to notes · IV.288" chip for each footnote touched, with Undo, and a link to the notebook.
+- **Read view:** a superscript number at the end of a footnoted line in Scroll, Page and Two pages. It is an empty `span.fn-mark` drawn by CSS, after the line's text inside `span.ln`; the line stays one block with its `br`, so Safari Reader and the read-along word count are unchanged. Tap or Enter opens the note card: quote, notes, "Ask the Reader about this passage" and Remove.
+- **`#/notes`:** footnotes by book in line order; Copy as Markdown (numbered per book, with book and line references), Clear (tap again to confirm), Remove and Read in context per footnote.
+- **Storage and sync:** `localStorage` key `notes` with stamp `notes-t`. Signed in, the notes ride in `/api/state` (`notes`, `nt`). On load: if only the server changed since the last sync (`notes-s`), the server copy wins; if only this device changed, it pushes; if both, footnotes are union-merged by id.
 
 ## Read-along
 
@@ -104,6 +121,7 @@ The Read view has a headphones button in the top bar. It opens a compact player 
 - `#/people` and `#/people/<id>`: characters.
 - `#/plates`: gallery of Doré's plates by book; tap to enlarge, the line number opens the passage.
 - `#/listen`: all recitations and audiobooks.
+- `#/notes`: your footnotes by book, with Copy as Markdown and Clear.
 
 ## API
 
@@ -111,7 +129,7 @@ The Read view has a headphones button in the top bar. It opens a compact player 
 |---|---|
 | `GET /api/dict?w=<word>` | Dictionary entry with etymology (no sign-in; 60 a minute per IP; word of 40 letters, hyphen or apostrophe) |
 | `GET /api/me` | Who is signed in, whether chat is on, share of today's allowance left |
-| `GET`/`PUT /api/state` | Reading place and per-book progress (signed in) |
+| `GET`/`PUT /api/state` | Reading place, per-book progress and footnotes `notes` with change stamp `nt` (signed in). A PUT without `notes` leaves stored notes unchanged. |
 | `POST /api/chat` | Server-sent events: `{t}` text, `{done}`, `{error}` (signed in) |
 | `POST /api/account/delete` | Deletes the user, state and usage |
 | `GET /api/admin/usage` | Totals and top users (admins) |
@@ -133,7 +151,7 @@ node scripts/shots.mjs            # phone light + dark plus a wide reader (needs
 
 ## Privacy and safety
 
-- Stored per signed-in user: email, name, last sign-in, reading place and daily token counts. "Delete my data" in the account menu removes all of it.
+- Stored per signed-in user: email, name, last sign-in, reading place, footnotes and daily token counts. "Delete my data" in the account menu removes all of it, notes included. Footnotes hold only passages of the public poem, a sentence of each answer and the question asked; the server accepts at most 200 footnotes, validates every field (book, line range, string lengths) and rejects bodies over 400 KB.
 - Sessions are HMAC-signed, HTTP-only, SameSite=Lax cookies (Secure on https); writes from other sites are refused.
 - The page sends only which book, line or character a question is about. The server builds the text the model sees, so a page can't change what the poem says.
 - Messages are capped (60 messages, 8,000 characters each, 60,000 in all), and the last message must be the reader's. The model has no tools and no private data.
