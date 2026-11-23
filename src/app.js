@@ -116,21 +116,66 @@
     const b = $("#textsize"); b.setAttribute("aria-label", `Text size: ${TSN[tsi]}`); b.title = `Text size: ${TSN[tsi]}`;
   };
   applyTs();
-  $("#textsize").addEventListener("click", () => {
-    tsi = (tsi + 1) % TS.length;
+  function setTs(i, quiet) {
+    tsi = i;
     store.set("ts", tsi); applyTs();
-    const h = $("#dict-hint"); h.textContent = `Text size: ${TSN[tsi]}`; h.hidden = false; clearTimeout(h._t); h._t = setTimeout(() => { h.hidden = true; h.textContent = "Dictionary on · tap a word"; }, 1400);
+    if (!quiet) { const h = $("#dict-hint"); h.textContent = `Text size: ${TSN[tsi]}`; h.hidden = false; clearTimeout(h._t); h._t = setTimeout(() => { h.hidden = true; h.textContent = "Dictionary on · tap a word"; }, 1400); }
     requestAnimationFrame(() => { if (reader) { reader.paged ? route() : (measure(), track()); } });
+  }
+  const curTheme = () => document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  function setTheme(t) { store.set("theme", t); applyTheme(t); $("#theme").title = `Theme: ${t}`; }
+  $("#textsize").addEventListener("click", () => setTs((tsi + 1) % TS.length));
+  $("#theme").addEventListener("click", () => setTheme({ light: "dark", dark: "dim", dim: "light" }[curTheme()] || "dark"));
+
+  // ── phone menu: one button opens one panel; looks first, then toggles ──
+  const menuBtn = $("#menu"), mp = document.createElement("div");
+  mp.id = "menu-panel"; mp.className = "menu-panel"; mp.hidden = true; mp.setAttribute("role", "dialog"); mp.setAttribute("aria-label", "Reading options");
+  document.body.appendChild(mp);
+  const seg = (label, key, opts, cur) => `<div class="mp-row"><div class="mp-label">${label}</div><div class="mp-seg" role="radiogroup" aria-label="${label}">${opts.map(([v, t, cls]) => `<button type="button" role="radio" data-k="${key}" data-v="${v}" class="${cls || ""}" aria-checked="${String(String(v) === String(cur))}">${t}</button>`).join("")}</div></div>`;
+  const tog = (label, hint, key, on) => `<button type="button" class="mp-tog" role="switch" data-k="${key}" aria-checked="${on}"><span><b>${label}</b><small>${hint}</small></span><i class="mp-sw" aria-hidden="true"></i></button>`;
+  function buildMenu() {
+    const inReader = !plainBtn.hidden;
+    let h = `<div class="mp-sec">Appearance</div>`;
+    h += seg("Text size", "ts", TS.map((_, i) => [i, "A", `ts${i}`]), tsi);
+    h += seg("Theme", "theme", [["light", "Light"], ["dark", "Dark"], ["dim", "Dim"]], curTheme());
+    if (inReader) {
+      h += seg("Layout", "mode", [["scroll", "Scroll"], ["page", "Page"]], store.get("mode", "scroll"));
+      h += `<div class="mp-sec">Features</div>`;
+      h += tog("Plain text", "Hide the notes", "plain", plainBtn.getAttribute("aria-pressed") === "true");
+      if (!listenBtn.hidden) h += tog("Read-along", "Listen and follow the words", "listen", listenBtn.getAttribute("aria-pressed") === "true");
+      h += tog("Dictionary", "Tap any word for its meaning", "dict", dictBtn.getAttribute("aria-pressed") === "true");
+    }
+    const sg = $("#signin"), ac = $("#acct");
+    if (!sg.hidden) h += `<a class="mp-link" href="${sg.getAttribute("href")}">Sign in</a>`;
+    else if (!ac.hidden) h += `<button type="button" class="mp-link" data-k="acct">Account</button>`;
+    mp.innerHTML = h;
+  }
+  function setMP(open) {
+    if (open) buildMenu();
+    mp.hidden = !open; menuBtn.setAttribute("aria-expanded", String(open)); menuBtn.classList.toggle("on", open);
+    if (open) header.classList.remove("hidden");
+  }
+  menuBtn.addEventListener("click", (e) => { e.stopPropagation(); setMP(mp.hidden); });
+  mp.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const b = e.target.closest("[data-k]"); if (!b) return;
+    const k = b.dataset.k, v = b.dataset.v;
+    if (k === "ts") setTs(+v, true);
+    else if (k === "theme") setTheme(v);
+    else if (k === "mode") { const t = layoutMenu.querySelector(`[data-mode="${v}"]`); if (t) { t.click(); } }
+    else if (k === "plain") plainBtn.click();
+    else if (k === "listen") listenBtn.click();
+    else if (k === "dict") dictBtn.click();
+    else if (k === "acct") { setMP(false); $("#acct").click(); return; }
+    if (k === "listen" || k === "mode") { setMP(false); return; }
+    buildMenu();
   });
-  $("#theme").addEventListener("click", () => {
-    // light → dark → dim → light
-    const cur = document.documentElement.dataset.theme
-      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    const next = { light: "dark", dark: "dim", dim: "light" }[cur] || "dark";
-    store.set("theme", next);
-    applyTheme(next);
-    $("#theme").title = `Theme: ${next}`;
-  });
+  document.addEventListener("click", (e) => { if (e.isTrusted && !mp.hidden) setMP(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !mp.hidden) { setMP(false); menuBtn.focus(); } });
+  addEventListener("hashchange", () => setMP(false));
+  const dismissOnMove = (e) => { if (!mp.hidden && !mp.contains(e.target)) setMP(false); };
+  addEventListener("touchmove", dismissOnMove, { passive: true });
+  addEventListener("wheel", dismissOnMove, { passive: true });
   backBtn.addEventListener("click", () => {
     if (history.length > 1 && ss("inapp")) history.back();
     else location.hash = "#/";
