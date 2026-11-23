@@ -1250,6 +1250,29 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
   }
 
   let after = null;
+  function creditsView() {
+    setTitle("Credits", true);
+    CHAT.set({ ...POEM, label: "Credits" });
+    app.innerHTML = `<article class="credits fade">
+<h1>Credits and copyright</h1>
+<p class="note">Made with love in New Orleans by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>.</p>
+<h2>The poem</h2>
+<ul><li>Text of the second edition (1674) from <a href="https://www.gutenberg.org/ebooks/26" rel="noopener">Project Gutenberg #26</a>. Public domain.</li></ul>
+<h2>Plates</h2>
+<ul><li>Fifty engravings by Gustave Doré (1866 Cassell edition), scans from <a href="https://commons.wikimedia.org/wiki/Category:Illustrations_of_Paradise_Lost_by_Gustave_Dor%C3%A9" rel="noopener">Wikimedia Commons</a>. Public domain; resized for the web.</li></ul>
+<h2>Listening</h2>
+<ul><li>The read-along uses the <a href="https://librivox.org/paradise-lost-by-john-milton/" rel="noopener">LibriVox</a> reading by Thomas A. Copeland (public domain), streamed from the Internet Archive. Word timings were made for this guide.</li>
+<li>Recitations on the Listen pages are links to YouTube, LibriVox and the Internet Archive. Nothing is hosted here.</li></ul>
+<h2>Dictionary and etymology</h2>
+<ul><li>Definitions and etymologies come from <a href="https://en.wiktionary.org/" rel="noopener">Wiktionary</a>, text available under <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>. Each card links to the entry it came from.</li>
+<li>The Milton lexicon (the senses shown first as "Milton's sense") and the guide's glosses were written for this guide.</li></ul>
+<h2>Guide, notes and code</h2>
+<ul><li>The guide notes, characters, glosses and software are © 2026 Ben Jacobs and the Paradise Lost contributors, under the <a href="https://github.com/benmj/paradise-lost/blob/main/LICENSE" rel="noopener">MIT License</a>. Source: <a href="https://github.com/benmj/paradise-lost" rel="noopener">github.com/benmj/paradise-lost</a>.</li>
+<li>Fonts: IM Fell and EB Garamond, SIL Open Font License.</li></ul>
+<h2>Ask the Reader</h2>
+<ul><li>Answers are written by an AI model from the passage you have open and can be wrong. Check them against the poem.</li></ul>
+</article>`;
+  }
   function route() {
     const parts = location.hash.replace(/^#/, "").split("?")[0].split("/").filter(Boolean);
     header.classList.remove("hidden");
@@ -1275,6 +1298,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     else if (parts[0] === "listen") listenView();
     else if (parts[0] === "plates") platesView();
     else if (parts[0] === "notes") notesView();
+    else if (parts[0] === "credits") creditsView();
     else notFound();
     scrollTo(0, 0);
     if (after) requestAnimationFrame(after);
