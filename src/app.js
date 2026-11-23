@@ -93,7 +93,7 @@
   // ── shell ──
   const app = $("#app");
   document.body.insertAdjacentHTML("afterbegin", DEFS);
-  const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), layoutMenu = $("#layout-menu"), progress = $("#progress");
+  const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), listenBtn = $("#listen"), layoutMenu = $("#layout-menu"), progress = $("#progress");
   $("#theme").addEventListener("click", () => {
     // light → dark → dim → light
     const cur = document.documentElement.dataset.theme
@@ -417,6 +417,8 @@ ${GROUPS.map(([label, kinds]) => {
     plainBtn.hidden = false;
     layoutBtn.hidden = false;
     progress.hidden = false;
+    listenBtn.hidden = true;
+    plAvail(n).then((ok) => { if (reader && reader.n === n) listenBtn.hidden = !ok; });
 
     const secAt = new Map(g.sections.map((s) => [s.from, s]));
     const glossAt = new Map();
@@ -488,11 +490,15 @@ ${tabs(n, "read")}
       if ((e.key === "Enter" || e.key === " ") && e.target.matches(".gl, .fam-mark")) { e.preventDefault(); e.target.click(); }
     });
     poem.addEventListener("click", (e) => {
+      // Read-along open: a tap in the number margin of a line plays from there.
+      if (pl.open && pl.n === n && e.target.classList.contains("ln") && e.clientX > e.target.getBoundingClientRect().right - 30) { e.stopPropagation(); return plSeekLine(+e.target.dataset.l); }
       const gl = e.target.closest(".gl");
       if (gl) { e.stopPropagation(); return showGloss(n, g, +gl.dataset.g, gl); }
       const fm = e.target.closest(".fam-mark");
       if (fm) { e.stopPropagation(); return showFamous(n, g, +fm.dataset.f, fm); }
     });
+    // Pages are laid out by column: plates must have their size before the pages are counted.
+    if (mode !== "scroll") poem.querySelectorAll("img[loading=lazy]").forEach((im) => { im.loading = "eager"; });
     reader = { n, total, els: [...poem.querySelectorAll(".ln")], tops: [], lastL: 0, g, target: at, t0: performance.now(), paged: mode !== "scroll", spread: mode === "spread" };
     if (reader.paged) { after = () => initPaged(at); return; }
     after = () => {
@@ -580,6 +586,9 @@ ${tabs(n, "read")}
         else if (k === "End") { e.preventDefault(); goPage(q.pages - 1); }
       });
     }
+    // Plates load lazily and change the columns once they arrive: lay the pages out again.
+    let imgT = 0;
+    r.flow.addEventListener("load", (e) => { if (e.target.tagName === "IMG") { clearTimeout(imgT); imgT = setTimeout(() => layoutPaged(), 120); } }, true);
     r.ro = new ResizeObserver(() => layoutPaged());
     r.ro.observe(r.paper);
     r.ro.observe(document.body);
@@ -589,11 +598,13 @@ ${tabs(n, "read")}
   function layoutPaged(atLine) {
     const r = reader;
     if (!r || !r.paged || !r.stage) return;
-    const line = atLine || r.lastL || r.target || 1;
+    // Re-layouts keep the line that was asked for (r.anchor) instead of sliding back to each page's first line.
+    const line = atLine || r.anchor || r.lastL || r.target || 1;
+    r.anchor = line;
     const title = line <= 1 && r.cur === 0;
     scrollTo(0, 0);
     const top = r.stage.getBoundingClientRect().top;
-    const reserve = innerWidth < 820 ? 78 : 22;
+    const reserve = (innerWidth < 820 ? 78 : 22) + (pl.open ? pl.h : 0);
     const h = Math.max(280, Math.floor(innerHeight - top - 54 - reserve));
     r.stage.style.height = h + "px";
     r.paper.style.setProperty("--sh", h + "px");
@@ -605,16 +616,19 @@ ${tabs(n, "read")}
     r.stride = r.spread ? 2 * (cw + gap) : cw + gap;
     r.lefts = r.els.map((el) => el.offsetLeft);
     r.pages = Math.max(1, Math.round((r.stage.scrollWidth + gap) / r.stride));
+    r.laying = true;
     if (title) goPage(0, false); else goLine(line, false);
+    r.laying = false;
   }
   const pageOfLeft = (left) => Math.max(0, Math.floor((left + 2) / reader.stride));
   function goLine(l, smooth) { const r = reader; goPage(pageOfLeft(r.lefts[Math.min(Math.max(l, 1), r.total) - 1] || 0), smooth); }
-  function turn(d) { if (reader) goPage(reader.cur + d, true); }
+  function turn(d) { if (reader) { pl.lock = Date.now() + 5000; goPage(reader.cur + d, true); } }
   function goPage(p, smooth) {
     const r = reader;
     if (!r || !r.paged) return;
     p = Math.min(Math.max(p, 0), r.pages - 1);
     r.cur = p;
+    if (!r.laying) r.anchor = 0;
     r.stage.scrollTo({ left: Math.round(p * r.stride), behavior: smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto" });
     r.prev.disabled = p === 0;
     r.next.disabled = p === r.pages - 1;
@@ -627,6 +641,292 @@ ${tabs(n, "read")}
     setLine(p === r.pages - 1 ? r.total : first, p > 0);
     progress.style.width = `${(Math.min(last, r.total) / r.total) * 100}%`;
   }
+
+
+  // ── read-along: Thomas A. Copeland's LibriVox reading, streamed from archive.org, lights the word being read ──
+  // Word start times come from data/audio/book-NN.json (scripts/align.py). The poem's markup is never touched:
+  // the current word is a Range over the line's text nodes, painted by the CSS Custom Highlight API.
+  const AUDIO_URL = (n) => `https://archive.org/download/paradiselost_1411_librivox/paradiselost_${String(n).padStart(2, "0")}_milton_64kb.mp3`;
+  const SPEEDS = [0.8, 1, 1.25];
+  const hasHL = !!(window.CSS && CSS.highlights && typeof window.Highlight === "function");
+  const pl = { n: 0, open: false, h: 0, data: null, T: null, L: null, W: null, idx: -2, line: -1, lock: 0, audio: null, bar: null, drag: false, force: false, raf: 0, sec: -1, avail: new Map() };
+  const fmt = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
+  const ICON = {
+    play: '<path d="M8 5.5v13l11-6.5z" fill="currentColor"/>',
+    pause: '<path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z" fill="currentColor"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  };
+  const audioFile = (n) => `audio/book-${String(n).padStart(2, "0")}.json`;
+
+  // Is there a reading of this book? (a HEAD request: the timing file itself is fetched only when the player opens)
+  function plAvail(n) {
+    if (!hasHL) return Promise.resolve(false);
+    if (!pl.avail.has(n)) pl.avail.set(n, fetch(audioFile(n), { method: "HEAD" }).then((r) => r.ok).catch(() => false));
+    return pl.avail.get(n);
+  }
+
+  function plBar() {
+    if (pl.bar) return pl.bar;
+    const el = document.createElement("div");
+    el.className = "player";
+    el.id = "player";
+    el.setAttribute("role", "region");
+    el.setAttribute("aria-label", "Read-along player");
+    el.hidden = true;
+    el.innerHTML = `<div class="pl-row">
+  <button type="button" class="pl-btn pl-play" aria-label="Play" title="Play"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON.play}</svg></button>
+  <button type="button" class="pl-btn pl-skip" data-d="-15" aria-label="Back 15 seconds" title="Back 15 seconds">−15</button>
+  <button type="button" class="pl-btn pl-skip" data-d="15" aria-label="Forward 15 seconds" title="Forward 15 seconds">+15</button>
+  <input type="range" class="pl-scrub" min="0" max="1" step="1" value="0" aria-label="Position in the reading">
+  <button type="button" class="pl-btn pl-speed" aria-label="Speed" title="Speed">1×</button>
+</div>
+<div class="pl-meta"><span class="pl-line">Line 1</span><span class="pl-credit">Read by Thomas A. Copeland · LibriVox (public domain)</span><button type="button" class="pl-btn pl-close" aria-label="Close player" title="Close player"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON.close}</svg></button></div>`;
+    document.body.appendChild(el);
+    pl.bar = el;
+    const q = (s) => el.querySelector(s);
+    pl.playBtn = q(".pl-play"); pl.scrub = q(".pl-scrub"); pl.speedBtn = q(".pl-speed"); pl.lineEl = q(".pl-line");
+    pl.playBtn.addEventListener("click", () => { const a = pl.audio; if (a) a.paused ? plPlay() : a.pause(); });
+    el.querySelectorAll(".pl-skip").forEach((b) => b.addEventListener("click", () => plJump(+b.dataset.d)));
+    pl.speedBtn.addEventListener("click", () => {
+      store.set("speed", SPEEDS[(SPEEDS.indexOf(store.get("speed", 1)) + 1) % SPEEDS.length]);
+      plSpeed();
+    });
+    q(".pl-close").addEventListener("click", () => plClose());
+    pl.scrub.addEventListener("pointerdown", () => { pl.drag = true; });
+    ["pointerup", "pointercancel", "change", "blur"].forEach((ev) => pl.scrub.addEventListener(ev, () => { pl.drag = false; }));
+    pl.scrub.addEventListener("input", () => { pl.lock = 0; pl.audio.currentTime = +pl.scrub.value; pl.sec = -1; plTick(true); });
+    // The bar's height (--pbar) lifts the Ask button and the note card, and shortens the pages.
+    new ResizeObserver(() => {
+      const h = pl.open ? Math.ceil(el.getBoundingClientRect().height) : 0;
+      if (h === pl.h) return;
+      pl.h = h;
+      document.documentElement.style.setProperty("--pbar", h + "px");
+      if (reader && reader.paged) layoutPaged();
+    }).observe(el);
+    return el;
+  }
+
+  function plAudio() {
+    if (pl.audio) return pl.audio;
+    const a = new Audio();
+    a.preload = "metadata";
+    ["timeupdate", "seeked", "loadedmetadata", "durationchange"].forEach((ev) => a.addEventListener(ev, () => plTick(false)));
+    a.addEventListener("play", () => { plState(); plLoop(); });
+    ["pause", "ended", "ratechange"].forEach((ev) => a.addEventListener(ev, plState));
+    a.addEventListener("error", () => { if (a.getAttribute("src")) pl.lineEl.textContent = "Audio unavailable"; });
+    pl.audio = a;
+    return a;
+  }
+
+  function plSpeed() {
+    const v = store.get("speed", 1), sp = SPEEDS.includes(v) ? v : 1;
+    if (pl.audio) pl.audio.playbackRate = sp;
+    pl.speedBtn.textContent = `${sp}×`;
+    pl.speedBtn.setAttribute("aria-label", `Speed ${sp}×, change`);
+  }
+  function plPlay() {
+    const a = pl.audio;
+    if (a.ended) a.currentTime = 0;
+    a.play().catch(() => { pl.lineEl.textContent = "Audio unavailable"; });
+  }
+  function plJump(d) {
+    const a = pl.audio;
+    if (!a || !pl.data) return;
+    pl.lock = 0;
+    a.currentTime = Math.max(0, Math.min((a.duration || pl.data.dur) - 0.5, a.currentTime + d));
+  }
+  function plState() {
+    const a = pl.audio;
+    if (!pl.bar || !a) return;
+    const on = !a.paused && !a.ended;
+    pl.bar.classList.toggle("is-playing", on);
+    pl.playBtn.firstElementChild.innerHTML = on ? ICON.pause : ICON.play;
+    pl.playBtn.setAttribute("aria-label", on ? "Pause" : "Play");
+    pl.playBtn.title = on ? "Pause" : "Play";
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = on ? "playing" : "paused";
+    if (!on) cancelAnimationFrame(pl.raf);
+  }
+  function plLoop() {
+    cancelAnimationFrame(pl.raf);
+    const step = () => { plTick(false); if (pl.audio && !pl.audio.paused) pl.raf = requestAnimationFrame(step); };
+    pl.raf = requestAnimationFrame(step);
+  }
+
+  // The word under the playhead is the last one whose start time has passed.
+  function plBuild(data) {
+    const T = [], L = [], W = [];
+    let last = 0;
+    data.lines.forEach((ws, i) => (ws || []).forEach((t, k) => { last = Math.max(last, +t || 0); T.push(last); L.push(i + 1); W.push(k); }));
+    Object.assign(pl, { data, T, L, W, idx: -2, line: -1 });
+  }
+  function plTick(force) {
+    const a = pl.audio;
+    if (!a || !pl.T || !pl.open) return;
+    const t = a.currentTime, T = pl.T;
+    let lo = 0, hi = T.length - 1, idx = -1;
+    while (lo <= hi) { const m = (lo + hi) >> 1; if (T[m] <= t) { idx = m; lo = m + 1; } else hi = m - 1; }
+    // A word held for seconds is a pause between sections, not a word: no highlight.
+    const key = idx >= 0 && t - T[idx] > 3 ? -1 : idx;
+    if (key !== pl.idx || pl.force || force) { const f = pl.force; pl.force = false; pl.idx = key; plWord(key, f); }
+    const dur = a.duration && isFinite(a.duration) ? a.duration : pl.data.dur;
+    if (+pl.scrub.max !== Math.floor(dur)) pl.scrub.max = Math.floor(dur);
+    const s = Math.floor(t);
+    if (s !== pl.sec && !pl.drag) {
+      pl.sec = s;
+      pl.scrub.value = s;
+      const l = idx >= 0 ? pl.L[idx] : 0;
+      pl.lineEl.textContent = `${l ? `Line ${l}` : "Intro"} · ${fmt(t)}`;
+      pl.scrub.setAttribute("aria-valuetext", `${l ? `Line ${l}` : "Intro"}, ${fmt(t)}`);
+      if ("mediaSession" in navigator && navigator.mediaSession.setPositionState && s % 5 === 0) {
+        try { navigator.mediaSession.setPositionState({ duration: dur, playbackRate: a.playbackRate || 1, position: Math.min(t, dur) }); } catch {}
+      }
+    }
+  }
+
+  // Word k of line l as a Range over the line's text nodes (a word can run across gloss spans).
+  function wordRange(l, k) {
+    const el = reader && reader.els[l - 1];
+    if (!el) return null;
+    const wm = reader.wm || (reader.wm = new Map());
+    let m = wm.get(l);
+    if (!m) {
+      const words = [], re = /\S+/g, text = el.textContent;
+      let x;
+      while ((x = re.exec(text))) words.push([x.index, x.index + x[0].length]);
+      const nodes = [], tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let nd, pos = 0;
+      while ((nd = tw.nextNode())) { nodes.push([nd, pos]); pos += nd.length; }
+      m = { words, nodes };
+      wm.set(l, m);
+    }
+    const w = m.words[Math.min(k, m.words.length - 1)];
+    if (!w) return null;
+    const at = (p, end) => {
+      for (const [nd, s] of m.nodes) if (end ? p > s && p <= s + nd.length : p >= s && p < s + nd.length) return [nd, p - s];
+      return null;
+    };
+    const a = at(w[0], false), b = at(w[1], true);
+    if (!a || !b) return null;
+    const r = document.createRange();
+    r.setStart(a[0], a[1]);
+    r.setEnd(b[0], b[1]);
+    return r;
+  }
+  function plWord(key, force) {
+    if (!reader || reader.n !== pl.n) return;
+    if (key < 0) { CSS.highlights.delete("reading"); return; }
+    const l = pl.L[key], r = wordRange(l, pl.W[key]);
+    if (r) CSS.highlights.set("reading", new Highlight(r)); else CSS.highlights.delete("reading");
+    pl.line = l;
+    plFollow(l, force);
+  }
+
+  // Keep the current line in view: scroll only when it leaves the middle band, turn to the page that holds it,
+  // and stand back for a few seconds after the reader scrolls or turns a page by hand.
+  function plFollow(l, force) {
+    const r = reader;
+    if (!r || (!force && Date.now() < pl.lock)) return;
+    const smooth = !force && !reduce && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (r.paged) {
+      if (!r.lefts || !r.lefts.length) return;
+      const p = pageOfLeft(r.lefts[l - 1] || 0);
+      if (p !== r.cur) goPage(p, smooth);
+      return;
+    }
+    const el = r.els[l - 1];
+    if (!el) return;
+    const rc = el.getBoundingClientRect(), vh = innerHeight - pl.h, hd = header.classList.contains("hidden") ? 0 : header.offsetHeight;
+    const lo = hd + (vh - hd) * 0.2, hi = hd + (vh - hd) * 0.65;
+    // A long jump (a seek) lands at once; the next line down glides.
+    if (force || rc.top < lo || rc.bottom > hi) scrollTo({ top: scrollY + rc.top - (hd + (vh - hd) * 0.4), behavior: smooth && Math.abs(rc.top - vh / 2) < innerHeight * 1.2 ? "smooth" : "auto" });
+  }
+  const plManual = (e) => { if (pl.open && !(pl.bar && pl.bar.contains(e.target))) pl.lock = Date.now() + 5000; };
+  ["wheel", "touchmove", "keydown"].forEach((ev) => addEventListener(ev, plManual, { passive: true }));
+
+  function plSeekLine(l) {
+    const t = pl.data && pl.data.lines[l - 1] && pl.data.lines[l - 1][0];
+    if (t == null || !pl.audio) return;
+    pl.lock = 0;
+    pl.audio.currentTime = t;
+    plPlay();
+  }
+  // Previous / next line, for the lock screen.
+  function plStep(d) {
+    const l = Math.max(1, Math.min(pl.data.lines.length, (pl.line > 0 ? pl.line : 1) + d));
+    const t = pl.data.lines[l - 1] && pl.data.lines[l - 1][0];
+    if (t != null) { pl.lock = 0; pl.audio.currentTime = t; }
+  }
+
+  async function plOpen() {
+    if (!reader || !hasHL) return;
+    const n = reader.n, bar = plBar(), a = plAudio();
+    if (pl.n !== n) {
+      a.pause();
+      a.removeAttribute("src");
+      Object.assign(pl, { n, data: null, T: null, idx: -2, line: -1 });
+    }
+    pl.open = true;
+    pl.sec = -1;
+    bar.hidden = false;
+    document.body.classList.add("has-player");
+    listenBtn.classList.add("on");
+    listenBtn.setAttribute("aria-pressed", "true");
+    plSpeed();
+    plState();
+    if (!pl.data) {
+      pl.lineEl.textContent = "Loading…";
+      try {
+        const r = await fetch(audioFile(n));
+        if (!r.ok) throw new Error(r.status);
+        plBuild(await r.json());
+      } catch { pl.lineEl.textContent = "Read-along unavailable"; return; }
+      if (!pl.open || pl.n !== n) return;
+      a.src = AUDIO_URL(n);
+      a.playbackRate = SPEEDS.includes(store.get("speed", 1)) ? store.get("speed", 1) : 1;
+      // Start where the reader is, not at the top of the recording.
+      const l = reader && reader.lastL > 1 ? reader.lastL : reader && reader.target > 1 ? reader.target : 0;
+      const t = l && pl.data.lines[l - 1] && pl.data.lines[l - 1][0];
+      if (t) a.currentTime = Math.max(0, t - 0.3);
+    }
+    if ("mediaSession" in navigator) {
+      const ms = navigator.mediaSession;
+      ms.metadata = new MediaMetadata({ title: `Paradise Lost, Book ${n}`, artist: "John Milton, read by Thomas A. Copeland", album: "Paradise Lost · LibriVox" });
+      const set = (k, f) => { try { ms.setActionHandler(k, f); } catch {} };
+      set("play", plPlay);
+      set("pause", () => a.pause());
+      set("seekbackward", (d) => plJump(-((d && d.seekOffset) || 15)));
+      set("seekforward", (d) => plJump((d && d.seekOffset) || 15));
+      set("seekto", (d) => { if (d && d.seekTime != null) { pl.lock = 0; a.currentTime = d.seekTime; } });
+      set("previoustrack", () => plStep(-1));
+      set("nexttrack", () => plStep(1));
+    }
+    pl.force = true;
+    plTick(true);
+  }
+  // leaving: the reader is going away, so the audio goes too
+  function plClose(leaving) {
+    pl.open = false;
+    if (pl.audio) pl.audio.pause();
+    if (leaving && pl.audio) { pl.audio.removeAttribute("src"); pl.n = 0; pl.data = null; pl.T = null; }
+    if (hasHL) CSS.highlights.delete("reading");
+    if (pl.bar) pl.bar.hidden = true;
+    document.body.classList.remove("has-player");
+    listenBtn.classList.remove("on");
+    listenBtn.setAttribute("aria-pressed", "false");
+    document.documentElement.style.setProperty("--pbar", "0px");
+    pl.h = 0;
+    if ("mediaSession" in navigator) { navigator.mediaSession.metadata = null; navigator.mediaSession.playbackState = "none"; }
+    if (!leaving && reader && reader.paged) layoutPaged();
+  }
+  // After a layout change the view is rebuilt: pick the highlight and the place up again.
+  function plRebind() {
+    if (!pl.open || !reader || reader.n !== pl.n || !pl.T) return;
+    listenBtn.classList.add("on");
+    listenBtn.setAttribute("aria-pressed", "true");
+    pl.force = true;
+    plTick(true);
+  }
+  listenBtn.addEventListener("click", () => (pl.open ? plClose() : plOpen()));
 
   // ── note card: a gloss, or why a passage is famous ──
   const card = $("#note-card"), ncWord = $("#nc-word"), ncText = $("#nc-text"), ncAsk = $("#nc-ask");
@@ -693,12 +993,14 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     const parts = location.hash.replace(/^#/, "").split("?")[0].split("/").filter(Boolean);
     header.classList.remove("hidden");
     closeNote();
+    if (pl.open && !(parts[0] === "r" && +parts[1] === pl.n)) plClose(true);
     if (reader && reader.ro) reader.ro.disconnect();
     reader = null;
     after = null;
     document.body.classList.remove("paged", "mode-spread");
     plainBtn.hidden = true;
     layoutBtn.hidden = true;
+    listenBtn.hidden = true;
     setMenu(false);
     progress.hidden = true;
     if (!parts.length) home();
@@ -710,6 +1012,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     else notFound();
     scrollTo(0, 0);
     if (after) requestAnimationFrame(after);
+    if (pl.open) requestAnimationFrame(() => requestAnimationFrame(plRebind));
   }
   // A plate enlarges on click or Enter; click, Close or Escape puts it away.
   const lb = $("#lb");

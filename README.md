@@ -5,6 +5,7 @@
   - One page app (plain HTML, CSS and JS) in a restrained Doré-inspired print look: all fifty of Gustave Doré's 1866 engravings placed at their lines, IM Fell and EB Garamond, crimson accents.
   - For each book: a **Guide** (argument, setting, sections, people), **Read** (the full text with glosses, famous passages and line numbers) and **Listen** (YouTube recitations and audiobooks).
   - **Three ways to read:** Scroll, Page (one book-style page at a time) and Two pages (a spread with a spine, on screens 820 px and wider). Turn pages with the arrows, space, swipe or the buttons; the layout and your place carry over when you switch.
+  - **Read-along:** a Listen button in the Read view plays the LibriVox reading inline and lights the word being read. See "Read-along".
   - **Ask the Reader**: the only AI in the app, a chat about the passage you have open. `server.mjs` builds the context from the poem and streams the reply from the Anthropic API.
   - **Accounts** (public mode): Google sign-in, SQLite for users, reading place and usage. Reading needs no account; a saved place needs sign-in.
   - **Everything else is free and open to the public:** the guide, text, glosses, plates and listening list use no AI and need no account. Only chat is limited (own key, or the host's allowlist).
@@ -51,6 +52,7 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 | `data/text.json` | The twelve books as numbered lines, from `scripts/text.py` |
 | `data/guide/book-NN.json` | Notes per book: argument, setting, sections, glosses, famous passages |
 | `data/characters.json` | 22 people of the poem, with first appearance and a key passage |
+| `data/audio/book-NN.json` | Read-along word timings per book, from `scripts/align.py`; copied to `dist/audio/` |
 | `data/listen.json` | YouTube recitations, LibriVox readings and recommended audiobooks |
 | `src/` | The app: `index.html`, `app.js` (routes, reader, account), `chat.js`, `art.js` (SVG fallback art), `styles.css`, service worker, icons |
 | `art/web/NN.jpg`, `art/plates.json` | Doré's fifty plates (720 px JPEGs) and each one's book, line, title and mapping confidence |
@@ -60,6 +62,23 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 | `lib/db.mjs` | SQLite: users, state, usage |
 | `server.mjs` | Static files, `/auth/*`, `/api/*`, auth modes |
 | `deploy/` | Examples for a reverse proxy and systemd |
+
+## Read-along
+
+The Read view has a headphones button in the top bar. It opens a compact player (play, back and forward 15 s, speed 0.8x / 1x / 1.25x, a scrubber with the current line) and lights the word being read.
+
+- **Audio:** Thomas A. Copeland's LibriVox reading (public domain), streamed from `archive.org`. It is not stored in the repo and the service worker does not cache it.
+- **Timings:** `data/audio/book-NN.json` is `{n, dur, lines: [[word start seconds per line]]}`. `scripts/build.py` copies them to `dist/audio/`; the player fetches a book's file when it opens. A book without a file has no button.
+- **Highlight:** the CSS Custom Highlight API (`::highlight(reading)`) over a Range on the word's text. Word k of a line is the k-th whitespace-separated word of its text. Browsers without the API hide the player. The poem markup is unchanged.
+- **Follow:** the page scrolls (or turns) to the current line when it leaves the middle of the view. Scrolling by hand pauses following for five seconds. Tapping a line number seeks there.
+- **Lock screen:** `navigator.mediaSession` shows the title and artist and wires play, pause and seek.
+
+### Making the timings
+
+`scripts/align.py <book 1-12> <audio.mp3>` writes `data/audio/book-NN.json` by forced alignment of the reading to `data/text.json`, with the MMS forced-aligner from torchaudio (`MMS_FA`).
+
+- **Needs:** a Python venv (`.venv-align/`, ignored by git) with `torch`, `torchaudio` and `soundfile`, plus `ffmpeg` on the path.
+- **Audio files:** download the book's mp3 from the LibriVox item on archive.org (`paradiselost_1411_librivox`); keep it outside the repo.
 
 ## Routes
 
