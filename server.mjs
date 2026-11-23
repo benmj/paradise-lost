@@ -160,7 +160,7 @@ function serveStatic(res, rel) {
 }
 // Google mode: reading needs a sign-in. Signed-out visitors get the welcome page (with the privacy text);
 // a signed-out request for the service worker gets one that removes any copy an earlier visit cached.
-const PUBLIC_FILES = new Set(['/welcome.html', '/welcome.js', '/icon.svg', '/icon-180.png', '/icon-512.png', '/manifest.webmanifest', '/art/01.jpg']);
+const PUBLIC_FILES = new Set(['/welcome.html', '/welcome.js', '/icon.svg', '/icon-180.png', '/icon-512.png', '/manifest.webmanifest', '/art/01.jpg', '/art/welcome.jpg']);
 const KILL_SW = "self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).then(()=>self.registration.unregister()).then(()=>self.clients.matchAll()).then(cs=>cs.forEach(c=>c.navigate(c.url)))));";
 function gateWelcome(res, pathname) {
   if (pathname === '/sw.js') return send(res, 200, KILL_SW, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-store' });

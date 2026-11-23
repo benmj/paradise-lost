@@ -5,8 +5,9 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{font:18px/1.55 Georgia,"Iowan Old Style",serif;color:#f3ead7;background:#14100c;min-height:100vh;min-height:100dvh}
-.hero{position:fixed;inset:0;background:#14100c url(art/01.jpg) center 30%/cover no-repeat;filter:sepia(.35) brightness(.55) contrast(1.05)}
-.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(20,16,12,.25),rgba(20,16,12,.85) 75%)}
+.hero{--hw:calc(min(100vh,1210px)*.396);position:fixed;inset:0;background:#14100c url(art/01.jpg) center top/auto min(100%,1210px) no-repeat;filter:sepia(.35) brightness(.55) contrast(1.05)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#14100c calc(50% - var(--hw)),rgba(20,16,12,0) calc(50% - var(--hw)*.55),rgba(20,16,12,0) calc(50% + var(--hw)*.55),#14100c calc(50% + var(--hw))),radial-gradient(ellipse at 50% 45%,rgba(20,16,12,.25),rgba(20,16,12,.8) 80%)}
+@media (min-width:640px) and (min-height:640px),(min-resolution:2dppx){.hero{background-image:url(art/welcome.jpg)}}
 main{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;text-align:center}
 .kick{letter-spacing:.28em;text-transform:uppercase;font-size:.72rem;color:#d9c9a6;margin:0 0 .8rem}
 h1{font-weight:400;font-size:clamp(2.6rem,9vw,4.6rem);line-height:1.05;margin:0 0 .5rem;letter-spacing:.01em}
@@ -25,7 +26,8 @@ input::placeholder{color:#a99c82}
 input:focus{outline:2px solid #c9a15a;outline-offset:1px}
 #code{letter-spacing:.4em;font-size:1.4rem}
 form{display:grid;gap:.7rem;margin:0}
-.msg{min-height:1.3em;margin:0;font-size:.92rem;color:#f0b9a8}
+.msg:empty{display:none}
+.msg{margin:0;font-size:.92rem;color:#f0b9a8}
 .msg.ok{color:#cfe3c0}
 .lnk{background:none;border:0;color:#d9c9a6;font:inherit;font-size:.9rem;cursor:pointer;text-decoration:underline;padding:0}
 .small{font-size:.88rem;margin-top:1.4rem;color:#c8bb9f}
@@ -35,12 +37,12 @@ form{display:grid;gap:.7rem;margin:0}
 #privacy{display:none;position:relative;max-width:36rem;margin:0 auto;padding:28px 20px 60px;background:rgba(20,16,12,.8);min-height:100vh}
 #privacy h2{font-size:1.15rem;margin:1.4em 0 .3em}#privacy ul{padding-left:1.2em;margin:.2em 0}#privacy a{color:#e7c98f}
 body.priv #privacy{display:block}body.priv main,body.priv .cred{display:none}
+.cred a{color:inherit;text-underline-offset:2px}.cred .heart{color:#c9573f}
 </style></head><body>
 <div class="hero" role="img" aria-label="Gustave Doré, Fall of the rebel angels"></div>
 <main>
 <p class="kick">An illustrated reading guide</p>
 <h1>Paradise Lost</h1><div class="orn">❦</div>
-<p class="sub">Milton's poem with notes, Doré's plates, a reader you can ask, and the whole poem read aloud.</p>
 <div class="card">
 <a class="btn g" id="google" href="/auth/login?back=/"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</a>
 <div class="or" id="or" hidden>or</div>
@@ -50,7 +52,7 @@ body.priv #privacy{display:block}body.priv main,body.priv .cred{display:none}
 </div>
 <p class="small">Free. We keep your email and your reading place, nothing else. <a href="/privacy">Privacy</a></p>
 </main>
-<p class="cred">Fall of the rebel angels, Gustave Doré, 1866</p>
+<p class="cred">Made with love in New Orleans <span class="heart" aria-hidden="true">❤</span> by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a><br>Fall of the rebel angels, Gustave Doré, 1866</p>
 <article id="privacy"><h1>Privacy</h1>
 <p class="note">Paradise Lost, an illustrated reading guide by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>. Last updated November 23, 2026.</p>
 <h2>Signing in</h2>
