@@ -1363,9 +1363,9 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     app.innerHTML = `<article class="credits fade">
 <h1>Privacy</h1>
 <p class="note">Paradise Lost, an illustrated reading guide by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>. Last updated November 23, 2026.</p>
-<h2>Signing in with Google</h2>
-<ul><li>Reading the guide needs a Google sign-in. It is used to save your reading place and footnotes, to ask the Reader questions, and to see how many people read and how far they get.</li>
-<li>We receive your email address, name and Google account id, and nothing else. We never see your Google password and do not read your mail, contacts or files.</li></ul>
+<h2>Signing in</h2>
+<ul><li>Reading the guide needs a sign-in, with Google or with a code we email you. It is used to save your reading place and footnotes, to ask the Reader questions, and to see how many people read and how far they get.</li>
+<li>With Google we receive your email address, name and Google account id, and nothing else; we never see your Google password. With a code we receive only the email address you type, and keep a code for 10 minutes.</li></ul>
 <h2>What is stored</h2>
 <ul><li>Per reader: email, name, sign-in count, last sign-in, how far you have read in each book, footnotes you save and daily usage counts.</li>
 <li>Footnotes hold only passages of the public poem, a sentence of each answer and the question you asked.</li></ul>

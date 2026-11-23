@@ -31,6 +31,7 @@ import { loadBook, buildContext, checkMessages, SYSTEM, ChatError } from './lib/
 import { streamReply, MODEL, backend, costMicro } from './lib/llm.mjs';
 import { openDb } from './lib/db.mjs';
 import { makeAuth, sessionSecret } from './lib/auth.mjs';
+import { makeEmailCode } from './lib/emailcode.mjs';
 import { lookup, loadLexicon, DictError } from './lib/dict.mjs';
 
 const PORT = Number(process.env.PORT) || 8107;
@@ -56,6 +57,7 @@ if (DEV_USER && !['127.0.0.1', '::1', 'localhost'].includes(HOST)) throw new Err
 
 const db = openDb(DATA_DIR);
 const auth = makeAuth({ secret: sessionSecret(DATA_DIR), baseUrl: BASE_URL, clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET });
+const emailCode = makeEmailCode({ secret: sessionSecret(DATA_DIR), dataDir: DATA_DIR, from: process.env.MAIL_FROM || '' });
 const MODE = DEV_USER ? 'dev' : auth.enabled ? 'google' : ACCESS_AUD ? 'access' : '';
 if (!MODE) throw new Error('set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (public), ACCESS_AUD (Cloudflare Access) or DEV_USER (local)');
 if (MODE === 'access' && !ACCESS_TEAM) throw new Error('access mode needs ACCESS_TEAM');
@@ -158,7 +160,7 @@ function serveStatic(res, rel) {
 }
 // Google mode: reading needs a sign-in. Signed-out visitors get the welcome page (with the privacy text);
 // a signed-out request for the service worker gets one that removes any copy an earlier visit cached.
-const PUBLIC_FILES = new Set(['/welcome.html', '/welcome.js', '/icon.svg', '/icon-180.png', '/icon-512.png', '/manifest.webmanifest']);
+const PUBLIC_FILES = new Set(['/welcome.html', '/welcome.js', '/icon.svg', '/icon-180.png', '/icon-512.png', '/manifest.webmanifest', '/art/01.jpg']);
 const KILL_SW = "self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).then(()=>self.registration.unregister()).then(()=>self.clients.matchAll()).then(cs=>cs.forEach(c=>c.navigate(c.url)))));";
 function gateWelcome(res, pathname) {
   if (pathname === '/sw.js') return send(res, 200, KILL_SW, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-store' });
@@ -227,6 +229,25 @@ function redirect(res, url, setCookie) { send(res, 302, '', { Location: url, 'Ca
 async function authRoutes(req, res, url) {
   if (MODE !== 'google') return json(res, 404, { error: 'not found' });
   if (limited(`auth:${clientIp(req)}`, 30, 60_000)) return json(res, 429, { error: 'too many sign-in attempts; wait a minute' });
+  if (url.pathname === '/auth/methods' && req.method === 'GET') return json(res, 200, { google: true, email: emailCode.enabled() });
+  if (url.pathname === '/auth/email/start' && req.method === 'POST') {
+    if (!sameOrigin(req)) return json(res, 403, { error: 'cross-site request refused' });
+    if (!emailCode.enabled()) return json(res, 404, { error: 'email sign-in is not set up' });
+    const email = String((await readJson(req, 2048)).email || '').trim().toLowerCase();
+    if (!emailCode.valid(email)) return json(res, 400, { error: 'that does not look like an email address' });
+    if (limited(`code-ip:${clientIp(req)}`, 8, 3600_000) || limited(`code:${email}`, 4, 3600_000)) return json(res, 429, { error: 'too many codes requested; try again later' });
+    try { await emailCode.start(email); } catch (e) { console.warn(`[auth] ${e.message}`); return json(res, 502, { error: 'could not send the email; try again' }); }
+    return json(res, 200, { ok: true });
+  }
+  if (url.pathname === '/auth/email/verify' && req.method === 'POST') {
+    if (!sameOrigin(req)) return json(res, 403, { error: 'cross-site request refused' });
+    const b = await readJson(req, 2048);
+    const email = String(b.email || '').trim().toLowerCase();
+    if (!emailCode.valid(email) || !emailCode.check(email, b.code)) return json(res, 400, { error: 'that code did not work; check it or ask for a new one' });
+    const u = db.login(email, '');
+    console.log(`[auth] email sign-in user ${u.id}`);
+    return send(res, 200, JSON.stringify({ ok: true }), { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Set-Cookie': auth.sessionCookie(u.id) });
+  }
   if (url.pathname === '/auth/login' && req.method === 'GET') {
     const { url: to, setCookie } = auth.start(url.searchParams.get('back'));
     return redirect(res, to, setCookie);

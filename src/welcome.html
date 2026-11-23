@@ -1,23 +1,61 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Paradise Lost</title><link rel="icon" href="icon.svg"><meta name="theme-color" content="#f4eedf">
+<title>Paradise Lost</title><link rel="icon" href="icon.svg"><meta name="theme-color" content="#14100c">
 <style>
-body{font:18px/1.55 Georgia,serif;background:#f4eedf;color:#1c1712;margin:0;padding:16px;min-height:100vh;display:grid;place-items:center}
-@media(prefers-color-scheme:dark){body{background:#17130f;color:#eee5d3}a{color:#e08a7a!important}}
-main{max-width:30rem;text-align:center}h1{font-weight:400;font-size:2.4rem;margin:.2em 0}
-.sub{color:#6b5f50;margin:0 0 1.6rem}a{color:#9b1c1c}
-.btn{display:inline-block;background:#9b1c1c;color:#fff!important;text-decoration:none;padding:.7em 1.4em;border-radius:999px;font-size:1.05rem}
-.small{font-size:.9rem;margin-top:1.4rem;opacity:.8}
-#privacy{display:none;text-align:left;max-width:34rem}#privacy h2{font-size:1.15rem;margin:1.4em 0 .3em}#privacy ul{padding-left:1.2em;margin:.2em 0}
-body.priv #privacy{display:block}body.priv main{display:none}
+:root{--ink:#f3ead7;--red:#a3201f}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font:18px/1.55 Georgia,"Iowan Old Style",serif;color:#f3ead7;background:#14100c;min-height:100vh;min-height:100dvh}
+.hero{position:fixed;inset:0;background:#14100c url(art/01.jpg) center 30%/cover no-repeat;filter:sepia(.35) brightness(.55) contrast(1.05)}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(20,16,12,.25),rgba(20,16,12,.85) 75%)}
+main{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;text-align:center}
+.kick{letter-spacing:.28em;text-transform:uppercase;font-size:.72rem;color:#d9c9a6;margin:0 0 .8rem}
+h1{font-weight:400;font-size:clamp(2.6rem,9vw,4.6rem);line-height:1.05;margin:0 0 .5rem;letter-spacing:.01em}
+.orn{color:#c9a15a;letter-spacing:.5em;margin:.2rem 0 1rem}
+.sub{max-width:32rem;color:#e2d6bd;margin:0 auto 1.8rem;font-size:1.08rem}
+.card{width:100%;max-width:21rem;display:grid;gap:.8rem;background:rgba(20,16,12,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(217,201,166,.22);border-radius:16px;padding:1.2rem}
+.btn{font:inherit;display:flex;align-items:center;justify-content:center;gap:.6em;width:100%;padding:.75em 1em;border-radius:999px;border:0;cursor:pointer;text-decoration:none;font-size:1rem}
+.g{background:#f3ead7;color:#1c1712!important}
+.g svg{width:1.1em;height:1.1em}
+.go{background:var(--red);color:#fff}
+.go:disabled{opacity:.6}
+.or{display:flex;align-items:center;gap:.8em;color:#b9ab8d;font-size:.85rem}
+.or::before,.or::after{content:"";flex:1;height:1px;background:rgba(217,201,166,.25)}
+input{font:inherit;width:100%;padding:.7em .9em;border-radius:10px;border:1px solid rgba(217,201,166,.35);background:rgba(243,234,215,.1);color:#f3ead7;text-align:center}
+input::placeholder{color:#a99c82}
+input:focus{outline:2px solid #c9a15a;outline-offset:1px}
+#code{letter-spacing:.4em;font-size:1.4rem}
+form{display:grid;gap:.7rem;margin:0}
+.msg{min-height:1.3em;margin:0;font-size:.92rem;color:#f0b9a8}
+.msg.ok{color:#cfe3c0}
+.lnk{background:none;border:0;color:#d9c9a6;font:inherit;font-size:.9rem;cursor:pointer;text-decoration:underline;padding:0}
+.small{font-size:.88rem;margin-top:1.4rem;color:#c8bb9f}
+.small a{color:#e7c98f}
+[hidden]{display:none!important}
+.cred{position:fixed;left:0;right:0;bottom:8px;text-align:center;font-size:.72rem;color:#a99c82;z-index:1}
+#privacy{display:none;position:relative;max-width:36rem;margin:0 auto;padding:28px 20px 60px;background:rgba(20,16,12,.8);min-height:100vh}
+#privacy h2{font-size:1.15rem;margin:1.4em 0 .3em}#privacy ul{padding-left:1.2em;margin:.2em 0}#privacy a{color:#e7c98f}
+body.priv #privacy{display:block}body.priv main,body.priv .cred{display:none}
 </style></head><body>
-<main><h1>Paradise Lost</h1><p class="sub">An illustrated reading guide to Milton's poem: the text, notes, Doré's plates, a reader to ask, and the poem read aloud.</p>
-<p><a class="btn" href="/auth/login?back=/">Sign in with Google to read</a></p>
-<p class="small">Free. We receive your email and name, nothing else. <a href="/privacy">Privacy</a></p></main>
+<div class="hero" role="img" aria-label="Gustave Doré, Fall of the rebel angels"></div>
+<main>
+<p class="kick">An illustrated reading guide</p>
+<h1>Paradise Lost</h1><div class="orn">❦</div>
+<p class="sub">Milton's poem with notes, Doré's plates, a reader you can ask, and the whole poem read aloud.</p>
+<div class="card">
+<a class="btn g" id="google" href="/auth/login?back=/"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</a>
+<div class="or" id="or" hidden>or</div>
+<form id="f1" hidden><input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" aria-label="Email address" required><button class="btn go" id="send">Email me a code</button></form>
+<form id="f2" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" aria-label="6-digit code" required><button class="btn go" id="check">Sign in</button><button class="lnk" type="button" id="back">Use a different email</button></form>
+<p class="msg" id="msg" aria-live="polite"></p>
+</div>
+<p class="small">Free. We keep your email and your reading place, nothing else. <a href="/privacy">Privacy</a></p>
+</main>
+<p class="cred">Fall of the rebel angels, Gustave Doré, 1866</p>
 <article id="privacy"><h1>Privacy</h1>
 <p class="note">Paradise Lost, an illustrated reading guide by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>. Last updated November 23, 2026.</p>
-<h2>Signing in with Google</h2>
-<ul><li>Reading the guide needs a Google sign-in. It is used to save your reading place and footnotes, to ask the Reader questions, and to see how many people read and how far they get.</li>
-<li>We receive your email address, name and Google account id, and nothing else. We never see your Google password and do not read your mail, contacts or files.</li></ul>
+<h2>Signing in</h2>
+<ul><li>Reading the guide needs a sign-in, with Google or with a code we email you. It is used to save your reading place and footnotes, to ask the Reader questions, and to see how many people read and how far they get.</li>
+<li>With Google we receive your email address, name and Google account id, and nothing else; we never see your Google password. With a code we receive only the email address you type, and keep a code for 10 minutes.</li></ul>
 <h2>What is stored</h2>
 <ul><li>Per reader: email, name, sign-in count, last sign-in, how far you have read in each book, footnotes you save and daily usage counts.</li>
 <li>Footnotes hold only passages of the public poem, a sentence of each answer and the question you asked.</li></ul>
