@@ -49,6 +49,11 @@
 :root[data-theme="dim"] * { border-color: var(--line); }
 :root[data-theme="dim"] .topbar { border-bottom: 1px solid var(--line); }
 
+/* big desktops: the reading column and its type grow together so the page doesn't sit small in the window */
+:root { --big: 1; }
+@media (min-width: 1500px) { :root { --big: 1.2; } }
+@media (min-width: 2000px) { :root { --big: 1.45; } }
+@media (min-width: 2600px) { :root { --big: 1.75; } }
 * { box-sizing: border-box; }
 html, body { overflow-x: clip; }
 html { scroll-padding-top: 76px; }
@@ -115,7 +120,7 @@ button { font: inherit; }
 .icon-btn[hidden] { display: grid; visibility: hidden; }
 .icon-btn.on { color: var(--crimson); }
 
-main { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-area-inset-bottom) + 40px); }
+main { max-width: calc(640px * var(--big)); margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-area-inset-bottom) + 40px); }
 
 /* ── shared ── */
 .fade { animation: fade .3s ease both; }
@@ -259,7 +264,7 @@ main { max-width: 640px; margin: 0 auto; padding: 0 var(--gutter) calc(env(safe-
 .reader-head .eyebrow { margin-bottom: 6px; }
 .reader-head h1 { font-size: 30px; line-height: 1.12; }
 .reader-head .fleuron { margin-top: 16px; }
-.poem { margin: 10px 0 0; font-size: calc(clamp(15.5px, 4.35vw, 18.5px) * var(--ts, 1)); line-height: 1.62; }
+.poem { margin: 10px 0 0; font-size: calc(clamp(15.5px, 4.35vw, 18.5px) * var(--ts, 1) * var(--big)); line-height: 1.62; }
 .poem br { display: none; }
 .ln { display: block; position: relative; padding: 0 28px 0 1.3em; text-indent: -1.3em; scroll-margin-top: 90px; }
 .ln.para { margin-top: .9em; padding-left: calc(1.3em + 1.6em); }
@@ -652,9 +657,9 @@ body.plain figure.dore { display: none; }
 
 .pager { display: none; }
 body.paged { overflow: hidden; }
-body.paged main, body.paged:has(.ask-fab:not([hidden])) main { max-width: 760px; padding-bottom: 0; }
+body.paged main, body.paged:has(.ask-fab:not([hidden])) main { max-width: calc(760px * var(--big)); padding-bottom: 0; }
 html:has(body.paged) { overflow: hidden; }
-body.mode-spread main, body.mode-spread:has(.ask-fab:not([hidden])) main { max-width: 1240px; }
+body.mode-spread main, body.mode-spread:has(.ask-fab:not([hidden])) main { max-width: calc(1240px * var(--big)); }
 body.paged .paper {
   position: relative; margin: 14px 0 0; padding: clamp(18px, 3.4vw, 38px) clamp(20px, 5.5vw, 64px) 0;
   background: var(--card); border: 1px solid var(--line); border-radius: 3px; box-shadow: var(--shadow);
@@ -765,7 +770,6 @@ body.paged .site-foot a { pointer-events: auto; }
 body.paged .site-foot, body.paged.has-player .site-foot, body.paged:has(.ask-fab:not([hidden])) .site-foot { right: 0; left: 0; padding: 3px 110px calc(env(safe-area-inset-bottom) + 6px) 14px; text-align: left; font-size: 11.5px; line-height: 1.35; }
 
 /* ── phone menu: one button, one panel (looks first, then toggles) ── */
-#menu { display: none; }
 .menu-panel[hidden] { display: none; }
 .menu-panel {
   position: fixed; z-index: 30; right: 8px; top: calc(env(safe-area-inset-top) + 54px);
@@ -794,12 +798,11 @@ body.paged .site-foot, body.paged.has-player .site-foot, body.paged:has(.ask-fab
 .mp-tog[aria-checked="true"] .mp-sw { background: var(--crimson); }
 .mp-tog[aria-checked="true"] .mp-sw::after { transform: translateX(18px); }
 .mp-link { display: block; width: 100%; text-align: left; border: 0; border-top: 1px solid var(--line); background: none; color: var(--crimson); font: 400 15px/1 var(--caps); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; padding: 16px 2px 6px; margin-top: 8px; cursor: pointer; }
-@media (max-width: 640px) {
-  .topbar #menu { display: grid; }
-  .topbar #plain, .topbar #listen, .topbar #dict, .topbar #layout, .topbar #textsize, .topbar #theme, .topbar #acct, .topbar #signin { display: none; }
-  .layout-menu { display: none !important; }
-}
-@media (min-width: 641px) { .menu-panel { display: none; } }
+/* one menu at every width: appearance and features live in the panel; only the account stays in the bar */
+.topbar #menu { display: grid; }
+.topbar #plain, .topbar #listen, .topbar #dict, .topbar #layout, .topbar #textsize, .topbar #theme, .topbar #signin { display: none; }
+.topbar #acct { order: 99; }
+.layout-menu { display: none !important; }
 
 /* iOS zooms the page when a focused field is under 16px; keep every field at 16px or more (never user-scalable=no) */
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -810,3 +813,6 @@ input, textarea, select { font-size: max(16px, 1em); }
 .adm th { text-align: left; font-weight: 500; color: var(--ink-soft); font-size: 14px; }
 .adm th, .adm td { padding: 8px 6px; border-bottom: 1px solid var(--rule, rgba(128,128,128,.25)); vertical-align: top; }
 .adm td small { display: block; color: var(--ink-soft); font-size: 13px; overflow-wrap: anywhere; }
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 8px 0 20px; text-align: center; }
+.stats b { display: block; font: 400 34px/1.1 var(--display); }
+.stats span { font-size: 14px; color: var(--ink-soft); }

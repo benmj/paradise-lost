@@ -67,7 +67,6 @@
     if (!me.user) return;
     const initial = (me.user.name || me.user.email || "?").trim()[0].toUpperCase();
     acct.textContent = initial;
-    $("#acct-admin").hidden = !me.user.admin;
     if (!me.signIn) return;
     try {
       const s = await (await api("/api/state")).json();
@@ -84,27 +83,7 @@
       if (location.hash === "" || location.hash === "#/") route();
     } catch {}
   }
-  const dlg = $("#acct-dlg");
-  $("#acct").addEventListener("click", () => {
-    $("#acct-key").hidden = !window.PLKey.get();
-    $("#acct-who").textContent = window.ME && window.ME.user ? `${window.ME.user.name || "Signed in"} · ${window.ME.user.email}` : "";
-    dlg.showModal();
-  });
-  $("#acct-key").addEventListener("click", () => { window.PLKey.set(""); $("#acct-key").hidden = true; });
-  $("#acct-close").addEventListener("click", () => dlg.close());
-  $("#acct-notes").addEventListener("click", () => dlg.close());
-  $("#acct-admin").addEventListener("click", () => dlg.close());
-  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
-  $("#acct-out").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }).catch(() => {}); location.reload(); });
-  $("#acct-del").addEventListener("click", async () => {
-    if ($("#acct-del").dataset.sure !== "1") { $("#acct-del").dataset.sure = "1"; $("#acct-del").textContent = "Tap again to delete"; return; }
-    await api("/api/account/delete", { method: "POST" }).catch(() => {});
-    // the account's notes went with it; the copy in this browser goes too
-    NOTES.clear();
-    clearTimeout(pushTimer);
-    try { localStorage.removeItem("notes-s"); } catch {}
-    location.reload();
-  });
+  $("#acct").addEventListener("click", () => { location.hash = "#/me"; });
 
   // ── shell ──
   const app = $("#app");
@@ -141,7 +120,7 @@
     h += seg("Text size", "ts", TS.map((_, i) => [i, "A", `ts${i}`]), tsi);
     h += seg("Theme", "theme", [["light", "Light"], ["dark", "Dark"], ["dim", "Dim"]], curTheme());
     if (inReader) {
-      h += seg("Layout", "mode", [["scroll", "Scroll"], ["page", "Page"]], store.get("mode", "scroll"));
+      h += seg("Layout", "mode", [["scroll", "Scroll"], ["page", "Page"], ...(innerWidth >= 820 ? [["spread", "Two pages"]] : [])], store.get("mode", "scroll"));
       h += `<div class="mp-sec">Features</div>`;
       h += tog("Plain text", "Hide the notes", "plain", plainBtn.getAttribute("aria-pressed") === "true");
       if (!listenBtn.hidden) h += tog("Read-along", "Listen and follow the words", "listen", listenBtn.getAttribute("aria-pressed") === "true");
@@ -149,7 +128,6 @@
     }
     const sg = $("#signin"), ac = $("#acct");
     if (!sg.hidden) h += `<a class="mp-link" href="${sg.getAttribute("href")}">Sign in</a>`;
-    else if (!ac.hidden) h += `<button type="button" class="mp-link" data-k="acct">Account</button>`;
     mp.innerHTML = h;
   }
   function setMP(open) {
@@ -1320,6 +1298,50 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
 <ul><li>Answers are written by an AI model from the passage you have open and can be wrong. Check them against the poem.</li></ul>
 </article>`;
   }
+  async function meView() {
+    setTitle("Profile", true);
+    CHAT.set({ ...POEM, label: "Profile" });
+    const u = window.ME && window.ME.user;
+    if (!u) { app.innerHTML = `<div class="page"><p class="sec-note">Sign in to see your profile.</p><p style="text-align:center"><a class="btn" href="/auth/login?back=/">Sign in with Google</a></p></div>`; return; }
+    let pr = {};
+    try { pr = await (await api("/api/profile")).json(); } catch {}
+    const rows = PL.books.map((b) => ({ n: b.n, p: pct(b.n) }));
+    const total = PL.books.reduce((a, b) => a + b.lines.length, 0);
+    const got = PL.books.reduce((a, b) => a + Math.min(readOf(b.n), b.lines.length), 0);
+    const overall = Math.round((got / total) * 100);
+    const finished = rows.filter((r) => r.p >= 99).length, started = rows.filter((r) => r.p > 0).length;
+    const since = pr.first_seen ? new Date(pr.first_seen).toLocaleDateString(undefined, { month: "long", year: "numeric" }) : "";
+    app.innerHTML = `<div class="page"><section class="people-head"><span class="eyebrow">${esc(u.email)}</span><h1>${esc(u.name || "You")}</h1>
+<p class="sec-note" style="text-align:center">${since ? `Reading since ${since}` : ""}</p></section>
+<div class="stats"><div><b>${overall}%</b><span>of the poem read</span></div><div><b>${finished}</b><span>books finished</span></div><div><b>${NOTES.count()}</b><span>footnotes</span></div><div><b>${pr.asks || 0}</b><span>questions asked</span></div></div>
+<table class="adm"><tr><th>Book</th><th>Read</th></tr>${rows.map((r) => `<tr><td>${ROMAN[r.n]} · ${esc(guide(r.n) && guide(r.n).title || book(r.n).title || "")}</td><td>${r.p}%</td></tr>`).join("")}</table>
+<div class="acct-actions" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0">
+<a class="chip" href="#/notes">Your notes</a>${u.admin ? `<a class="chip" href="#/admin">Readers</a>` : ""}
+<button type="button" class="chip" id="me-key" ${window.PLKey.get() ? "" : "hidden"}>Forget my API key</button>
+<button type="button" class="chip" id="me-clear">Clear reading data</button>
+<button type="button" class="chip" id="me-out">Sign out</button>
+<button type="button" class="chip" id="me-del">Delete my account</button></div>
+<p class="sec-note" style="text-align:center">Clearing reading data resets your place and progress and keeps your footnotes. Deleting your account removes everything.</p></div>`;
+    $("#me-key").addEventListener("click", () => { window.PLKey.set(""); $("#me-key").hidden = true; });
+    $("#me-out").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }).catch(() => {}); location.href = "/"; });
+    const twice = (id, label, fn) => $(id).addEventListener("click", async () => {
+      const el = $(id);
+      if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "Tap again to confirm"; return; }
+      await fn(); });
+    twice("#me-clear", "Clear reading data", async () => {
+      clearTimeout(pushTimer);
+      for (let n = 1; n <= 12; n++) { try { localStorage.removeItem(`read:${n}`); } catch {} }
+      try { localStorage.removeItem("pos"); } catch {}
+      await api("/api/state/clear-reading", { method: "POST" }).catch(() => {});
+      location.hash = "#/"; location.reload();
+    });
+    twice("#me-del", "Delete my account", async () => {
+      await api("/api/account/delete", { method: "POST" }).catch(() => {});
+      NOTES.clear(); clearTimeout(pushTimer);
+      try { localStorage.removeItem("notes-s"); } catch {}
+      location.href = "/";
+    });
+  }
   async function adminView() {
     setTitle("Readers", true);
     CHAT.set({ ...POEM, label: "Readers" });
@@ -1341,19 +1363,17 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     app.innerHTML = `<article class="credits fade">
 <h1>Privacy</h1>
 <p class="note">Paradise Lost, an illustrated reading guide by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>. Last updated November 23, 2026.</p>
-<h2>Reading without an account</h2>
-<ul><li>The poem, notes, plates and listening pages need no account. Your text size, theme and reading place stay in your browser.</li></ul>
 <h2>Signing in with Google</h2>
-<ul><li>Signing in is optional and is only used to save your reading place and footnotes, and to ask the Reader questions.</li>
+<ul><li>Reading the guide needs a Google sign-in. It is used to save your reading place and footnotes, to ask the Reader questions, and to see how many people read and how far they get.</li>
 <li>We receive your email address, name and Google account id, and nothing else. We never see your Google password and do not read your mail, contacts or files.</li></ul>
 <h2>What is stored</h2>
-<ul><li>Per signed-in reader: email, name, last sign-in, reading place, footnotes you save and daily usage counts.</li>
+<ul><li>Per reader: email, name, sign-in count, last sign-in, how far you have read in each book, footnotes you save and daily usage counts.</li>
 <li>Footnotes hold only passages of the public poem, a sentence of each answer and the question you asked.</li></ul>
 <h2>Ask the Reader</h2>
 <ul><li>Your question and the passage you have open are sent to Anthropic to write the answer. If you bring your own key, it stays in your browser and goes only to Anthropic.</li>
 <li>Questions are not kept beyond the footnotes you choose to save.</li></ul>
 <h2>Sharing</h2>
-<ul><li>We do not sell or share your data, and we run no advertising or analytics trackers. YouTube plays through youtube-nocookie.com and loads only when you tap play.</li></ul>
+<ul><li>We do not sell or share your data, and we run no advertising or third-party analytics trackers. YouTube plays through youtube-nocookie.com and loads only when you tap play.</li></ul>
 <h2>Deleting your data</h2>
 <ul><li>"Delete my data" in the account menu removes your account and everything stored with it. You can also write to the address on <a href="https://benbybenjacobs.com" rel="noopener">benbybenjacobs.com</a>.</li></ul>
 </article>`;
@@ -1386,6 +1406,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     else if (parts[0] === "credits") creditsView();
     else if (parts[0] === "privacy") privacyView();
     else if (parts[0] === "admin") adminView();
+    else if (parts[0] === "me") meView();
     else notFound();
     scrollTo(0, 0);
     if (after) requestAnimationFrame(after);

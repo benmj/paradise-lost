@@ -156,6 +156,17 @@ function serveStatic(res, rel) {
     fs.createReadStream(file).pipe(res);
   });
 }
+// Google mode: reading needs a sign-in. Signed-out visitors get the welcome page (with the privacy text);
+// a signed-out request for the service worker gets one that removes any copy an earlier visit cached.
+const PUBLIC_FILES = new Set(['/welcome.html', '/welcome.js', '/icon.svg', '/icon-180.png', '/icon-512.png', '/manifest.webmanifest']);
+const KILL_SW = "self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).then(()=>self.registration.unregister()).then(()=>self.clients.matchAll()).then(cs=>cs.forEach(c=>c.navigate(c.url)))));";
+function gateWelcome(res, pathname) {
+  if (pathname === '/sw.js') return send(res, 200, KILL_SW, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-store' });
+  if (/\.(js|css|jpg|png|svg|json|webmanifest)$/.test(pathname)) return send(res, 401, 'sign in to read', { 'Cache-Control': 'no-store' });
+  const file = path.join(DIST, 'welcome.html');
+  res.writeHead(200, { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+  fs.createReadStream(file).pipe(res);
+}
 const gatePage = (msg) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Paradise Lost</title><style>body{font:18px/1.5 Georgia,serif;background:#f4eedf;color:#1c1712;display:grid;place-items:center;min-height:100vh;margin:0;padding:16px}
 main{max-width:26rem;text-align:center}a{color:#9b1c1c}</style></head><body><main><h1>Paradise Lost</h1><p>${msg}</p>
@@ -249,6 +260,17 @@ async function apiRoutes(req, res, url, user) {
       db.setState(user.id, cleanState(await readJson(req, 400 * 1024), db.getState(user.id)));
       return json(res, 200, { ok: true });
     }
+  }
+  if (url.pathname === '/api/profile' && req.method === 'GET') {
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    return json(res, 200, db.profile(user.id) || {});
+  }
+  if (url.pathname === '/api/state/clear-reading' && req.method === 'POST') {
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    if (!sameOrigin(req)) return json(res, 403, { error: 'cross-site request refused' });
+    const old = db.getState(user.id);
+    db.setState(user.id, { t: Date.now(), read: {}, ...(old.notes ? { notes: old.notes, nt: old.nt || 0 } : {}) });
+    return json(res, 200, { ok: true });
   }
   if (url.pathname === '/api/account/delete' && req.method === 'POST') {
     if (!user) return json(res, 401, { error: 'not signed in' });
@@ -357,6 +379,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (url.pathname.startsWith('/api/')) return await apiRoutes(req, res, url, user);
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'method not allowed');
+    if (MODE === 'google' && !user && !PUBLIC_FILES.has(url.pathname)) return gateWelcome(res, url.pathname);
     return serveStatic(res, url.pathname);
   } catch (e) {
     const status = e instanceof ChatError ? e.status : 500;
