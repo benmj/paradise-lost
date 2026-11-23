@@ -35,6 +35,20 @@
   color-scheme: dark;
 }
 
+/* Dim: late-night reading. Same muted palette as dark, lower luminance, crisp lines. */
+:root[data-theme="dim"] {
+  --paper: #0b0a0c; --paper-2: #131114; --card: #141216;
+  --ink: #aaa08b; --ink-soft: #877e6c; --ink-faint: #625b4e; --line: #3b353d;
+  --crimson: #b8493c; --gold: #a98b4c;
+  --shadow: none;
+  color-scheme: dark;
+}
+:root[data-theme="dim"] body { font-weight: 450; text-rendering: geometricPrecision; }
+:root[data-theme="dim"] .dore-img { mix-blend-mode: normal; filter: sepia(.2) brightness(.58) contrast(1.15); }
+:root[data-theme="dim"] hr, :root[data-theme="dim"] .card, :root[data-theme="dim"] .topbar { border-color: var(--line); }
+:root[data-theme="dim"] * { border-color: var(--line); }
+:root[data-theme="dim"] .topbar { border-bottom: 1px solid var(--line); }
+
 * { box-sizing: border-box; }
 html, body { overflow-x: clip; }
 html { scroll-padding-top: 76px; }
@@ -632,3 +646,4 @@ body.paged .paper { margin-top: 8px; padding-top: clamp(14px, 2.4vw, 26px); }
 body.paged .pg-count { min-width: 112px; }
 body.paged .reader-head { padding-top: 12%; }
 body.mode-spread .paper::before, body.mode-spread .paper::after { top: clamp(14px, 2.4vw, 26px); }
+:root[data-theme="dim"] .ask-fab { background: var(--ink-soft); box-shadow: none; }

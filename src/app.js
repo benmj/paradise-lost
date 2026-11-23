@@ -95,12 +95,13 @@
   document.body.insertAdjacentHTML("afterbegin", DEFS);
   const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), layoutMenu = $("#layout-menu"), progress = $("#progress");
   $("#theme").addEventListener("click", () => {
-    const dark = document.documentElement.dataset.theme
-      ? document.documentElement.dataset.theme === "dark"
-      : matchMedia("(prefers-color-scheme: dark)").matches;
-    const next = dark ? "light" : "dark";
+    // light → dark → dim → light
+    const cur = document.documentElement.dataset.theme
+      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const next = { light: "dark", dark: "dim", dim: "light" }[cur] || "dark";
     store.set("theme", next);
     applyTheme(next);
+    $("#theme").title = `Theme: ${next}`;
   });
   backBtn.addEventListener("click", () => {
     if (history.length > 1 && ss("inapp")) history.back();
