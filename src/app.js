@@ -1308,7 +1308,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
 <h2>The poem</h2>
 <ul><li>Text of the second edition (1674) from <a href="https://www.gutenberg.org/ebooks/26" rel="noopener">Project Gutenberg #26</a>. Public domain.</li></ul>
 <h2>Plates</h2>
-<ul><li>Fifty engravings by Gustave Doré (1866 Cassell edition), scans from <a href="https://commons.wikimedia.org/wiki/Category:Illustrations_of_Paradise_Lost_by_Gustave_Dor%C3%A9" rel="noopener">Wikimedia Commons</a>. Public domain; the page serves a small copy and the largest scan available when a plate is enlarged.</li></ul>
+<ul><li>Fifty engravings by Gustave Doré (1866). Full-size images are cropped from the <a href="https://archive.org/details/paradiselostillu00miltuoft" rel="noopener">Lovell edition scan at the Internet Archive</a> (University of Toronto copy); small copies and plate 24 come from <a href="https://commons.wikimedia.org/wiki/Category:Illustrations_of_Paradise_Lost_by_Gustave_Dor%C3%A9" rel="noopener">Wikimedia Commons</a>. Public domain; the page serves a small copy and the largest scan available when a plate is enlarged.</li></ul>
 <h2>Teaser video</h2>
 <ul><li>Soundtrack: Johannes Brahms, Intermezzo in A major, Op. 118 No. 2 (1893), a <a href="https://commons.wikimedia.org/wiki/File:Johannes_Brahms_-_klavierstucke,_op._118_-_ii._intermezzo.ogg" rel="noopener">Musopen recording on Wikimedia Commons</a>. Public domain.</li>
 <li>The footage is screen captures of this app; the artwork in it is Doré's plates above.</li></ul>

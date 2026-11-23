@@ -59,7 +59,7 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 | `data/audio/book-NN.json` | Read-along word timings per book, from `scripts/align.py`; copied to `dist/audio/` |
 | `data/listen.json` | YouTube recitations, LibriVox readings and recommended audiobooks |
 | `src/` | The app: `index.html`, `app.js` (routes, reader, account), `chat.js`, `notes.js` (footnote capture, curation, export), `art.js` (SVG fallback art), `styles.css`, service worker, icons |
-| `art/web/NN.jpg`, `art/hi/NN.jpg`, `art/plates.json` | Doré's fifty plates (720 px copies for the page, best available scans in `hi/` for big screens and enlarging) and each one's book, line, title and mapping confidence |
+| `art/web/NN.jpg`, `art/hi/NN.jpg`, `art/plates.json` | Doré's fifty plates (720 px copies for the page, full-size crops in `hi/` from the Internet Archive Lovell scan, for big screens and enlarging) and each one's book, line, title and mapping confidence |
 | `lib/dict.mjs` | Dictionary lookup: Milton spellings, Wiktionary parse, sense ranking, cache |
 | `data/lexicon.json` | Curated Milton lexicon (354 entries), from `scripts/lexicon.py` |
 | `scripts/lexicon.py` | Builds the lexicon: about 150 hand entries plus single-word guide glosses |
