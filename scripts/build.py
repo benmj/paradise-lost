@@ -49,6 +49,9 @@ def main():
     shutil.copytree(os.path.join(ROOT, "src"), DIST)
     if plates:
         shutil.copytree(os.path.join(ROOT, "art", "web"), os.path.join(DIST, "art"))
+        hi = os.path.join(ROOT, "art", "hi")
+        if os.path.isdir(hi):
+            shutil.copytree(hi, os.path.join(DIST, "art", "hi"))
     # Read-along timings (scripts/align.py). The audio itself is streamed from archive.org, never stored here.
     adir = os.path.join(DATA, "audio")
     if os.path.isdir(adir):

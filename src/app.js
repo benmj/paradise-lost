@@ -29,7 +29,9 @@
   // Doré's plates (public domain), each tied to a book and line in art/plates.json.
   const PLATES = PL.plates || [];
   const platesOf = (n) => PLATES.filter((x) => x.book === n);
-  const pimg = (x, cls = "", eager) => `<img class="dore-img ${cls}" src="art/${String(x.plate).padStart(2, "0")}.jpg" alt="Doré, plate ${x.plate}: ${esc(x.title)}" ${eager ? "" : 'loading="lazy" '}decoding="async" data-p="${x.plate}" tabindex="0">`;
+  const pid = (x) => String(x.plate).padStart(2, "0");
+  // art/NN.jpg is the small copy; art/hi/NN.jpg is the highest-resolution scan, picked by srcset on big or sharp screens and always used when a plate is enlarged.
+  const pimg = (x, cls = "", eager) => `<img class="dore-img ${cls}" src="art/${pid(x)}.jpg" srcset="art/${pid(x)}.jpg 720w, art/hi/${pid(x)}.jpg 2000w" sizes="${/thumb/.test(cls) ? "160px" : "(min-width: 900px) 640px, 92vw"}" alt="Doré, plate ${x.plate}: ${esc(x.title)}" ${eager ? "" : 'loading="lazy" '}decoding="async" data-p="${x.plate}" tabindex="0">`;
   const pcap = (x) => `<b>${esc(x.title)}</b><span>Gustave Doré, 1866 · <a href="#/r/${x.book}/${x.line}">${ref(x.book, x.line)}</a></span>`;
   const quoteFor = (ls) => ls.map((l) => `> ${l}`).join("\n");
 
@@ -1439,7 +1441,10 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
   function openPlate(img) {
     const x = PLATES.find((q) => q.plate === +img.dataset.p);
     if (!x || !lb) return;
-    $("#lb-img").src = img.src;
+    const li = $("#lb-img");
+    li.removeAttribute("srcset");
+    li.onerror = () => { li.onerror = null; li.src = "art/" + pid(x) + ".jpg"; };
+    li.src = "art/hi/" + pid(x) + ".jpg";
     $("#lb-img").alt = img.alt;
     $("#lb-cap").innerHTML = pcap(x);
     lb.showModal();
