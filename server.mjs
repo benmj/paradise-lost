@@ -20,6 +20,7 @@
 //   ADMINS=you@example.com  (may read /api/admin/usage)
 //   ALLOWLIST=a@x.com,b@y.com  (google mode: use the hosted ANTHROPIC_API_KEY; everyone else pastes their own)
 //   ANTHROPIC_API_KEY  PL_MODEL=claude-haiku-5-5  PL_MAX_OUTPUT_TOKENS=700
+//   OPEN_BETA=1  OPEN_BETA_DAILY_USD=5  (google mode: every signed-in reader uses the hosted key until their cap, the beta's daily cap or the month's budget is spent, then adds their own key)
 //   USER_DAILY_USD=0.15  MONTHLY_USD=25   estimated spend caps (see lib/llm.mjs)
 //   DEV_USER=someone@example.com   local testing only: refused unless BASE_URL is localhost
 import http from 'node:http';
@@ -60,7 +61,12 @@ if (!MODE) throw new Error('set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (publi
 if (MODE === 'access' && !ACCESS_TEAM) throw new Error('access mode needs ACCESS_TEAM');
 if (MODE === 'google' && backend !== 'api') console.warn('[chat] no ANTHROPIC_API_KEY: only readers with their own key can chat in public (google) mode');
 // Hosted key: everyone in dev/access mode, allowlisted users and admins in google mode.
-const hostedFor = (u) => Boolean(u) && (MODE !== 'google' ? true : backend === 'api' && (u.admin || ALLOWLIST.has(canon(u.email))));
+const OPEN_BETA = /^(1|true|yes|on)$/i.test(process.env.OPEN_BETA || '');   // google mode: any signed-in reader uses the hosted key until a cap is hit, then brings their own
+const BETA_DAILY_MICRO = (Number(process.env.OPEN_BETA_DAILY_USD) || 5) * 1e6;   // all open-beta readers together, per UTC day
+const isSeat = (u) => Boolean(u) && (u.admin || ALLOWLIST.has(canon(u.email)));
+const hostedFor = (u) => Boolean(u) && (MODE !== 'google' ? true : backend === 'api' && (isSeat(u) || OPEN_BETA));
+// an open-beta reader (no seat) is out of hosted questions when their own cap, the beta's daily cap or the month's budget is spent
+const betaCapped = (u) => OPEN_BETA && !isSeat(u) && MODE === 'google' && (db.spentToday(u.id, today()) >= USER_DAILY_MICRO || db.spentDay(today()) >= BETA_DAILY_MICRO || db.spentSince(monthStart()) >= MONTHLY_MICRO);
 const ownKey = (req) => { const k = String(req.headers['x-user-api-key'] || '').trim(); return /^sk-ant-[A-Za-z0-9_-]{20,300}$/.test(k) ? k : ''; };
 
 const book = loadBook(path.join(DIST, 'data.js'));
@@ -167,9 +173,10 @@ function sameOrigin(req) {
 // ---------------- account, state, admin ----------------
 const meInfo = (u) => {
   const hosted = hostedFor(u);
-  const left = hosted && backend === 'api' ? Math.max(0, USER_DAILY_MICRO - db.spentToday(u.id, today())) / USER_DAILY_MICRO : 0;
+  const capped = hosted && u && betaCapped(u);
+  const left = hosted && !capped && backend === 'api' ? Math.max(0, USER_DAILY_MICRO - db.spentToday(u.id, today())) / USER_DAILY_MICRO : 0;
   // chat: 'hosted' (our key, capped) or 'byok' (the reader pastes their own Anthropic key)
-  return { user: u ? { email: u.email, name: u.name, admin: u.admin } : null, signIn: MODE === 'google', chat: hosted ? 'hosted' : 'byok', chatLeft: Math.round(left * 100) / 100 };
+  return { user: u ? { email: u.email, name: u.name, admin: u.admin } : null, signIn: MODE === 'google', chat: hosted && !capped ? 'hosted' : 'byok', beta: OPEN_BETA && !isSeat(u), capped, chatLeft: Math.round(left * 100) / 100 };
 };
 // The reader's footnotes (src/notes.js): at most 200, every field length-limited and range-checked.
 const NOTE_LIMITS = { quote: 240, note: 260, question: 160 };
@@ -281,6 +288,7 @@ async function chat(req, res, user) {
   const who = user ? `user:${user.id}` : `ip:${req.headers['cf-connecting-ip'] || req.socket.remoteAddress}`;
   if (limited(`chat:${who}`, 8, 60_000)) return json(res, 429, { error: 'A little slower: wait a moment before the next question.' });
   const meter = hosted && backend === 'api';   // only the hosted key is metered; a reader's own key is billed to them
+  if (meter && betaCapped(user)) return json(res, 429, { error: "The free questions for the reader are used up for now (they reset at midnight UTC). Add your own Anthropic API key to keep asking; reading, notes and the dictionary stay free.", needKey: true });
   if (meter) {
     if (db.spentToday(user.id, today()) >= USER_DAILY_MICRO) return json(res, 429, { error: "You've used today's questions for the reader. They reset at midnight UTC." });
     if (db.spentSince(monthStart()) >= MONTHLY_MICRO) return json(res, 429, { error: "The reader has used this month's budget and is resting until next month. Reading and notes still work." });

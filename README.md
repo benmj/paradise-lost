@@ -45,6 +45,7 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 - `USER_DAILY_USD` (default 0.15) stops one user; `MONTHLY_USD` (default 25) pauses chat for everyone until next month.
 - The book text is sent as a cached prompt block, so follow-up questions about a book cost a fraction of the first.
 - Output is capped (`PL_MAX_OUTPUT_TOKENS`, default 700); a user can send 8 questions a minute.
+- **Open beta** (`OPEN_BETA=1`, public mode): every signed-in reader uses the hosted key, capped by `USER_DAILY_USD` each, `OPEN_BETA_DAILY_USD` (default 5) for all beta readers per UTC day, and `MONTHLY_USD`. When any cap is spent the reader sees the bring-your-own-key box instead of a pause; allowlist and admins are not held to the beta cap.
 - Set a spend limit on the API key's workspace in the Anthropic Console as the hard backstop; the caps above are estimates.
 
 ## Layout
