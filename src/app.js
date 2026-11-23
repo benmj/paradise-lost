@@ -67,6 +67,7 @@
     if (!me.user) return;
     const initial = (me.user.name || me.user.email || "?").trim()[0].toUpperCase();
     acct.textContent = initial;
+    $("#acct-admin").hidden = !me.user.admin;
     if (!me.signIn) return;
     try {
       const s = await (await api("/api/state")).json();
@@ -92,6 +93,7 @@
   $("#acct-key").addEventListener("click", () => { window.PLKey.set(""); $("#acct-key").hidden = true; });
   $("#acct-close").addEventListener("click", () => dlg.close());
   $("#acct-notes").addEventListener("click", () => dlg.close());
+  $("#acct-admin").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
   $("#acct-out").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }).catch(() => {}); location.reload(); });
   $("#acct-del").addEventListener("click", async () => {
@@ -1318,6 +1320,21 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
 <ul><li>Answers are written by an AI model from the passage you have open and can be wrong. Check them against the poem.</li></ul>
 </article>`;
   }
+  async function adminView() {
+    setTitle("Readers", true);
+    CHAT.set({ ...POEM, label: "Readers" });
+    app.innerHTML = `<div class="page"><section class="people-head"><span class="eyebrow">Admin</span><h1>Readers</h1></section><p class="sec-note" id="adm">Loading…</p></div>`;
+    let d;
+    try { const r = await api("/api/admin/analytics"); if (!r.ok) throw 0; d = await r.json(); }
+    catch { $("#adm").textContent = "Admins only. Sign in with an admin account."; return; }
+    const day = (t) => new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    $("#adm").outerHTML = `<article class="prose">
+<p>${d.signed_in} signed in · ${d.started} started reading</p>
+<h2>Content</h2>
+<table class="adm"><tr><th>Book</th><th>Readers</th><th>Avg</th><th>Done</th></tr>${d.books.map((b) => `<tr><td>${ROMAN[b.n]}</td><td>${b.readers}</td><td>${b.avg_pct}%</td><td>${b.finished}</td></tr>`).join("")}</table>
+<h2>Readers</h2>
+<table class="adm"><tr><th>Who</th><th>Done</th><th>Asks</th><th>Last</th></tr>${d.readers.map((r) => `<tr><td>${esc(r.name || r.email)}<small>${esc(r.email)} · ${r.logins} sign-in${r.logins === 1 ? "" : "s"} · ${r.notes} note${r.notes === 1 ? "" : "s"}</small></td><td>${r.pct}%</td><td>${r.asks}</td><td>${day(r.last_seen)}</td></tr>`).join("")}</table></article>`;
+  }
   function privacyView() {
     setTitle("Privacy", true);
     CHAT.set({ ...POEM, label: "Privacy" });
@@ -1368,6 +1385,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     else if (parts[0] === "notes") notesView();
     else if (parts[0] === "credits") creditsView();
     else if (parts[0] === "privacy") privacyView();
+    else if (parts[0] === "admin") adminView();
     else notFound();
     scrollTo(0, 0);
     if (after) requestAnimationFrame(after);

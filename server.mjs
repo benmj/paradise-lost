@@ -267,6 +267,30 @@ async function apiRoutes(req, res, url, user) {
       days: r.days.map((d) => ({ ...d, cost_usd: usd(d.cost_micro) })), top: r.top.map((t) => ({ ...t, cost_usd: usd(t.cost_micro) })),
     });
   }
+  if (url.pathname === '/api/admin/analytics' && req.method === 'GET') {
+    if (!user || !user.admin) return json(res, 403, { error: 'admins only' });
+    const lens = book.books.map((b) => b.lines.length);
+    const total = lens.reduce((a, b) => a + b, 0);
+    const per = lens.map(() => ({ readers: 0, done: 0, lines: 0 }));
+    const readers = db.readers().map((r) => {
+      let st = {}; try { st = JSON.parse(r.state || '{}'); } catch {}
+      let got = 0;
+      const books = lens.map((len, i) => {
+        const v = Math.min((st.read || {})[i + 1] || 0, len);
+        got += v;
+        if (v) { per[i].readers++; per[i].lines += v / len; if (v >= len - 2) per[i].done++; }
+        return v ? Math.round((v / len) * 100) : 0;
+      });
+      return { name: r.name, email: r.email, first_seen: r.first_seen, last_seen: r.last_seen, logins: r.logins, asks: r.asks,
+        pct: Math.round((got / total) * 1000) / 10, books, notes: Array.isArray(st.notes) ? st.notes.length : 0 };
+    });
+    return json(res, 200, {
+      signed_in: readers.length,
+      started: readers.filter((r) => r.pct > 0).length,
+      books: per.map((b, i) => ({ n: i + 1, title: book.books[i].title || `Book ${i + 1}`, readers: b.readers, finished: b.done, avg_pct: b.readers ? Math.round((b.lines / b.readers) * 100) : 0 })),
+      readers,
+    });
+  }
   if (url.pathname === '/api/dict' && req.method === 'GET') {
     if (limited(`dict:${clientIp(req)}`, 60, 60_000)) return json(res, 429, { error: 'too many lookups; wait a moment' });
     try { return json(res, 200, await lookup(url.searchParams.get('w'))); }

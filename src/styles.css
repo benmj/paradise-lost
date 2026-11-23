@@ -805,3 +805,8 @@ body.paged .site-foot, body.paged.has-player .site-foot, body.paged:has(.ask-fab
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 input, textarea, select { font-size: max(16px, 1em); }
 .chat-compose textarea { font-size: max(17px, 1em); }
+
+.adm { width: 100%; border-collapse: collapse; font-size: 16px; margin: 8px 0 24px; }
+.adm th { text-align: left; font-weight: 500; color: var(--ink-soft); font-size: 14px; }
+.adm th, .adm td { padding: 8px 6px; border-bottom: 1px solid var(--rule, rgba(128,128,128,.25)); vertical-align: top; }
+.adm td small { display: block; color: var(--ink-soft); font-size: 13px; overflow-wrap: anywhere; }
