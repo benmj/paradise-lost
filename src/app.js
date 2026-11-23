@@ -108,6 +108,20 @@
   const app = $("#app");
   document.body.insertAdjacentHTML("afterbegin", DEFS);
   const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), listenBtn = $("#listen"), dictBtn = $("#dict"), layoutMenu = $("#layout-menu"), progress = $("#progress");
+  // ── text size: scales the poem and note cards; cycles through five steps ──
+  const TS = [0.9, 1, 1.15, 1.3, 1.5], TSN = ["small", "normal", "large", "larger", "largest"];
+  let tsi = Math.min(TS.length - 1, Math.max(0, +store.get("ts", 1)));
+  const applyTs = () => {
+    document.documentElement.style.setProperty("--ts", TS[tsi]);
+    const b = $("#textsize"); b.setAttribute("aria-label", `Text size: ${TSN[tsi]}`); b.title = `Text size: ${TSN[tsi]}`;
+  };
+  applyTs();
+  $("#textsize").addEventListener("click", () => {
+    tsi = (tsi + 1) % TS.length;
+    store.set("ts", tsi); applyTs();
+    const h = $("#dict-hint"); h.textContent = `Text size: ${TSN[tsi]}`; h.hidden = false; clearTimeout(h._t); h._t = setTimeout(() => { h.hidden = true; h.textContent = "Dictionary on · tap a word"; }, 1400);
+    requestAnimationFrame(() => { if (reader) { reader.paged ? route() : (measure(), track()); } });
+  });
   $("#theme").addEventListener("click", () => {
     // light → dark → dim → light
     const cur = document.documentElement.dataset.theme
