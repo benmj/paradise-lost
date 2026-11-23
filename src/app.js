@@ -658,6 +658,15 @@ ${tabs(n, "read")}
     }, { passive: true });
     if (!pagedKeys) {
       pagedKeys = true;
+      // Wheel and trackpad turn one page per gesture (the page itself no longer scrolls).
+      let wheelAt = 0;
+      addEventListener("wheel", (e) => {
+        const q = reader;
+        if (!q || !q.paged || e.ctrlKey || document.body.classList.contains("chat-sheet") || e.target.closest?.(".player, .note-card, .chat, dialog")) return;
+        const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(d) < 12 || Date.now() - wheelAt < 450) return;
+        wheelAt = Date.now(); turn(d > 0 ? 1 : -1);
+      }, { passive: true });
       addEventListener("keydown", (e) => {
         const q = reader;
         if (!q || !q.paged || e.altKey || e.ctrlKey || e.metaKey) return;
@@ -691,7 +700,8 @@ ${tabs(n, "read")}
     const h = Math.max(280, Math.floor(innerHeight - top - 54 - reserve));
     r.stage.style.height = h + "px";
     r.paper.style.setProperty("--sh", h + "px");
-    const W = r.stage.clientWidth, gap = r.spread ? Math.min(72, Math.round(W * 0.06)) : 40;
+    const W = r.stage.clientWidth, gap = r.spread ? Math.max(56, Math.min(96, Math.round(W * 0.07))) : 40;
+    r.paper.style.setProperty("--gap", gap + "px");
     const cw = r.spread ? (W - gap) / 2 : W;
     r.flow.style.width = W + "px";
     r.flow.style.columnWidth = cw + "px";
