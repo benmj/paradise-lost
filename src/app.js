@@ -1281,6 +1281,8 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     app.innerHTML = `<article class="credits fade">
 <h1>Credits and copyright</h1>
 <p class="note">Made with love in New Orleans by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>.</p>
+<h2>Source and how it works</h2>
+<ul><li>Open source (MIT): <a href="https://github.com/benmj/paradise-lost" rel="noopener">github.com/benmj/paradise-lost</a>. Plain HTML, CSS and JavaScript on a small Node server, no framework. The poem, notes and plates are static data; the reader chat sends your question and the open passage to Claude.</li></ul>
 <h2>The poem</h2>
 <ul><li>Text of the second edition (1674) from <a href="https://www.gutenberg.org/ebooks/26" rel="noopener">Project Gutenberg #26</a>. Public domain.</li></ul>
 <h2>Plates</h2>
