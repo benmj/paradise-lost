@@ -2,6 +2,7 @@
 //
 // One node process, no npm dependencies (Node 22.5+, for node:sqlite):
 //   - serves the built app from DIST_DIR (scripts/build.py writes it from data/; dist/ is not committed)
+//   - GET /api/dict?w=word: the curated lexicon of Milton's senses plus the English Wiktionary (lib/dict.mjs); no sign-in
 //   - POST /api/chat streams a reply as server-sent events (lib/llm.mjs). The server builds the context
 //     from the poem itself; the client only says which book, line or character it is about.
 //   - three auth modes, picked by which settings exist:
@@ -29,6 +30,7 @@ import { loadBook, buildContext, checkMessages, SYSTEM, ChatError } from './lib/
 import { streamReply, MODEL, backend, costMicro } from './lib/llm.mjs';
 import { openDb } from './lib/db.mjs';
 import { makeAuth, sessionSecret } from './lib/auth.mjs';
+import { lookup, loadLexicon, DictError } from './lib/dict.mjs';
 
 const PORT = Number(process.env.PORT) || 8107;
 const HOST = process.env.HOST || '127.0.0.1';
@@ -62,6 +64,7 @@ const hostedFor = (u) => Boolean(u) && (MODE !== 'google' ? true : backend === '
 const ownKey = (req) => { const k = String(req.headers['x-user-api-key'] || '').trim(); return /^sk-ant-[A-Za-z0-9_-]{20,300}$/.test(k) ? k : ''; };
 
 const book = loadBook(path.join(DIST, 'data.js'));
+const LEXICON = loadLexicon(path.join(import.meta.dirname, 'data', 'lexicon.json'));
 const MAX_RUNNING = 4;
 let running = 0;
 const today = () => new Date().toISOString().slice(0, 10);
@@ -232,6 +235,11 @@ async function apiRoutes(req, res, url, user) {
       days: r.days.map((d) => ({ ...d, cost_usd: usd(d.cost_micro) })), top: r.top.map((t) => ({ ...t, cost_usd: usd(t.cost_micro) })),
     });
   }
+  if (url.pathname === '/api/dict' && req.method === 'GET') {
+    if (limited(`dict:${clientIp(req)}`, 60, 60_000)) return json(res, 429, { error: 'too many lookups; wait a moment' });
+    try { return json(res, 200, await lookup(url.searchParams.get('w'))); }
+    catch (e) { if (e instanceof DictError) return json(res, e.status, { error: e.message }); throw e; }
+  }
   if (url.pathname === '/api/chat' && req.method === 'POST') return chat(req, res, user);
   return json(res, 404, { error: 'not found' });
 }
@@ -283,7 +291,7 @@ async function chat(req, res, user) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, BASE_URL);
   try {
-    if (url.pathname === '/api/health') return json(res, 200, { ok: true, mode: MODE, backend, model: MODEL, books: book.books.length, running });
+    if (url.pathname === '/api/health') return json(res, 200, { ok: true, mode: MODE, backend, model: MODEL, books: book.books.length, lexicon: LEXICON, running });
     if (url.pathname.startsWith('/auth/')) return await authRoutes(req, res, url);
     const user = await currentUser(req);
     if (MODE === 'access') {

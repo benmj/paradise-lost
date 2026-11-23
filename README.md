@@ -7,6 +7,7 @@
   - **Three ways to read:** Scroll, Page (one book-style page at a time) and Two pages (a spread with a spine, on screens 820 px and wider). Turn pages with the arrows, space, swipe or the buttons; the layout and your place carry over when you switch.
   - **Read-along:** a Listen button in the Read view plays the LibriVox reading inline and lights the word being read. See "Read-along".
   - **Ask the Reader**: the only AI in the app, a chat about the passage you have open. `server.mjs` builds the context from the poem and streams the reply from the Anthropic API.
+  - **Dictionary:** an online dictionary with etymology. Tap any word (Dictionary button in the Read bar, or press and hold) for Milton's sense first, then Wiktionary senses ranked "In Milton's day" before "Today". See "Dictionary".
   - **Accounts** (public mode): Google sign-in, SQLite for users, reading place and usage. Reading needs no account; a saved place needs sign-in.
   - **Everything else is free and open to the public:** the guide, text, glosses, plates and listening list use no AI and need no account. Only chat is limited (own key, or the host's allowlist).
   - **Who pays for chat:** readers bring their own Anthropic API key (kept in their browser, sent per question, never stored). Only an allowlist and the admins use the host's key, capped per user per day and per month.
@@ -15,6 +16,7 @@
   browser ─► (proxy) ─► node server.mjs ─┬─► dist/ (static)
                                           ├─► /auth/* ─► Google
                                           ├─► /api/state, /api/me ─► SQLite
+                                          ├─► /api/dict ─► en.wiktionary.org (cached)
                                           └─► /api/chat ─► Anthropic API (key's owner pays)
   ```
 - **Documents:** this README, `NOTICE.md` (licenses of the text and plates), `.env.example` (every setting). Screenshots: `node scripts/shots.mjs` writes them to `shots/`.
@@ -56,6 +58,9 @@ Applies to the hosted key only (allowlist and admins); readers using their own k
 | `data/listen.json` | YouTube recitations, LibriVox readings and recommended audiobooks |
 | `src/` | The app: `index.html`, `app.js` (routes, reader, account), `chat.js`, `art.js` (SVG fallback art), `styles.css`, service worker, icons |
 | `art/web/NN.jpg`, `art/plates.json` | Doré's fifty plates (720 px JPEGs) and each one's book, line, title and mapping confidence |
+| `lib/dict.mjs` | Dictionary lookup: Milton spellings, Wiktionary parse, sense ranking, cache |
+| `data/lexicon.json` | Curated Milton lexicon (354 entries), from `scripts/lexicon.py` |
+| `scripts/lexicon.py` | Builds the lexicon: about 150 hand entries plus single-word guide glosses |
 | `lib/chat.mjs` | What the reader is told: system prompt, context per book, line or character, message checks |
 | `lib/llm.mjs` | Chat backends: Anthropic API over fetch, or `claude -p` for local use; cost estimate |
 | `lib/auth.mjs` | Google sign-in and signed session cookies |
@@ -80,6 +85,17 @@ The Read view has a headphones button in the top bar. It opens a compact player 
 - **Needs:** a Python venv (`.venv-align/`, ignored by git) with `torch`, `torchaudio` and `soundfile`, plus `ffmpeg` on the path.
 - **Audio files:** download the book's mp3 from the LibriVox item on archive.org (`paradiselost_1411_librivox`); keep it outside the repo.
 
+## Dictionary
+
+`GET /api/dict?w=<word>` returns `{word, resolved, found, milton, via, entries:[{pos, senses, old}], etymology, url, license}`.
+
+- **Source:** the English section of en.wiktionary.org through the MediaWiki action API (`node` fetch, a descriptive User-Agent). Text is CC BY-SA 4.0; the card links to the page. Raw HTML is never returned.
+- **Milton spellings:** lowercase, curly apostrophes, elisions (`th'` to the, `'d` to ed, `Heav'nly` to heavenly), irregulars (`o'er`, `ev'n`), stems (`-eth`, `-est`, `-ing`, `-ed`, `-s`), `ye` to you, and one "form of X" hop (`hath` to have).
+- **Ranking:** senses labelled obsolete, archaic, poetic, literary, Latinism or rare come first under "In Milton's day"; modern ones follow under "Today". Offensive senses are dropped.
+- **Lexicon:** `data/lexicon.json` has `{word, milton, note?, root}` per word, shown first as "Milton's sense", and also when Wiktionary has no sense (Pandemonium, Mammon, Belial). Rebuild with `python3 scripts/lexicon.py`.
+- **Here:** a tapped word with a guide gloss also shows "Milton's sense here" from that line.
+- **Limits:** in-memory LRU of 2000 words for 24 hours; upstream calls are spaced 300 ms apart; the service worker never caches `/api/`.
+
 ## Routes
 
 - `#/`: home, with the twelve books and where you left off.
@@ -93,6 +109,7 @@ The Read view has a headphones button in the top bar. It opens a compact player 
 
 | Route | What |
 |---|---|
+| `GET /api/dict?w=<word>` | Dictionary entry with etymology (no sign-in; 60 a minute per IP; word of 40 letters, hyphen or apostrophe) |
 | `GET /api/me` | Who is signed in, whether chat is on, share of today's allowance left |
 | `GET`/`PUT /api/state` | Reading place and per-book progress (signed in) |
 | `POST /api/chat` | Server-sent events: `{t}` text, `{done}`, `{error}` (signed in) |

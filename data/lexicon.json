@@ -1,0 +1,2375 @@
+[
+{
+"word": "abrupt",
+"milton": "Used as a noun: the abyss, the sheer gulf.",
+"src": "guide",
+"book": 2,
+"line": 409
+},
+{
+"word": "Absolved",
+"milton": "Completed (Latin absolvere, to finish).",
+"src": "guide",
+"book": 7,
+"line": 94
+},
+{
+"word": "abyss",
+"milton": "The bottomless depth.",
+"src": "hand",
+"root": "Greek abyssos 'bottomless'"
+},
+{
+"word": "accuser",
+"milton": "The Hebrew name Satan means adversary or accuser; Revelation calls him ‘the accuser of our brethren.’ Here he comes first as tempter.",
+"src": "guide",
+"book": 4,
+"line": 10
+},
+{
+"word": "Achilles",
+"milton": "In the Iliad, Achilles in his wrath chased Hector three times around the walls of Troy before killing him.",
+"src": "guide",
+"book": 9,
+"line": 15
+},
+{
+"word": "adamant",
+"milton": "A fabled unbreakable stone or metal.",
+"src": "hand",
+"note": "Not the diamond of later usage alone.",
+"root": "Greek adamas 'untamable'"
+},
+{
+"word": "adamantine",
+"milton": "Unbreakable, hard as adamant, the fabled hardest metal or stone.",
+"src": "hand",
+"note": "'Adamantine chains' (1.48).",
+"root": "Greek adamas 'untamable'"
+},
+{
+"word": "admiration",
+"milton": "Wonder, astonishment.",
+"src": "guide",
+"book": 7,
+"line": 52
+},
+{
+"word": "admire",
+"milton": "To wonder at, be amazed by.",
+"src": "hand",
+"note": "Milton often means astonishment, not approval.",
+"root": "Latin admirari 'to wonder at'"
+},
+{
+"word": "admired",
+"milton": "Wondered at.",
+"src": "guide",
+"book": 2,
+"line": 677
+},
+{
+"word": "adust",
+"milton": "Scorched, burnt dry.",
+"src": "guide",
+"book": 12,
+"line": 635
+},
+{
+"word": "adverse",
+"milton": "Opposed, hostile, facing.",
+"src": "hand",
+"root": "Latin adversus 'turned against'"
+},
+{
+"word": "aerial",
+"milton": "Of the air; airy.",
+"src": "hand",
+"root": "Latin aerius"
+},
+{
+"word": "Aialon",
+"milton": "Aijalon, the valley over which the moon stood still while Joshua defeated the Amorites at Gibeon (Joshua 10).",
+"src": "guide",
+"book": 12,
+"line": 266
+},
+{
+"word": "alchemy",
+"milton": "Trumpets made of an alloy that imitated gold.",
+"src": "guide",
+"book": 2,
+"line": 517
+},
+{
+"word": "Alcides",
+"milton": "Hercules. Maddened by the poisoned robe his wife sent him, he tore up pines and hurled his servant Lichas from Mount Oeta into the sea.",
+"src": "guide",
+"book": 2,
+"line": 542
+},
+{
+"word": "Alcinous",
+"milton": "King of the Phaeacians in Homer’s Odyssey, whose orchards bore fruit all year round.",
+"src": "guide",
+"book": 5,
+"line": 341
+},
+{
+"word": "alienate",
+"milton": "To estrange, make foreign.",
+"src": "hand",
+"root": "Latin alienare 'to make another's'"
+},
+{
+"word": "amarant",
+"milton": "Amaranth, from the Greek for ‘unfading,’ a flower that never wilts.",
+"src": "guide",
+"book": 3,
+"line": 352
+},
+{
+"word": "amarantine",
+"milton": "Of amaranth, the unfading flower of Heaven.",
+"src": "guide",
+"book": 11,
+"line": 78
+},
+{
+"word": "amaze",
+"milton": "To stupefy, bewilder, strike with confusion.",
+"src": "hand",
+"root": "Old English āmasian 'to stupefy'; later felt as 'a-maze'"
+},
+{
+"word": "amazement",
+"milton": "Bewilderment; being stunned or struck dumb with confusion.",
+"src": "hand",
+"note": "Much stronger than modern 'surprise'; it is the state of one lost in a maze.",
+"root": "Middle English amasen, from Old English āmasian 'to stupefy'"
+},
+{
+"word": "ambrosial",
+"milton": "Divinely sweet or fragrant; belonging to the gods' food.",
+"src": "hand",
+"root": "Greek ambrosios 'immortal'"
+},
+{
+"word": "amerce",
+"milton": "To punish with a fine; deprive of.",
+"src": "hand",
+"root": "Old French a merci 'at mercy'"
+},
+{
+"word": "amerced",
+"milton": "Punished by being deprived of.",
+"src": "guide",
+"book": 1,
+"line": 609
+},
+{
+"word": "ammiral",
+"milton": "Flagship, the admiral’s vessel.",
+"src": "guide",
+"book": 1,
+"line": 294
+},
+{
+"word": "Amphisbaena",
+"milton": "A fabled serpent with a head at each end. This catalogue of snakes comes from the Roman poet Lucan, who told how they sprang from the Gorgon’s blood in Libya.",
+"src": "guide",
+"book": 10,
+"line": 524
+},
+{
+"word": "Apocalypse",
+"milton": "The Book of Revelation. Its author hears a voice cry ‘Woe to the inhabiters of the earth’ when the Dragon is cast down (Revelation 12:12).",
+"src": "guide",
+"book": 4,
+"line": 2
+},
+{
+"word": "apostate",
+"milton": "One who has turned from his allegiance, such as a rebel angel.",
+"src": "hand",
+"root": "Greek apostasia 'standing away, defection'"
+},
+{
+"word": "appaid",
+"milton": "Satisfied, paid in full.",
+"src": "guide",
+"book": 12,
+"line": 401
+},
+{
+"word": "arbitrement",
+"milton": "Free decision, choice.",
+"src": "guide",
+"book": 8,
+"line": 641
+},
+{
+"word": "Ardours",
+"milton": "Burning ones: the seraphim, whose Hebrew name was understood to mean ‘burning’.",
+"src": "guide",
+"book": 5,
+"line": 249
+},
+{
+"word": "Argo",
+"milton": "Jason’s ship, which passed through the Clashing Rocks at the entrance to the Black Sea.",
+"src": "guide",
+"book": 2,
+"line": 1017
+},
+{
+"word": "argument",
+"milton": "Subject matter, theme of a work; also a proof or evidence.",
+"src": "hand",
+"note": "Milton's 'adventurous song' has an 'argument' in the sense of subject.",
+"root": "Latin argumentum 'proof, subject'"
+},
+{
+"word": "Argus",
+"milton": "The hundred-eyed watchman whom Hermes lulled to sleep with his pipe and wand, then killed.",
+"src": "guide",
+"book": 11,
+"line": 131
+},
+{
+"word": "Arimaspian",
+"milton": "A one-eyed people of Scythia who, Herodotus says, stole gold guarded by griffins.",
+"src": "guide",
+"book": 2,
+"line": 945
+},
+{
+"word": "arreed",
+"milton": "Advise, counsel. ‘Avant’ means begone.",
+"src": "guide",
+"book": 4,
+"line": 962
+},
+{
+"word": "artillery",
+"milton": "Weapons of any kind that throw missiles; in book 6 the cannon the rebels invent.",
+"src": "hand",
+"root": "Old French artillier 'to equip'"
+},
+{
+"word": "ascanse",
+"milton": "Aslant. One theory has the angels tilt the earth’s axis by more than twenty degrees, creating the seasons.",
+"src": "guide",
+"book": 10,
+"line": 668
+},
+{
+"word": "Asmadai",
+"milton": "Asmodeus, the demon of the Book of Tobit whom Raphael drove away; fittingly, Raphael defeats him here. Adramelech was an idol of the Assyrians (2 Kings 17:31).",
+"src": "guide",
+"book": 6,
+"line": 365
+},
+{
+"word": "Asmodeus",
+"milton": "In the Book of Tobit, a demon who loved Sara and killed her husbands; the smoke of a burning fish drove him away and the angel Raphael bound him in Egypt.",
+"src": "guide",
+"book": 4,
+"line": 168
+},
+{
+"word": "aspect",
+"milton": "Look, appearance, a gaze; stressed on the second syllable (aspéct).",
+"src": "hand",
+"note": "In astrology, a position of planets in relation to each other.",
+"root": "Latin aspectus 'a looking at'"
+},
+{
+"word": "Assessour",
+"milton": "One who sits beside a ruler and shares his authority.",
+"src": "guide",
+"book": 6,
+"line": 679
+},
+{
+"word": "Astracan",
+"milton": "Astrakhan on the Volga. The simile pictures Tartars retreating before the Russians and the Persian shah (‘Bactrin Sophi’) retreating before the Turks.",
+"src": "guide",
+"book": 10,
+"line": 432
+},
+{
+"word": "Astrea",
+"milton": "Astraea, goddess of justice, identified with the constellation Virgo; the scales are Libra, which lies between Virgo and Scorpio.",
+"src": "guide",
+"book": 4,
+"line": 998
+},
+{
+"word": "Atabalipa",
+"milton": "Atahualpa, the Inca emperor conquered by the Spanish.",
+"src": "guide",
+"book": 11,
+"line": 409
+},
+{
+"word": "Atlantean",
+"milton": "Like Atlas, the Titan who holds up the sky.",
+"src": "guide",
+"book": 2,
+"line": 306
+},
+{
+"word": "aught",
+"milton": "Anything.",
+"src": "hand",
+"root": "Old English āwiht 'any whit'"
+},
+{
+"word": "awful",
+"milton": "Awe-inspiring.",
+"src": "guide",
+"book": 8,
+"line": 577
+},
+{
+"word": "Baalim",
+"milton": "Plural of Baal; with Ashtaroth (plural of Ashtoreth) these are general names for the male and female gods of Canaan.",
+"src": "guide",
+"book": 1,
+"line": 422
+},
+{
+"word": "bates",
+"milton": "Slows down or stops to rest; short for ‘abates.’",
+"src": "guide",
+"book": 12,
+"line": 1
+},
+{
+"word": "battailous",
+"milton": "Warlike, arrayed for battle.",
+"src": "guide",
+"book": 6,
+"line": 81
+},
+{
+"word": "beelzebub",
+"milton": "Satan's second in command, 'lord of flies'; Satan's chief lieutenant.",
+"src": "hand",
+"root": "Hebrew baʿal zĕvūv 'lord of flies'"
+},
+{
+"word": "Behemoth",
+"milton": "The huge beast of Job 40, here taken to be the elephant.",
+"src": "guide",
+"book": 7,
+"line": 471
+},
+{
+"word": "belial",
+"milton": "Fallen angel of sloth and lewdness; his name means 'worthlessness'.",
+"src": "hand",
+"root": "Hebrew bĕliyyaʿal 'worthless'"
+},
+{
+"word": "Bellerophon",
+"milton": "The hero who tried to ride Pegasus up to heaven, was thrown, and wandered alone on the Aleian plain (Iliad, Book 6). Milton fears a similar fall.",
+"src": "guide",
+"book": 7,
+"line": 18
+},
+{
+"word": "Bellona",
+"milton": "The Roman goddess of war.",
+"src": "guide",
+"book": 2,
+"line": 922
+},
+{
+"word": "bower",
+"milton": "A leafy shelter; a private inner room.",
+"src": "hand",
+"note": "Adam and Eve's 'nuptial bower' is a shaded retreat.",
+"root": "Old English būr 'dwelling'"
+},
+{
+"word": "Briareos",
+"milton": "A hundred-handed giant; Typhon was a monster said to live in a cave in Cilicia near Tarsus. Both fought against Jove.",
+"src": "guide",
+"book": 1,
+"line": 199
+},
+{
+"word": "brute",
+"milton": "An animal without reason; irrational.",
+"src": "hand",
+"root": "Latin brutus 'dull, irrational'"
+},
+{
+"word": "Busiris",
+"milton": "A legendary tyrant of Egypt, here made the Pharaoh whose charioteers drowned pursuing the Israelites (the ‘sojourners of Goshen’) through the Red Sea.",
+"src": "guide",
+"book": 1,
+"line": 307
+},
+{
+"word": "buxom",
+"milton": "Yielding, offering no resistance.",
+"src": "guide",
+"book": 2,
+"line": 842
+},
+{
+"word": "Cambalu",
+"milton": "Khanbaliq, modern Beijing, capital of the Great Khan of Cathay. The lines that follow tour the great capitals of Asia, Africa and the Americas.",
+"src": "guide",
+"book": 11,
+"line": 388
+},
+{
+"word": "caparisons",
+"milton": "Ornamented cloths draped over horses.",
+"src": "guide",
+"book": 9,
+"line": 35
+},
+{
+"word": "capital",
+"milton": "To the head (Latin caput), and also deadly, fatal: a pun on the Serpent’s bruised head.",
+"src": "guide",
+"book": 12,
+"line": 383
+},
+{
+"word": "cataract",
+"milton": "A waterfall; the floodgates of heaven.",
+"src": "hand",
+"root": "Greek kataraktēs 'downrush'"
+},
+{
+"word": "causey",
+"milton": "Causeway.",
+"src": "guide",
+"book": 10,
+"line": 415
+},
+{
+"word": "champaign",
+"milton": "Open and level, like a plain.",
+"src": "guide",
+"book": 4,
+"line": 134
+},
+{
+"word": "champain",
+"milton": "Open, level country.",
+"src": "guide",
+"book": 6,
+"line": 2
+},
+{
+"word": "chaos",
+"milton": "The formless, unordered abyss before the Creation, and its personified ruler.",
+"src": "hand",
+"note": "Not 'disorder' alone: the raw matter between Hell and Heaven.",
+"root": "Greek khaos 'gaping void'"
+},
+{
+"word": "charming",
+"milton": "Spellbinding, in the old sense of casting a charm or song (Latin carmen).",
+"src": "guide",
+"book": 8,
+"line": 2
+},
+{
+"word": "Charybdis",
+"milton": "The whirlpool opposite Scylla; Ulysses steered between them in the Odyssey.",
+"src": "guide",
+"book": 2,
+"line": 1020
+},
+{
+"word": "cherub",
+"milton": "An angel of the second order; plural cherubim.",
+"src": "hand",
+"root": "Hebrew kĕrūb"
+},
+{
+"word": "cherubim",
+"milton": "Angels of the second order, set to guard Eden.",
+"src": "hand",
+"root": "Hebrew kĕrūbīm"
+},
+{
+"word": "chivalry",
+"milton": "Knighthood; a body of knights.",
+"src": "hand",
+"root": "Old French chevalerie"
+},
+{
+"word": "Circean",
+"milton": "Circe, the enchantress of the Odyssey, turned men into beasts that came at her call.",
+"src": "guide",
+"book": 9,
+"line": 522
+},
+{
+"word": "Cleombrotus",
+"milton": "A young man who drowned himself after reading Plato’s dialogue on the immortality of the soul.",
+"src": "guide",
+"book": 3,
+"line": 473
+},
+{
+"word": "Collateral",
+"milton": "Side by side, between equals; there may be a play on the rib from Adam’s side.",
+"src": "guide",
+"book": 8,
+"line": 426
+},
+{
+"word": "colure",
+"milton": "Either of two great circles of the heavens running through the poles; crossing them means travelling from pole to pole.",
+"src": "guide",
+"book": 9,
+"line": 66
+},
+{
+"word": "complacence",
+"milton": "Delight, the one in whom I am pleased.",
+"src": "guide",
+"book": 3,
+"line": 276
+},
+{
+"word": "conceit",
+"milton": "A conception or thought; an imagining.",
+"src": "hand",
+"note": "Not yet 'vanity'.",
+"root": "Middle English conceiven, from Latin concipere 'to take in'"
+},
+{
+"word": "confound",
+"milton": "To ruin, overthrow, bewilder, throw into disorder.",
+"src": "hand",
+"root": "Latin confundere 'to pour together'"
+},
+{
+"word": "Confusion",
+"milton": "Babel, which Genesis links to the Hebrew balal, ‘to confuse.’",
+"src": "guide",
+"book": 12,
+"line": 62
+},
+{
+"word": "consort",
+"milton": "Company, partnership, fellowship; a partner.",
+"src": "hand",
+"root": "Latin consors 'sharing a lot'"
+},
+{
+"word": "conversation",
+"milton": "Behaviour, manner of living.",
+"src": "hand",
+"note": "'Conversation' is how one conducts oneself, not only talk.",
+"root": "Latin conversatio 'dwelling with'"
+},
+{
+"word": "converse",
+"milton": "Company, social intercourse; to keep company.",
+"src": "hand",
+"root": "Latin conversari 'to associate with'"
+},
+{
+"word": "cope",
+"milton": "A vault or canopy, here made of flying fire.",
+"src": "guide",
+"book": 6,
+"line": 215
+},
+{
+"word": "cormorant",
+"milton": "A greedy seabird, a byword for gluttony.",
+"src": "guide",
+"book": 4,
+"line": 196
+},
+{
+"word": "craze",
+"milton": "Crack or shatter; Exodus says God ‘took off their chariot wheels.’",
+"src": "guide",
+"book": 12,
+"line": 210
+},
+{
+"word": "cressets",
+"milton": "Iron baskets of burning fuel, used as lamps.",
+"src": "guide",
+"book": 1,
+"line": 728
+},
+{
+"word": "crisped",
+"milton": "Rippled, curling.",
+"src": "guide",
+"book": 4,
+"line": 237
+},
+{
+"word": "Danite",
+"milton": "Samson, of the tribe of Dan, who woke in Delilah’s lap shorn of his hair and his strength.",
+"src": "guide",
+"book": 9,
+"line": 1059
+},
+{
+"word": "Darien",
+"milton": "The isthmus of Panama, the barrier between the Atlantic and the Pacific.",
+"src": "guide",
+"book": 9,
+"line": 81
+},
+{
+"word": "darkling",
+"milton": "In the dark. The ‘wakeful bird’ is the nightingale.",
+"src": "guide",
+"book": 3,
+"line": 39
+},
+{
+"word": "defended",
+"milton": "Forbidden, from the French défendre.",
+"src": "guide",
+"book": 11,
+"line": 86
+},
+{
+"word": "Delos",
+"milton": "The Greek island that floated loose until Zeus fixed it so Latona could give birth there.",
+"src": "guide",
+"book": 10,
+"line": 296
+},
+{
+"word": "Demogorgon",
+"milton": "A shadowy primeval deity, so dreadful that his name was not to be spoken.",
+"src": "guide",
+"book": 2,
+"line": 965
+},
+{
+"word": "Deucalion",
+"milton": "In Greek myth, Deucalion and his wife Pyrrha survived a flood sent by Zeus and prayed at the shrine of Themis to restore the human race.",
+"src": "guide",
+"book": 11,
+"line": 12
+},
+{
+"word": "devote",
+"milton": "Consigned to destruction, doomed.",
+"src": "guide",
+"book": 3,
+"line": 208
+},
+{
+"word": "disastrous",
+"milton": "Ill-starred, unlucky, boding disaster.",
+"src": "hand",
+"note": "Literally 'with a bad star'.",
+"root": "Italian disastro, Greek astron 'star'"
+},
+{
+"word": "Discursive",
+"milton": "Reasoning step by step, as humans mostly do; ‘intuitive’ reason grasps truth at once, as angels mostly do.",
+"src": "guide",
+"book": 5,
+"line": 488
+},
+{
+"word": "disobedience",
+"milton": "The act of Adam and Eve in eating the forbidden fruit; the poem's first word and its subject.",
+"src": "hand",
+"note": "Milton means the whole refusal of God's command, not only a single breach.",
+"root": "Latin dis- + oboedire 'to obey'"
+},
+{
+"word": "displode",
+"milton": "Explode, fire off; a ‘tire’ is a volley or row of guns.",
+"src": "guide",
+"book": 6,
+"line": 605
+},
+{
+"word": "Divan",
+"milton": "A council of state, from the Turkish word.",
+"src": "guide",
+"book": 10,
+"line": 457
+},
+{
+"word": "dividual",
+"milton": "Separate; liberty and reason have no existence apart from each other.",
+"src": "guide",
+"book": 12,
+"line": 85
+},
+{
+"word": "dominations",
+"milton": "The Dominions, one of the orders of angels.",
+"src": "hand",
+"root": "Latin dominatio 'rule'"
+},
+{
+"word": "Dothan",
+"milton": "Where the Syrian king sent an army to seize the prophet Elisha, and the mountain filled with horses and chariots of fire to protect him (2 Kings 6).",
+"src": "guide",
+"book": 11,
+"line": 217
+},
+{
+"word": "eden",
+"milton": "The garden of God.",
+"src": "hand",
+"note": "The Hebrew name means 'delight'.",
+"root": "Hebrew ʿēden 'delight'"
+},
+{
+"word": "emmet",
+"milton": "Ant. Proverbs 6 holds up the ant as provident; Milton adds that its society may model a just commonwealth of equals.",
+"src": "guide",
+"book": 7,
+"line": 485
+},
+{
+"word": "Empedocles",
+"milton": "A Greek philosopher said to have leapt into Etna so that people would think he had become a god.",
+"src": "guide",
+"book": 3,
+"line": 471
+},
+{
+"word": "empyreal",
+"milton": "Of the Empyrean, the highest heaven, a region of pure fire and light.",
+"src": "hand",
+"root": "Greek empyros 'in fire'"
+},
+{
+"word": "empyrean",
+"milton": "The highest heaven, the region of pure fire and light where God dwells.",
+"src": "hand",
+"root": "Greek empyros 'in fire'"
+},
+{
+"word": "emulation",
+"milton": "Rivalry, jealous contest for superiority.",
+"src": "hand",
+"root": "Latin aemulatio"
+},
+{
+"word": "engine",
+"milton": "An ingenious contrivance; a machine of war, esp. a cannon.",
+"src": "hand",
+"root": "Latin ingenium 'native talent, device'"
+},
+{
+"word": "engines",
+"milton": "Ingenious contrivances; machines of war, esp. cannon (6.484).",
+"src": "hand",
+"root": "Latin ingenium"
+},
+{
+"word": "Enna",
+"milton": "The meadow in Sicily where Proserpine was picking flowers when Dis, god of the underworld, carried her off; her mother Ceres searched the world for her.",
+"src": "guide",
+"book": 4,
+"line": 269
+},
+{
+"word": "enow",
+"milton": "Enough.",
+"src": "hand",
+"root": "Old English genōg; archaic plural of 'enough'"
+},
+{
+"word": "epicycle",
+"milton": "A small circle whose center travels around a larger one, used to explain why planets seem to loop backward.",
+"src": "guide",
+"book": 8,
+"line": 84
+},
+{
+"word": "Epidaurus",
+"milton": "Site of the shrine of Aesculapius, god of healing, who appeared there as a serpent.",
+"src": "guide",
+"book": 9,
+"line": 507
+},
+{
+"word": "erebus",
+"milton": "The primeval darkness of the underworld.",
+"src": "hand",
+"root": "Greek erebos 'darkness'"
+},
+{
+"word": "essence",
+"milton": "Being, nature; spiritual substance.",
+"src": "hand",
+"note": "Angels are pure 'essence', not matter.",
+"root": "Latin essentia, from esse 'to be'"
+},
+{
+"word": "ethereal",
+"milton": "Of the aether: the pure fifth element above air and fire, of which the heavens are made.",
+"src": "hand",
+"root": "Greek aithēr 'upper air, blaze'"
+},
+{
+"word": "exercise",
+"milton": "To train, torment, or put to trial.",
+"src": "hand",
+"root": "Latin exercere 'to drive on, keep at work'"
+},
+{
+"word": "Exploded",
+"milton": "Hissed and jeered off, the word’s original sense.",
+"src": "guide",
+"book": 11,
+"line": 669
+},
+{
+"word": "fancy",
+"milton": "The imagination; the faculty that makes mental images.",
+"src": "hand",
+"root": "Greek phantasia"
+},
+{
+"word": "fantasy",
+"milton": "The imagination, the faculty that forms images.",
+"src": "hand",
+"note": "In Eve's dream, the 'fancy' is its working part.",
+"root": "Greek phantasia 'appearance'"
+},
+{
+"word": "fatal",
+"milton": "Ordained by fate; deadly.",
+"src": "hand",
+"root": "Latin fatalis, from fatum 'fate'"
+},
+{
+"word": "fealty",
+"milton": "The loyalty a vassal swears to his lord.",
+"src": "guide",
+"book": 8,
+"line": 344
+},
+{
+"word": "Feature",
+"milton": "Form or shape: Death, who has no proper shape.",
+"src": "guide",
+"book": 10,
+"line": 279
+},
+{
+"word": "fell",
+"milton": "Cruel, fierce, deadly.",
+"src": "hand",
+"root": "Old French fel 'cruel'"
+},
+{
+"word": "fiend",
+"milton": "An enemy, an adversary; a devil.",
+"src": "hand",
+"root": "Old English fēond 'enemy'"
+},
+{
+"word": "flood",
+"milton": "The sea, a river, any great body of water.",
+"src": "hand",
+"root": "Old English flōd"
+},
+{
+"word": "flown",
+"milton": "Swollen, flushed.",
+"src": "guide",
+"book": 1,
+"line": 502
+},
+{
+"word": "fond",
+"milton": "Foolish.",
+"src": "hand",
+"note": "'Fondly' is foolishly.",
+"root": "Middle English fonned 'made a fool of'"
+},
+{
+"word": "fondly",
+"milton": "Foolishly.",
+"src": "hand",
+"root": "Middle English fonned 'foolish'"
+},
+{
+"word": "frequent",
+"milton": "Crowded, thronged.",
+"src": "hand",
+"root": "Latin frequens 'crowded'"
+},
+{
+"word": "front",
+"milton": "Forehead, face.",
+"src": "hand",
+"root": "Latin frons 'forehead'"
+},
+{
+"word": "frore",
+"milton": "Frosty, freezing.",
+"src": "guide",
+"book": 2,
+"line": 595
+},
+{
+"word": "fruit",
+"milton": "Both the literal fruit of the forbidden tree and what comes of the act: its consequence.",
+"src": "hand",
+"note": "'Fruit' plays on both senses in 1.1–2.",
+"root": "Latin fructus 'enjoyment, produce'"
+},
+{
+"word": "Fusil",
+"milton": "Cast by melting and pouring metal.",
+"src": "guide",
+"book": 11,
+"line": 573
+},
+{
+"word": "Galileo",
+"milton": "Galileo’s telescope (the ‘glass’) revealed mountains and what seemed seas on the moon. Milton visited him in Italy, and he is the only contemporary named in the poem.",
+"src": "guide",
+"book": 5,
+"line": 262
+},
+{
+"word": "Gehenna",
+"milton": "The valley of Hinnom outside Jerusalem, where children were burned to Moloch; its name became a word for Hell.",
+"src": "guide",
+"book": 1,
+"line": 405
+},
+{
+"word": "gender",
+"milton": "To beget, produce.",
+"src": "hand",
+"root": "Latin generare 'to beget'"
+},
+{
+"word": "genial",
+"milton": "Of marriage or generation; nuptial.",
+"src": "hand",
+"root": "Latin genialis 'of the genius, of birth'"
+},
+{
+"word": "glister",
+"milton": "To glitter, shine.",
+"src": "hand",
+"root": "Middle English glisteren"
+},
+{
+"word": "gloze",
+"milton": "To flatter, to speak smoothly in order to deceive.",
+"src": "hand",
+"root": "Greek glōssa 'tongue' → 'to explain away'"
+},
+{
+"word": "glozed",
+"milton": "Flattered with smooth, deceitful talk; a ‘proem’ is a preface.",
+"src": "guide",
+"book": 9,
+"line": 549
+},
+{
+"word": "glozing",
+"milton": "Flattering; deceiving with fair words.",
+"src": "hand",
+"root": "Greek glōssa 'tongue'"
+},
+{
+"word": "Gordian",
+"milton": "Intricately knotted, like the Gordian knot that Alexander cut.",
+"src": "guide",
+"book": 4,
+"line": 348
+},
+{
+"word": "gorgeous",
+"milton": "Splendidly adorned, richly dressed.",
+"src": "hand",
+"root": "Old French gorgias"
+},
+{
+"word": "Gorgonian",
+"milton": "Like the Gorgon Medusa, whose look turned people to stone.",
+"src": "guide",
+"book": 10,
+"line": 297
+},
+{
+"word": "Graces",
+"milton": "The three Graces of classical myth, goddesses of beauty and charm; a ‘pomp’ is a procession.",
+"src": "guide",
+"book": 8,
+"line": 61
+},
+{
+"word": "griding",
+"milton": "Piercing, cutting through. A ‘discontinuous wound’ is a medical term for a gash that breaks the body’s continuity.",
+"src": "guide",
+"book": 6,
+"line": 329
+},
+{
+"word": "grisly",
+"milton": "Horrible, dreadful, causing horror. Not 'grey'.",
+"src": "hand",
+"root": "Old English grislic 'horrible'"
+},
+{
+"word": "Hail",
+"milton": "The angel Gabriel’s greeting to Mary at the Annunciation (Luke 1:28). Mary was called the ‘second Eve’ because her son would undo Eve’s fall.",
+"src": "guide",
+"book": 5,
+"line": 385
+},
+{
+"word": "Hameth",
+"milton": "Hamath in Syria, the northern limit of the promised land; the ‘Desart south’ is the Wilderness of Zin.",
+"src": "guide",
+"book": 12,
+"line": 139
+},
+{
+"word": "hear’st",
+"milton": "A Latin idiom: ‘would you rather be called.’ Milton is trying out names for Light.",
+"src": "guide",
+"book": 3,
+"line": 7
+},
+{
+"word": "heavenly",
+"milton": "Of or from Heaven; divine.",
+"src": "hand",
+"note": "Milton prints 'Heav'nly' to be read as two syllables.",
+"root": "Old English heofon"
+},
+{
+"word": "Hesperus",
+"milton": "The evening star, the planet Venus seen at dusk.",
+"src": "guide",
+"book": 9,
+"line": 49
+},
+{
+"word": "hierarchy",
+"milton": "A rank or order of angels.",
+"src": "hand",
+"root": "Greek hieros 'sacred' + arkhē 'rule'"
+},
+{
+"word": "horrent",
+"milton": "Bristling.",
+"src": "hand",
+"root": "Latin horrere 'to bristle'"
+},
+{
+"word": "horrid",
+"milton": "Bristling, rough; also dreadful.",
+"src": "hand",
+"note": "The older sense is physical: standing on end, like hair or spears.",
+"root": "Latin horridus 'bristling'"
+},
+{
+"word": "Hosanna",
+"milton": "A Hebrew cry of praise, originally ‘save, we pray’.",
+"src": "guide",
+"book": 6,
+"line": 205
+},
+{
+"word": "hull",
+"milton": "Drift with sails furled, at the mercy of the water.",
+"src": "guide",
+"book": 11,
+"line": 840
+},
+{
+"word": "humor",
+"milton": "A bodily fluid or moisture (one of the four humours); temperament.",
+"src": "hand",
+"root": "Latin umor 'liquid'"
+},
+{
+"word": "humour",
+"milton": "A bodily fluid or moisture (one of the four humours); temperament.",
+"src": "hand",
+"root": "Latin umor 'liquid'"
+},
+{
+"word": "hyacinthine",
+"milton": "A Homeric epithet for hair, probably dark and curling like the hyacinth flower.",
+"src": "guide",
+"book": 4,
+"line": 301
+},
+{
+"word": "hyaline",
+"milton": "Glassy; ‘the glassy sea’ before God’s throne in Revelation 4:6.",
+"src": "guide",
+"book": 7,
+"line": 619
+},
+{
+"word": "Hymen",
+"milton": "The god of marriage.",
+"src": "guide",
+"book": 11,
+"line": 591
+},
+{
+"word": "hymenaean",
+"milton": "A wedding song, from Hymen, the god of marriage.",
+"src": "guide",
+"book": 4,
+"line": 711
+},
+{
+"word": "Imaus",
+"milton": "A mountain range of central Asia, roughly the Himalaya and Hindu Kush.",
+"src": "guide",
+"book": 3,
+"line": 431
+},
+{
+"word": "Impresses",
+"milton": "Emblems with mottoes painted on knights’ shields.",
+"src": "guide",
+"book": 9,
+"line": 35
+},
+{
+"word": "increate",
+"milton": "Uncreated, existing from eternity.",
+"src": "guide",
+"book": 3,
+"line": 6
+},
+{
+"word": "infernal",
+"milton": "Of the lower world; of Hell.",
+"src": "hand",
+"root": "Latin infernus 'lower'"
+},
+{
+"word": "influence",
+"milton": "The supposed flow of power from the stars upon human affairs.",
+"src": "hand",
+"note": "An astrological term.",
+"root": "Latin influere 'to flow in'"
+},
+{
+"word": "inhabitant",
+"milton": "A dweller.",
+"src": "hand",
+"root": "Latin inhabitare"
+},
+{
+"word": "inordinate",
+"milton": "Disordered, immoderate, out of due rank.",
+"src": "hand",
+"root": "Latin inordinatus 'not set in order'"
+},
+{
+"word": "involve",
+"milton": "To wrap up, surround, wind around.",
+"src": "hand",
+"root": "Latin involvere 'to roll in'"
+},
+{
+"word": "irreconcilable",
+"milton": "Not to be made friends again.",
+"src": "hand",
+"root": "Latin reconciliare"
+},
+{
+"word": "irriguous",
+"milton": "Well watered.",
+"src": "guide",
+"book": 4,
+"line": 255
+},
+{
+"word": "Ithuriel",
+"milton": "Milton’s Hebrew-sounding names: Ithuriel suggests ‘discovery of God,’ Zephon ‘searcher.’",
+"src": "guide",
+"book": 4,
+"line": 788
+},
+{
+"word": "jaculation",
+"milton": "Hurling, throwing.",
+"src": "guide",
+"book": 6,
+"line": 665
+},
+{
+"word": "jealous",
+"milton": "Zealous, vigilant, watchful of one's own honour or rights; suspicious of rivals.",
+"src": "hand",
+"note": "God is 'jealous' in the Biblical sense of guarding what is his.",
+"root": "Old French gelos, from Greek zēlos 'zeal'"
+},
+{
+"word": "Jesus",
+"milton": "‘Jesus’ is the Greek form of the Hebrew Joshua, so Joshua leading Israel into Canaan prefigures Christ.",
+"src": "guide",
+"book": 12,
+"line": 310
+},
+{
+"word": "ken",
+"milton": "Range of sight; the distance one can see.",
+"src": "hand",
+"root": "Old English cennan 'to make known'"
+},
+{
+"word": "kind",
+"milton": "Nature, species, sort.",
+"src": "hand",
+"note": "'After his kind' is Biblical: according to its species.",
+"root": "Old English gecynd 'nature'"
+},
+{
+"word": "landskip",
+"milton": "Landscape, in the sense of a painted view.",
+"src": "guide",
+"book": 4,
+"line": 153
+},
+{
+"word": "Leucothea",
+"milton": "‘The white goddess,’ identified with the Roman goddess of dawn.",
+"src": "guide",
+"book": 11,
+"line": 135
+},
+{
+"word": "Leviathan",
+"milton": "The great sea creature of Job 41; the tale of sailors mooring to a sleeping whale they take for an island comes from medieval bestiaries.",
+"src": "guide",
+"book": 1,
+"line": 201
+},
+{
+"word": "limbeck",
+"milton": "Alembic, a still used in distilling.",
+"src": "guide",
+"book": 3,
+"line": 605
+},
+{
+"word": "limbo",
+"milton": "A region on the edge of Hell for the vain; 'the Paradise of Fools'.",
+"src": "hand",
+"root": "Latin limbus 'edge'"
+},
+{
+"word": "limitary",
+"milton": "Guarding a boundary; Satan sneers at Gabriel as a mere border guard.",
+"src": "guide",
+"book": 4,
+"line": 971
+},
+{
+"word": "lucid",
+"milton": "Bright, shining, transparent.",
+"src": "hand",
+"root": "Latin lucidus, from lux 'light'"
+},
+{
+"word": "lucifer",
+"milton": "Light-bringer, the morning star; Satan's name before the Fall.",
+"src": "hand",
+"root": "Latin lux 'light' + ferre 'to bear'"
+},
+{
+"word": "Maeotis",
+"milton": "The Sea of Azov, beyond Pontus, the Black Sea; the Ob is a great river of Siberia.",
+"src": "guide",
+"book": 9,
+"line": 78
+},
+{
+"word": "Mahanaim",
+"milton": "Where Jacob met a host of angels and named the place ‘two camps’ (Genesis 32).",
+"src": "guide",
+"book": 11,
+"line": 214
+},
+{
+"word": "mammon",
+"milton": "Wealth personified; the fallen angel who looked downward at the gold of Heaven's pavement.",
+"src": "hand",
+"root": "Aramaic māmōnā 'riches'"
+},
+{
+"word": "mansion",
+"milton": "A dwelling-place, abode.",
+"src": "hand",
+"note": "Heavenly 'mansions' are places to dwell, not houses.",
+"root": "Latin mansio 'a staying'"
+},
+{
+"word": "maugre",
+"milton": "In spite of.",
+"src": "guide",
+"book": 3,
+"line": 255
+},
+{
+"word": "meaths",
+"milton": "Meads: sweet drinks, here pressed from berries. ‘Must’ is fresh unfermented grape juice.",
+"src": "guide",
+"book": 5,
+"line": 345
+},
+{
+"word": "Megaera",
+"milton": "One of the Furies, who had snakes for hair.",
+"src": "guide",
+"book": 10,
+"line": 560
+},
+{
+"word": "Meliboean",
+"milton": "Meliboea in Thessaly and Sarra (Tyre) were famous for purple dye; ‘grain’ means dye.",
+"src": "guide",
+"book": 11,
+"line": 242
+},
+{
+"word": "messiah",
+"milton": "The Anointed One.",
+"src": "hand",
+"root": "Hebrew māšīaḥ 'anointed'"
+},
+{
+"word": "mole",
+"milton": "A massive pier or causeway of stone.",
+"src": "guide",
+"book": 10,
+"line": 300
+},
+{
+"word": "moloch",
+"milton": "Fallen angel, the god of the Ammonites, worshipped with child sacrifice.",
+"src": "hand",
+"note": "The first of the rebels to speak in council (book 2).",
+"root": "Hebrew mōlek 'king'"
+},
+{
+"word": "mulciber",
+"milton": "The Roman name of Vulcan, the smith of the gods; here the architect of Pandemonium.",
+"src": "hand",
+"root": "Latin mulcere 'to soften' (metal)"
+},
+{
+"word": "murren",
+"milton": "Murrain, a deadly plague of cattle.",
+"src": "guide",
+"book": 12,
+"line": 179
+},
+{
+"word": "nathless",
+"milton": "Nevertheless.",
+"src": "hand",
+"root": "Old English nā þȳ lǣs 'not the less'"
+},
+{
+"word": "naught",
+"milton": "Nothing; worthless.",
+"src": "hand",
+"root": "Old English nāwiht 'no whit'"
+},
+{
+"word": "Negus",
+"milton": "The emperor of Abyssinia (Ethiopia).",
+"src": "guide",
+"book": 11,
+"line": 397
+},
+{
+"word": "nice",
+"milton": "Fastidious, finely discriminating.",
+"src": "guide",
+"book": 8,
+"line": 399
+},
+{
+"word": "Niphates",
+"milton": "A mountain in Armenia, near the region where Eden was placed.",
+"src": "guide",
+"book": 3,
+"line": 742
+},
+{
+"word": "Nisroch",
+"milton": "An Assyrian god, in whose temple King Sennacherib was murdered (2 Kings 19:37).",
+"src": "guide",
+"book": 6,
+"line": 447
+},
+{
+"word": "nocent",
+"milton": "Harmful; the opposite of innocent.",
+"src": "guide",
+"book": 9,
+"line": 186
+},
+{
+"word": "obnoxious",
+"milton": "Exposed to harm, liable, subject to.",
+"src": "hand",
+"note": "Not 'offensive'.",
+"root": "Latin obnoxius 'exposed to harm', from noxa 'injury'"
+},
+{
+"word": "obscure",
+"milton": "Dark, hidden, not seen.",
+"src": "hand",
+"root": "Latin obscurus 'covered over'"
+},
+{
+"word": "Obsequious",
+"milton": "Dutiful, obedient, without the modern sense of fawning.",
+"src": "guide",
+"book": 6,
+"line": 10
+},
+{
+"word": "obvious",
+"milton": "Standing in the way (Latin obvius); no hill or valley breaks their ranks.",
+"src": "guide",
+"book": 6,
+"line": 69
+},
+{
+"word": "Occasionally",
+"milton": "For a particular occasion, as an afterthought: to Adam, Eve seems made first, not later to meet his need.",
+"src": "guide",
+"book": 8,
+"line": 556
+},
+{
+"word": "Officious",
+"milton": "Dutiful, performing a service; no sense of meddling.",
+"src": "guide",
+"book": 8,
+"line": 99
+},
+{
+"word": "Omnifick",
+"milton": "All-creating; Milton’s own coinage.",
+"src": "guide",
+"book": 7,
+"line": 217
+},
+{
+"word": "opacous",
+"milton": "Opaque, dark.",
+"src": "guide",
+"book": 3,
+"line": 418
+},
+{
+"word": "Ophion",
+"milton": "In a Greek myth, the serpent Ophion and Eurynome ruled Olympus before Saturn; Milton suggests the devils spread a garbled memory of the serpent and Eve.",
+"src": "guide",
+"book": 10,
+"line": 581
+},
+{
+"word": "Ophir",
+"milton": "The land of King Solomon’s gold, which some identified with Sofala in east Africa.",
+"src": "guide",
+"book": 11,
+"line": 400
+},
+{
+"word": "Ophiuchus",
+"milton": "The Serpent-Bearer, a huge northern constellation. Comets were believed to bring plague and war.",
+"src": "guide",
+"book": 2,
+"line": 709
+},
+{
+"word": "orb",
+"milton": "A sphere, circle or ring; a heavenly body or the sphere that carries it; a circular motion.",
+"src": "hand",
+"root": "Latin orbis 'circle, disc'"
+},
+{
+"word": "ordnance",
+"milton": "Mounted guns, cannon.",
+"src": "hand",
+"root": "From ordinance 'arrangement'"
+},
+{
+"word": "Oreb",
+"milton": "Horeb, another name for Mount Sinai, where Moses (the ‘shepherd’ of line 8) received the Law.",
+"src": "guide",
+"book": 1,
+"line": 7
+},
+{
+"word": "orient",
+"milton": "Eastern; rising, shining like the dawn.",
+"src": "hand",
+"note": "'Orient pearl' is lustrous.",
+"root": "Latin oriens 'rising'"
+},
+{
+"word": "orisons",
+"milton": "Prayers.",
+"src": "guide",
+"book": 5,
+"line": 145
+},
+{
+"word": "Ormus",
+"milton": "Hormuz, an island in the Persian Gulf famous as a market for jewels; ‘Ind’ is India.",
+"src": "guide",
+"book": 2,
+"line": 2
+},
+{
+"word": "ounce",
+"milton": "A lynx or snow leopard. The ‘libbard’ of the next line is a leopard, and ‘brinded’ means streaked.",
+"src": "guide",
+"book": 7,
+"line": 466
+},
+{
+"word": "ounces",
+"milton": "Lynxes or snow leopards; ‘pards’ are leopards.",
+"src": "guide",
+"book": 4,
+"line": 344
+},
+{
+"word": "palpable",
+"milton": "That can be touched or felt.",
+"src": "hand",
+"note": "'Palpable obscure' (2.406) is darkness that can be felt.",
+"root": "Latin palpabilis"
+},
+{
+"word": "pandemonium",
+"milton": "Milton's coinage: the high capital of Hell, built by Mammon and Mulciber: 'the palace of all the demons'.",
+"src": "hand",
+"note": "First recorded here (1.756); the word later came to mean any uproar.",
+"root": "Greek pan 'all' + daimōn 'demon, spirit'"
+},
+{
+"word": "Pandora",
+"milton": "The first woman in Greek myth, given gifts by all the gods and brought by Hermes to Epimetheus, ‘the unwiser son of Japhet,’ to punish his brother Prometheus for stealing fire.",
+"src": "guide",
+"book": 4,
+"line": 714
+},
+{
+"word": "paradise",
+"milton": "A walled garden of delight.",
+"src": "hand",
+"root": "Old Persian pairidaēza 'walled enclosure'"
+},
+{
+"word": "passion",
+"milton": "Any strong feeling or movement of the mind, also suffering.",
+"src": "hand",
+"note": "Passions are what the soul suffers, as opposed to what reason does.",
+"root": "Latin passio 'suffering', from pati 'to suffer'"
+},
+{
+"word": "paynim",
+"milton": "A pagan, a heathen.",
+"src": "hand",
+"root": "Old French paienime 'paganism'"
+},
+{
+"word": "peccant",
+"milton": "Sinning, guilty.",
+"src": "guide",
+"book": 11,
+"line": 70
+},
+{
+"word": "peculiar",
+"milton": "Specially chosen, God’s own; from the biblical ‘a peculiar people.’",
+"src": "guide",
+"book": 12,
+"line": 111
+},
+{
+"word": "petrifick",
+"milton": "Turning things to stone.",
+"src": "guide",
+"book": 10,
+"line": 294
+},
+{
+"word": "Petsora",
+"milton": "The Pechora region of northern Russia, beyond which explorers hoped to find a northeast passage to China (Cathay).",
+"src": "guide",
+"book": 10,
+"line": 292
+},
+{
+"word": "phoenix",
+"milton": "A mythical bird, only one alive at a time. The new phoenix carries the remains of the old to the temple of the Sun in Egypt, so all other birds stare at it.",
+"src": "guide",
+"book": 5,
+"line": 272
+},
+{
+"word": "platane",
+"milton": "Plane tree.",
+"src": "guide",
+"book": 4,
+"line": 478
+},
+{
+"word": "Pleiades",
+"milton": "The star cluster of the Seven Sisters. ‘Sweet influence’ recalls Job 38:31, ‘Canst thou bind the sweet influences of Pleiades?’",
+"src": "guide",
+"book": 7,
+"line": 374
+},
+{
+"word": "Pomona",
+"milton": "Roman goddess of fruit trees, courted by Vertumnus in disguise; Pales was goddess of flocks and pastures.",
+"src": "guide",
+"book": 9,
+"line": 393
+},
+{
+"word": "pomp",
+"milton": "A solemn procession; splendid display.",
+"src": "hand",
+"root": "Greek pompē 'procession'"
+},
+{
+"word": "Pontifical",
+"milton": "Bridge-building (from Latin pons, bridge), with a dig at the pope, the Pontifex.",
+"src": "guide",
+"book": 10,
+"line": 313
+},
+{
+"word": "portentous",
+"milton": "Ominous, foreboding.",
+"src": "hand",
+"root": "Latin portentum 'sign, omen'"
+},
+{
+"word": "potent",
+"milton": "Powerful.",
+"src": "hand",
+"root": "Latin potens 'being able'"
+},
+{
+"word": "pravity",
+"milton": "Depravity, corruption.",
+"src": "guide",
+"book": 12,
+"line": 288
+},
+{
+"word": "pregnant",
+"milton": "Teeming with potential; full of meaning; cogent.",
+"src": "hand",
+"root": "Latin praegnans 'with child'"
+},
+{
+"word": "prevent",
+"milton": "To go before, anticipate; to come first.",
+"src": "hand",
+"note": "'Prevenient grace' is grace that goes before. Not 'to stop'.",
+"root": "Latin praevenire 'to come before'"
+},
+{
+"word": "prime",
+"milton": "First, earliest, original.",
+"src": "hand",
+"note": "'Prime' is also 'the first age of the world'.",
+"root": "Latin primus 'first'"
+},
+{
+"word": "princedoms",
+"milton": "The Principalities, one of the orders of angels.",
+"src": "hand",
+"root": "Middle English prince + -dom"
+},
+{
+"word": "procinct",
+"milton": "Readiness; ‘war in procinct’ is war girded up and ready to begin.",
+"src": "guide",
+"book": 6,
+"line": 19
+},
+{
+"word": "prodigious",
+"milton": "Portentous, ominous, monstrous.",
+"src": "hand",
+"root": "Latin prodigiosus 'marvellous, ominous'"
+},
+{
+"word": "profluent",
+"milton": "Flowing; Milton held that baptism should be in running water.",
+"src": "guide",
+"book": 12,
+"line": 442
+},
+{
+"word": "prone",
+"milton": "Bent forward or downward; leaning.",
+"src": "hand",
+"root": "Latin pronus 'leaning forward'"
+},
+{
+"word": "Proserpina",
+"milton": "Ceres is pictured before she bore Proserpina to Jove, that is, still a virgin goddess.",
+"src": "guide",
+"book": 9,
+"line": 396
+},
+{
+"word": "Pythian",
+"milton": "The Pythian games, held at Delphi in honour of Apollo.",
+"src": "guide",
+"book": 2,
+"line": 530
+},
+{
+"word": "Python",
+"milton": "The huge serpent bred from the mud after the flood and slain by Apollo at Delphi.",
+"src": "guide",
+"book": 10,
+"line": 531
+},
+{
+"word": "quadrate",
+"milton": "A square military formation.",
+"src": "guide",
+"book": 6,
+"line": 62
+},
+{
+"word": "quadrature",
+"milton": "Square shape; Heaven is imagined as square, the created world as round (‘orbicular’).",
+"src": "guide",
+"book": 10,
+"line": 381
+},
+{
+"word": "quaternion",
+"milton": "A group of four: the four elements, earth, water, air and fire, which in old science endlessly change into one another.",
+"src": "guide",
+"book": 5,
+"line": 181
+},
+{
+"word": "quintessence",
+"milton": "The fifth, purest element above earth, water, air and fire.",
+"src": "hand",
+"root": "Latin quinta essentia 'fifth essence'"
+},
+{
+"word": "rase",
+"milton": "Erase, wipe out.",
+"src": "guide",
+"book": 12,
+"line": 53
+},
+{
+"word": "reason",
+"milton": "The faculty of thought: either 'discursive' (step by step, human) or 'intuitive' (instant, angelic).",
+"src": "hand",
+"note": "Raphael states the distinction in 5.486–90.",
+"root": "Latin ratio"
+},
+{
+"word": "recure",
+"milton": "Heal, restore.",
+"src": "guide",
+"book": 12,
+"line": 393
+},
+{
+"word": "reins",
+"milton": "Kidneys.",
+"src": "guide",
+"book": 6,
+"line": 346
+},
+{
+"word": "reluctant",
+"milton": "Struggling against, resisting.",
+"src": "hand",
+"root": "Latin reluctari 'to struggle against'"
+},
+{
+"word": "remorse",
+"milton": "Pity, compassion; also pangs of conscience.",
+"src": "hand",
+"note": "Latin 'biting back': the sense of pity is the older one.",
+"root": "Latin remorsus, from mordēre 'to bite'"
+},
+{
+"word": "remove",
+"milton": "A change of place; to shift or withdraw.",
+"src": "hand",
+"root": "Latin removere"
+},
+{
+"word": "respiration",
+"milton": "Breathing space, relief; the ‘times of refreshing’ of Acts 3:19.",
+"src": "guide",
+"book": 12,
+"line": 540
+},
+{
+"word": "rhomb",
+"milton": "The outermost sphere of the old astronomy, imagined as whirling all the heavens around the earth once a day.",
+"src": "guide",
+"book": 8,
+"line": 134
+},
+{
+"word": "Rimmon",
+"milton": "A god of Damascus; the leper Naaman, once his worshipper, was cured and turned to the God of Israel, while King Ahaz copied a Syrian altar (2 Kings 5 and 16).",
+"src": "guide",
+"book": 1,
+"line": 467
+},
+{
+"word": "ruth",
+"milton": "Pity, compassion, sorrow for another.",
+"src": "hand",
+"note": "'Ruthless' is its negative that survived.",
+"root": "Middle English ruthe, from Old Norse hryggð"
+},
+{
+"word": "Sabean",
+"milton": "Of Saba, or Sheba, in southern Arabia, ‘Araby the blest,’ famous for spices and incense.",
+"src": "guide",
+"book": 4,
+"line": 162
+},
+{
+"word": "sad",
+"milton": "Grave, serious, sober; steadfast. Not necessarily sorrowful.",
+"src": "hand",
+"note": "'Sad cure' and 'sad civility' mean grave or earnest.",
+"root": "Old English sæd 'sated', then 'steadfast'"
+},
+{
+"word": "Sagacious",
+"milton": "Keen-scented, in its old literal sense.",
+"src": "guide",
+"book": 10,
+"line": 281
+},
+{
+"word": "satan",
+"milton": "The Adversary.",
+"src": "hand",
+"note": "Milton's Satan is first named 'Satan' in 1.82; the word is Hebrew for 'adversary'.",
+"root": "Hebrew śāṭān 'adversary'"
+},
+{
+"word": "sciential",
+"milton": "Of knowledge; knowing.",
+"src": "hand",
+"root": "Latin scientia 'knowledge'"
+},
+{
+"word": "Scylla",
+"milton": "A sea monster whose lower body was ringed with dogs, haunting the strait between Italy and Sicily (the ‘Trinacrian shore’).",
+"src": "guide",
+"book": 2,
+"line": 660
+},
+{
+"word": "Sechem",
+"milton": "Shechem, where Abraham first camped in Canaan, near the oak (or plain) of Moreh.",
+"src": "guide",
+"book": 12,
+"line": 136
+},
+{
+"word": "secure",
+"milton": "Free from care, over-confident, unwary. Not 'safe'.",
+"src": "hand",
+"note": "'Secure of' = careless about.",
+"root": "Latin securus 'sine cura', without care"
+},
+{
+"word": "sedition",
+"milton": "Open rebellion, revolt.",
+"src": "hand",
+"root": "Latin seditio 'a going apart'"
+},
+{
+"word": "seisure",
+"milton": "A legal term: taking possession of property. Death is cheated of his claim for now.",
+"src": "guide",
+"book": 11,
+"line": 254
+},
+{
+"word": "Senir",
+"milton": "A peak of the Hermon range, beyond the Jordan.",
+"src": "guide",
+"book": 12,
+"line": 146
+},
+{
+"word": "sensible",
+"milton": "Perceptible by the senses; sensitive.",
+"src": "hand",
+"root": "Latin sensibilis"
+},
+{
+"word": "senteries",
+"milton": "Sentries, guard posts.",
+"src": "guide",
+"book": 2,
+"line": 412
+},
+{
+"word": "sequent",
+"milton": "Later, succeeding: the new Pharaoh ‘which knew not Joseph’ (Exodus 1).",
+"src": "guide",
+"book": 12,
+"line": 165
+},
+{
+"word": "seraph",
+"milton": "An angel of the highest order, 'burning one'.",
+"src": "hand",
+"root": "Hebrew śārāf 'burning'"
+},
+{
+"word": "seraphim",
+"milton": "The highest order of angels, 'burning ones'.",
+"src": "hand",
+"root": "Hebrew śĕrāfīm"
+},
+{
+"word": "Sericana",
+"milton": "China. Travellers reported that the Chinese drove light wagons fitted with sails.",
+"src": "guide",
+"book": 3,
+"line": 438
+},
+{
+"word": "silly",
+"milton": "Simple, innocent, helpless; harmless.",
+"src": "hand",
+"note": "Still carries the older sense 'blessed, harmless'.",
+"root": "Old English sǣlig 'happy, blessed'"
+},
+{
+"word": "Sodom",
+"milton": "Fruit near the Dead Sea was said to look ripe but turn to ash and smoke when bitten.",
+"src": "guide",
+"book": 10,
+"line": 562
+},
+{
+"word": "Sollicit",
+"milton": "Disturb, trouble.",
+"src": "guide",
+"book": 8,
+"line": 167
+},
+{
+"word": "sovereign",
+"milton": "Supreme, chief, ruling.",
+"src": "hand",
+"note": "Milton writes it 'sovran'.",
+"root": "Latin superanus 'above'"
+},
+{
+"word": "sovereignty",
+"milton": "Supreme power.",
+"src": "hand",
+"root": "Latin superanus"
+},
+{
+"word": "sovran",
+"milton": "Supreme, chief; Milton's spelling of 'sovereign'.",
+"src": "hand",
+"note": "He prefers the Italian-shaped sovran.",
+"root": "Italian sovrano, Latin superanus"
+},
+{
+"word": "sphere",
+"milton": "One of the concentric transparent shells that carry the planets and stars in the old astronomy.",
+"src": "hand",
+"root": "Greek sphaira 'ball'"
+},
+{
+"word": "spirit",
+"milton": "Any incorporeal being; breath, the vital power.",
+"src": "hand",
+"root": "Latin spiritus 'breath'"
+},
+{
+"word": "spirits",
+"milton": "Immaterial beings (angels or devils); also the vital forces.",
+"src": "hand",
+"root": "Latin spiritus 'breath'"
+},
+{
+"word": "stygian",
+"milton": "Of the river Styx; hellish.",
+"src": "hand",
+"root": "Greek Stygios, from Styx 'the hateful'"
+},
+{
+"word": "Styx",
+"milton": "The four rivers of the classical underworld; Milton translates each name: Styx ‘hateful,’ Acheron ‘sorrow,’ Cocytus ‘lamentation,’ Phlegethon ‘fiery.’",
+"src": "guide",
+"book": 2,
+"line": 577
+},
+{
+"word": "sublime",
+"milton": "Lifted up, high, raised aloft.",
+"src": "hand",
+"note": "Used of physical height, not 'noble' alone.",
+"root": "Latin sublimis 'uplifted'"
+},
+{
+"word": "success",
+"milton": "Outcome, result (good or bad).",
+"src": "hand",
+"root": "Latin successus 'a coming up, outcome'"
+},
+{
+"word": "succinct",
+"milton": "Tucked up, girded for speed.",
+"src": "guide",
+"book": 3,
+"line": 643
+},
+{
+"word": "synod",
+"milton": "An assembly or council; Satan grandly calls his rebels ‘Gods’ in council.",
+"src": "guide",
+"book": 6,
+"line": 156
+},
+{
+"word": "Syrtis",
+"milton": "The Syrtes, notorious quicksands and shoals off the coast of Libya.",
+"src": "guide",
+"book": 2,
+"line": 939
+},
+{
+"word": "Tantalus",
+"milton": "Punished in the underworld by standing in water that recedes whenever he stoops to drink.",
+"src": "guide",
+"book": 2,
+"line": 614
+},
+{
+"word": "Tartarean",
+"milton": "Of Tartarus, the deepest pit of the classical underworld.",
+"src": "guide",
+"book": 2,
+"line": 69
+},
+{
+"word": "tartareous",
+"milton": "Like tartar, the dregs that settle out of wine; with a hint of Tartarus, the classical pit of punishment.",
+"src": "guide",
+"book": 7,
+"line": 238
+},
+{
+"word": "tartarus",
+"milton": "The deepest pit of the classical underworld, here a name for Hell.",
+"src": "hand",
+"root": "Greek Tartaros"
+},
+{
+"word": "tedded",
+"milton": "Spread out to dry, as with mown hay.",
+"src": "guide",
+"book": 9,
+"line": 450
+},
+{
+"word": "temper",
+"milton": "To mix in due proportion; to bring to a right state.",
+"src": "hand",
+"root": "Latin temperare 'to mix'"
+},
+{
+"word": "tempt",
+"milton": "To try, test, put to the proof.",
+"src": "hand",
+"note": "The older sense: to test.",
+"root": "Latin temptare 'to test'"
+},
+{
+"word": "Thammuz",
+"milton": "A Syrian god identified with Adonis; women mourned his death each year, when the river Adonis ran red with soil washed from Lebanon.",
+"src": "guide",
+"book": 1,
+"line": 446
+},
+{
+"word": "Thamyris",
+"milton": "A Thracian poet blinded for challenging the Muses. Maeonides is Homer; Tiresias and Phineus were blind prophets.",
+"src": "guide",
+"book": 3,
+"line": 35
+},
+{
+"word": "thrall",
+"milton": "Slave, captive, bondman.",
+"src": "hand",
+"root": "Old Norse þræll 'slave'"
+},
+{
+"word": "Tine",
+"milton": "Kindle, set alight.",
+"src": "guide",
+"book": 10,
+"line": 1075
+},
+{
+"word": "Tobias",
+"milton": "In the apocryphal Book of Tobit, Raphael travels in disguise with young Tobias and helps him marry Sarah, whose seven earlier husbands had been killed by a demon on their wedding nights.",
+"src": "guide",
+"book": 5,
+"line": 222
+},
+{
+"word": "tract",
+"milton": "A stretch or expanse of space or time.",
+"src": "hand",
+"root": "Latin tractus 'a drawing out'"
+},
+{
+"word": "transpicuous",
+"milton": "Transparent.",
+"src": "guide",
+"book": 8,
+"line": 141
+},
+{
+"word": "trepidation",
+"milton": "Trembling; in the old astronomy, the supposed wobble of the outermost spheres (3.483).",
+"src": "hand",
+"root": "Latin trepidatio 'agitation'"
+},
+{
+"word": "triform",
+"milton": "Three-formed: the moon waxing, full and waning, and the triple goddess of the moon, Diana and Hecate.",
+"src": "guide",
+"book": 3,
+"line": 730
+},
+{
+"word": "trophy",
+"milton": "A monument or token of victory.",
+"src": "hand",
+"root": "Greek tropaion 'monument of a rout'"
+},
+{
+"word": "Turnus",
+"milton": "In the Aeneid, Turnus fights Aeneas after his promised bride Lavinia is given to the Trojan instead.",
+"src": "guide",
+"book": 9,
+"line": 17
+},
+{
+"word": "umbrageous",
+"milton": "Shady, casting shade.",
+"src": "hand",
+"root": "Latin umbra 'shade'"
+},
+{
+"word": "uncouth",
+"milton": "Unknown, strange, unfamiliar.",
+"src": "hand",
+"note": "Not yet 'rude'.",
+"root": "Old English uncūþ 'unknown'"
+},
+{
+"word": "urania",
+"milton": "The Heavenly Muse; Greek 'heavenly'.",
+"src": "hand",
+"note": "The muse Milton invokes at 7.1, a Christian Urania, not the classical one.",
+"root": "Greek ourania 'heavenly'"
+},
+{
+"word": "Uriel",
+"milton": "Hebrew for ‘light of God,’ one of the seven archangels of Jewish tradition who stand before God’s throne.",
+"src": "guide",
+"book": 3,
+"line": 648
+},
+{
+"word": "Urim",
+"milton": "Gems worn on the breastplate of Israel’s high priest (Exodus 28:30).",
+"src": "guide",
+"book": 6,
+"line": 761
+},
+{
+"word": "Vallombrosa",
+"milton": "A wooded valley near Florence; the name means ‘shady valley.’",
+"src": "guide",
+"book": 1,
+"line": 303
+},
+{
+"word": "vans",
+"milton": "Wings.",
+"src": "guide",
+"book": 2,
+"line": 927
+},
+{
+"word": "vaunt",
+"milton": "To boast.",
+"src": "hand",
+"root": "Old French vanter, Latin vanitare"
+},
+{
+"word": "Vicegerent",
+"milton": "Deputy, one who rules on another’s behalf.",
+"src": "guide",
+"book": 10,
+"line": 56
+},
+{
+"word": "vicissitude",
+"milton": "Alternation, as of day and night; ‘grateful’ here means pleasing.",
+"src": "guide",
+"book": 6,
+"line": 8
+},
+{
+"word": "virtue",
+"milton": "Power, efficacy, inherent strength; also moral excellence. As 'Virtues': an order of angels.",
+"src": "hand",
+"root": "Latin virtus 'manliness, strength'"
+},
+{
+"word": "virtues",
+"milton": "Powers; also the Virtues, one of the orders of angels.",
+"src": "hand",
+"root": "Latin virtus 'strength'"
+},
+{
+"word": "visage",
+"milton": "Face.",
+"src": "hand",
+"root": "Old French vis 'face'"
+},
+{
+"word": "vital",
+"milton": "Life-giving; of life.",
+"src": "hand",
+"root": "Latin vitalis"
+},
+{
+"word": "volant",
+"milton": "Flying, nimble. The musician is Jubal and the smith Tubal-cain, descendants of Cain in Genesis 4.",
+"src": "guide",
+"book": 11,
+"line": 561
+},
+{
+"word": "wanton",
+"milton": "Unrestrained, running riot; playful and sportive, sometimes lascivious.",
+"src": "hand",
+"note": "Eve's 'wanton ringlets' (4.306) are luxuriant and uncontrolled, not yet sinful.",
+"root": "Middle English wan- 'un-' + towen 'trained'"
+},
+{
+"word": "weened",
+"milton": "Supposed, expected.",
+"src": "guide",
+"book": 6,
+"line": 86
+},
+{
+"word": "welkin",
+"milton": "The sky.",
+"src": "hand",
+"root": "Old English wolcen 'cloud'"
+},
+{
+"word": "wight",
+"milton": "A creature, a person.",
+"src": "hand",
+"root": "Old English wiht 'creature'"
+},
+{
+"word": "wons",
+"milton": "Dwells.",
+"src": "guide",
+"book": 7,
+"line": 457
+},
+{
+"word": "wonted",
+"milton": "Accustomed, usual.",
+"src": "hand",
+"root": "Old English gewunod 'accustomed'"
+},
+{
+"word": "wrought",
+"milton": "Worked, made, brought about.",
+"src": "hand",
+"root": "Old English worhte, past of wyrcan 'to work'"
+},
+{
+"word": "Xerxes",
+"milton": "The Persian king who bridged the Hellespont with boats to invade Greece, and had the sea whipped when a storm broke his bridge.",
+"src": "guide",
+"book": 10,
+"line": 307
+},
+{
+"word": "zodiack",
+"milton": "The seven-branched lampstand of the tabernacle was read as a figure of the seven planets moving through the zodiac.",
+"src": "guide",
+"book": 12,
+"line": 255
+},
+{
+"word": "’sdeined",
+"milton": "Disdained.",
+"src": "guide",
+"book": 4,
+"line": 50
+}
+]

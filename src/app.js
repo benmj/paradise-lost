@@ -93,7 +93,7 @@
   // ── shell ──
   const app = $("#app");
   document.body.insertAdjacentHTML("afterbegin", DEFS);
-  const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), listenBtn = $("#listen"), layoutMenu = $("#layout-menu"), progress = $("#progress");
+  const header = $(".topbar"), backBtn = $("#back"), titleEl = $("#title"), plainBtn = $("#plain"), layoutBtn = $("#layout"), listenBtn = $("#listen"), dictBtn = $("#dict"), layoutMenu = $("#layout-menu"), progress = $("#progress");
   $("#theme").addEventListener("click", () => {
     // light → dark → dim → light
     const cur = document.documentElement.dataset.theme
@@ -418,6 +418,7 @@ ${GROUPS.map(([label, kinds]) => {
     layoutBtn.hidden = false;
     progress.hidden = false;
     listenBtn.hidden = true;
+    dictBtn.hidden = false;
     plAvail(n).then((ok) => { if (reader && reader.n === n) listenBtn.hidden = !ok; });
 
     const secAt = new Map(g.sections.map((s) => [s.from, s]));
@@ -492,11 +493,18 @@ ${tabs(n, "read")}
     poem.addEventListener("click", (e) => {
       // Read-along open: a tap in the number margin of a line plays from there.
       if (pl.open && pl.n === n && e.target.classList.contains("ln") && e.clientX > e.target.getBoundingClientRect().right - 30) { e.stopPropagation(); return plSeekLine(+e.target.dataset.l); }
+      if (dictLong) { dictLong = false; e.stopPropagation(); e.preventDefault(); return; }
+      if (dictMode && !e.target.closest(".fam-mark")) {
+        const hit = wordAtPoint(e.clientX, e.clientY), gl0 = e.target.closest(".gl");
+        const w = hit ? hit.word : gl0 ? glossWord(g.glosses[+gl0.dataset.g]) : "";
+        if (w) { e.stopPropagation(); return openDict(w, hit ? hit.line : g.glosses[+gl0.dataset.g].line, gl0); }
+      }
       const gl = e.target.closest(".gl");
-      if (gl) { e.stopPropagation(); return showGloss(n, g, +gl.dataset.g, gl); }
+      if (gl) { e.stopPropagation(); const hit = wordAtPoint(e.clientX, e.clientY); return showGloss(n, g, +gl.dataset.g, gl, hit && gl.contains(hit.node) ? hit.word : ""); }
       const fm = e.target.closest(".fam-mark");
       if (fm) { e.stopPropagation(); return showFamous(n, g, +fm.dataset.f, fm); }
     });
+    dictPress(poem);
     // Pages are laid out by column: plates must have their size before the pages are counted.
     if (mode !== "scroll") poem.querySelectorAll("img[loading=lazy]").forEach((im) => { im.loading = "eager"; });
     reader = { n, total, els: [...poem.querySelectorAll(".ln")], tops: [], lastL: 0, g, target: at, t0: performance.now(), paged: mode !== "scroll", spread: mode === "spread" };
@@ -930,8 +938,15 @@ ${tabs(n, "read")}
 
   // ── note card: a gloss, or why a passage is famous ──
   const card = $("#note-card"), ncWord = $("#nc-word"), ncText = $("#nc-text"), ncAsk = $("#nc-ask");
-  let cardAsk = "", cardFrom = null;
-  function openNote(word, text, ask, from) {
+  const ncDict = $("#nc-dict"), ncDictBtn = $("#nc-dictbtn");
+  let cardAsk = "", cardFrom = null, cardDict = null;
+  function openNote(word, text, ask, from, dict) {
+    if (dictAbort) dictAbort.abort();
+    cardDict = dict || null;
+    ncDictBtn.hidden = !dict;
+    ncText.hidden = false;
+    ncDict.hidden = true;
+    card.classList.remove("dict");
     if (cardFrom) cardFrom.classList.remove("open");
     cardFrom = from || null;
     if (cardFrom) cardFrom.classList.add("open");
@@ -945,14 +960,15 @@ ${tabs(n, "read")}
   }
   function closeNote() {
     if (card.hidden) return;
+    if (dictAbort) dictAbort.abort();
     card.hidden = true;
     if (cardFrom) cardFrom.classList.remove("open");
     cardFrom = null;
   }
-  function showGloss(n, g, i, el) {
+  function showGloss(n, g, i, el, tapped) {
     const x = g.glosses[i];
     const line = book(n).lines[x.line - 1];
-    openNote(`<small>${ref(n, x.line)}</small>${esc(x.word)}`, x.note, `> ${line}\n\nWhat does “${x.word}” mean here (${ref(n, x.line)})?`, el);
+    openNote(`<small>${ref(n, x.line)}</small>${esc(x.word)}`, x.note, `> ${line}\n\nWhat does “${x.word}” mean here (${ref(n, x.line)})?`, el, { word: tapped || glossWord(x), line: x.line });
   }
   function showFamous(n, g, i, el) {
     const f = g.famous[i];
@@ -961,8 +977,126 @@ ${tabs(n, "read")}
   }
   $("#nc-close").addEventListener("click", closeNote);
   ncAsk.addEventListener("click", () => { const a = cardAsk; closeNote(); CHAT.ask(a); });
+  ncDictBtn.addEventListener("click", () => { if (cardDict) openDict(cardDict.word, cardDict.line, cardFrom); });
+
   document.addEventListener("click", (e) => { if (!card.hidden && !card.contains(e.target)) closeNote(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeNote(); });
+
+  // ── dictionary: any word, from Wiktionary plus Milton's own senses (/api/dict) ──
+  // Hit-testing uses caretPositionFromPoint / caretRangeFromPoint, so the poem's markup is never touched.
+  let dictMode = false, dictAbort = null, dictLong = false;
+  const hint = $("#dict-hint");
+  const WORDCH = /[\p{L}'’-]/u;
+  const letters = (t) => String(t).toLowerCase().replace(/[’‘]/g, "'").replace(/[^\p{L}']/gu, "");
+  const glossWord = (x) => (x.word.split(/[\s-]+/).find((p) => letters(p).length > 1) || x.word).replace(/^[^\p{L}’']+|[^\p{L}]+$/gu, "");
+  function setDictMode(on) {
+    dictMode = on;
+    document.body.classList.toggle("dict-mode", on);
+    dictBtn.classList.toggle("on", on);
+    dictBtn.setAttribute("aria-pressed", String(on));
+    clearTimeout(setDictMode.t);
+    hint.hidden = !on;
+    if (on) setDictMode.t = setTimeout(() => { hint.hidden = true; }, 3500);
+  }
+  dictBtn.addEventListener("click", (e) => { e.stopPropagation(); setDictMode(!dictMode); });
+  function wordAtPoint(x, y) {
+    let node, off;
+    if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); if (!p) return null; node = p.offsetNode; off = p.offset; }
+    else if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(x, y); if (!r) return null; node = r.startContainer; off = r.startOffset; }
+    else return null;
+    if (!node || node.nodeType !== 3 || !node.parentElement) return null;
+    const ln = node.parentElement.closest(".ln");
+    if (!ln) return null;
+    const t = node.data;
+    let s = Math.min(off, t.length), e = s;
+    while (s > 0 && WORDCH.test(t[s - 1])) s--;
+    while (e < t.length && WORDCH.test(t[e])) e++;
+    if (s === e) return null;
+    const r = document.createRange();
+    r.setStart(node, s); r.setEnd(node, e);
+    const on = [...r.getClientRects()].some((b) => x >= b.left - 3 && x <= b.right + 3 && y >= b.top - 3 && y <= b.bottom + 3);
+    const w = t.slice(s, e).replace(/^[-‘]+|[-'’‘]+$/g, "");
+    return on && letters(w).length > 0 ? { word: w, line: +ln.dataset.l, node } : null;
+  }
+  // Press and hold on a word (about half a second, finger or mouse held still) opens it.
+  function dictPress(poem) {
+    let timer = 0, x0 = 0, y0 = 0;
+    const stop = () => { clearTimeout(timer); timer = 0; };
+    poem.addEventListener("pointerdown", (e) => {
+      dictLong = false;
+      if (e.button > 0 || e.target.closest(".gl, .fam-mark")) return;
+      stop(); x0 = e.clientX; y0 = e.clientY;
+      timer = setTimeout(() => {
+        timer = 0;
+        const h = wordAtPoint(x0, y0);
+        if (!h) return;
+        dictLong = true;
+        setTimeout(() => { dictLong = false; }, 900);
+        try { getSelection().removeAllRanges(); } catch {}
+        openDict(h.word, h.line, null);
+      }, 520);
+    });
+    poem.addEventListener("pointermove", (e) => { if (timer && Math.hypot(e.clientX - x0, e.clientY - y0) > 8) stop(); });
+    ["pointerup", "pointercancel", "pointerleave", "scroll"].forEach((n) => poem.addEventListener(n, stop, { passive: true }));
+    poem.addEventListener("contextmenu", (e) => { if (dictLong) e.preventDefault(); });
+  }
+  // Dictionary mode also follows a selected word (double-click, or Shift+arrows for keyboard users).
+  let selTimer = 0;
+  document.addEventListener("selectionchange", () => {
+    clearTimeout(selTimer);
+    if (!dictMode) return;
+    selTimer = setTimeout(() => {
+      const sel = getSelection();
+      if (!sel || sel.isCollapsed || !sel.anchorNode) return;
+      const w = sel.toString().trim();
+      const el = sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode;
+      const ln = el && el.closest && el.closest("#poem .ln");
+      if (ln && /^[\p{L}'’-]{2,40}$/u.test(w)) openDict(w, +ln.dataset.l, null);
+    }, 450);
+  });
+  const WIKI = "https://en.wiktionary.org/wiki/";
+  function dictHtml(word, d, gloss) {
+    const li = (a) => a.map((x) => `<li>${esc(x)}</li>`).join("");
+    let h = "";
+    if (gloss) h += `<div class="dc-m"><b>Milton’s sense here</b>${esc(gloss.note)}</div>`;
+    const m = d && d.milton;
+    if (m && !(gloss && m.src === "guide")) h += `<div class="dc-m"><b>Milton’s sense</b>${esc(m.milton)}${m.note ? `<span class="dc-n">${esc(m.note)}</span>` : ""}${m.root ? `<span class="dc-n">Root: ${esc(m.root)}</span>` : ""}</div>`;
+    const entries = (d && d.entries) || [];
+    if (d && d.via) h += `<p class="dc-via">“${esc(d.via.from)}”: ${esc(d.via.note)}. Showing “${esc(d.resolved)}”.</p>`;
+    entries.forEach((e) => {
+      const old = e.senses.slice(0, e.old), now = e.senses.slice(e.old);
+      h += `<h4 class="dc-pos">${esc(e.pos)}</h4>`;
+      if (old.length) h += `<div class="dc-sub">In Milton’s day</div><ol>${li(old)}</ol>`;
+      if (now.length) h += `${old.length ? `<div class="dc-sub">Today</div>` : ""}<ol start="${old.length + 1}">${li(now)}</ol>`;
+    });
+    if (d && d.etymology && d.etymology.length) h += `<h4 class="dc-pos">Etymology</h4>${d.etymology.map((t) => `<p class="dc-ety">${esc(t)}</p>`).join("")}`;
+    const url = d && /^https:\/\/en\.wiktionary\.org\/wiki\//.test(d.url || "") ? d.url : `${WIKI}${encodeURIComponent(word)}`;
+    if (!entries.length) h += `<p class="dc-none">No dictionary entry found for “${esc(word)}”.</p>`;
+    h += entries.length ? `<p class="dc-src"><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Wiktionary, CC BY-SA 4.0</a></p>` : `<p class="dc-src"><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Search Wiktionary</a></p>`;
+    return h;
+  }
+  async function openDict(word, line, from) {
+    const n = reader && reader.n, g = reader && reader.g;
+    const lw = letters(word);
+    const gloss = g && g.glosses.find((x) => x.line === line && (letters(x.word) === lw || x.word.split(/[\s-]+/).some((p) => letters(p) === lw)));
+    const lineText = n ? book(n).lines[line - 1] : "";
+    openNote(`<small>Dictionary${n ? ` · ${ref(n, line)}` : ""}</small>${esc(word)}`, "", `> ${lineText}\n\nWhat does “${word}” mean here (${ref(n, line)})?`, from, null);
+    ncText.hidden = true;
+    ncDict.hidden = false;
+    card.classList.add("dict");
+    const intro = gloss ? `<div class="dc-m"><b>Milton’s sense here</b>${esc(gloss.note)}</div>` : "";
+    ncDict.innerHTML = `${intro}<p class="dc-wait">Looking up “${esc(word)}”…</p>`;
+    const ctl = dictAbort = new AbortController();
+    let d = null;
+    try {
+      const r = await fetch(`/api/dict?w=${encodeURIComponent(word)}`, { signal: ctl.signal });
+      if (r.ok) d = await r.json();
+    } catch (e) { if (ctl.signal.aborted) return; }
+    if (ctl.signal.aborted) return;
+    if (d && !d.found) d = { ...d, entries: [], etymology: [] };
+    ncDict.innerHTML = dictHtml(word, d, gloss);
+    ncDict.scrollTop = 0;
+  }
 
   function platesView() {
     setTitle("Doré’s plates", true);
@@ -1001,6 +1135,8 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     plainBtn.hidden = true;
     layoutBtn.hidden = true;
     listenBtn.hidden = true;
+    dictBtn.hidden = true;
+    setDictMode(false);
     setMenu(false);
     progress.hidden = true;
     if (!parts.length) home();
