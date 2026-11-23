@@ -692,14 +692,15 @@ body.paged .pager {
 .pg-count { min-width: 150px; text-align: center; font: 400 12.5px/1.25 var(--caps); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); display: flex; flex-direction: column; gap: 3px; }
 .pg-count b { font-weight: 400; color: var(--ink); }
 .pg-count small { font-size: 11px; letter-spacing: .1em; color: var(--ink-faint); }
+/* Two pages: a hairline with a soft shadow on each side, inside the gutter between the columns. */
 body.mode-spread .paper::before {
-  content: ""; position: absolute; z-index: 0; pointer-events: none; top: clamp(18px, 3.4vw, 38px); bottom: 54px; left: 50%; width: calc(var(--gap, 56px) - 20px); transform: translateX(-50%);
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 5%, transparent) 50%, transparent);
+  content: ""; position: absolute; pointer-events: none; top: clamp(14px, 2.4vw, 26px); bottom: 54px; left: 50%; width: 1px; transform: translateX(-50%);
+  background: var(--line);
+  box-shadow: -10px 0 14px -6px color-mix(in srgb, var(--ink) 7%, transparent), 10px 0 14px -6px color-mix(in srgb, var(--ink) 7%, transparent);
 }
-body.mode-spread .paper::after {
-  content: ""; position: absolute; z-index: 0; pointer-events: none; top: clamp(18px, 3.4vw, 38px); bottom: 54px; left: 50%; width: 1px;
-  background: linear-gradient(transparent, var(--line) 10%, var(--line) 90%, transparent);
-}
+body.mode-spread .paper::after { content: none; }
+/* Paged modes fill the window: the credits live in the menu instead of under the pager. */
+body.paged .site-foot { display: none; }
 body.mode-spread .reader-head { padding-top: 12%; }
 body.paged .ask-fab { bottom: calc(env(safe-area-inset-bottom) + 10px + var(--pbar, 0px)); }
 @media (prefers-reduced-motion: reduce) { .pg-btn { transition: none; } }
@@ -710,7 +711,6 @@ body.paged .tabs { display: none; }
 body.paged .paper { margin-top: 8px; padding-top: clamp(14px, 2.4vw, 26px); }
 body.paged .pg-count { min-width: 112px; }
 body.paged .reader-head { padding-top: 12%; }
-body.mode-spread .paper::before, body.mode-spread .paper::after { top: clamp(14px, 2.4vw, 26px); }
 :root[data-theme="dim"] .ask-fab { background: var(--ink-soft); box-shadow: none; }
 
 /* ── read-along: the word being read, and the player bar ── */

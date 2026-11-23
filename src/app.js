@@ -128,6 +128,7 @@
     }
     const sg = $("#signin"), ac = $("#acct");
     if (!sg.hidden) h += `<a class="mp-link" href="${sg.getAttribute("href")}">Sign in</a>`;
+    h += `<a class="mp-link" href="#/credits">Credits and copyright</a><a class="mp-link" href="#/privacy">Privacy</a>`;
     mp.innerHTML = h;
   }
   function setMP(open) {
