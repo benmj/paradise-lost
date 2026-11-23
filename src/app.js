@@ -723,7 +723,16 @@ ${tabs(n, "read")}
     p = Math.min(Math.max(p, 0), r.pages - 1);
     r.cur = p;
     if (!r.laying) r.anchor = 0;
-    r.stage.scrollTo({ left: Math.round(p * r.stride), behavior: smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto" });
+    const left = Math.round(p * r.stride);
+    if (smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // A turn is a quick cross-fade, not a slide: the text never moves under the spine.
+      const st = r.stage, tok = (r.fadeTok = (r.fadeTok || 0) + 1);
+      st.style.transition = "opacity .11s ease"; st.style.opacity = "0";
+      setTimeout(() => {
+        if (r.fadeTok !== tok) return;
+        st.scrollTo({ left, behavior: "auto" }); st.style.transition = "opacity .16s ease"; st.style.opacity = "1";
+      }, 110);
+    } else { r.stage.style.opacity = ""; r.stage.scrollTo({ left, behavior: "auto" }); }
     r.prev.disabled = p === 0;
     r.next.disabled = p === r.pages - 1;
     const first = r.lefts.findIndex((x) => x >= p * r.stride - 2) + 1 || r.total;
