@@ -1318,6 +1318,29 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
 <ul><li>Answers are written by an AI model from the passage you have open and can be wrong. Check them against the poem.</li></ul>
 </article>`;
   }
+  function privacyView() {
+    setTitle("Privacy", true);
+    CHAT.set({ ...POEM, label: "Privacy" });
+    app.innerHTML = `<article class="credits fade">
+<h1>Privacy</h1>
+<p class="note">Paradise Lost, an illustrated reading guide by <a href="https://benbybenjacobs.com" rel="noopener">Ben Jacobs</a>. Last updated November 23, 2026.</p>
+<h2>Reading without an account</h2>
+<ul><li>The poem, notes, plates and listening pages need no account. Your text size, theme and reading place stay in your browser.</li></ul>
+<h2>Signing in with Google</h2>
+<ul><li>Signing in is optional and is only used to save your reading place and footnotes, and to ask the Reader questions.</li>
+<li>We receive your email address, name and Google account id, and nothing else. We never see your Google password and do not read your mail, contacts or files.</li></ul>
+<h2>What is stored</h2>
+<ul><li>Per signed-in reader: email, name, last sign-in, reading place, footnotes you save and daily usage counts.</li>
+<li>Footnotes hold only passages of the public poem, a sentence of each answer and the question you asked.</li></ul>
+<h2>Ask the Reader</h2>
+<ul><li>Your question and the passage you have open are sent to Anthropic to write the answer. If you bring your own key, it stays in your browser and goes only to Anthropic.</li>
+<li>Questions are not kept beyond the footnotes you choose to save.</li></ul>
+<h2>Sharing</h2>
+<ul><li>We do not sell or share your data, and we run no advertising or analytics trackers. YouTube plays through youtube-nocookie.com and loads only when you tap play.</li></ul>
+<h2>Deleting your data</h2>
+<ul><li>"Delete my data" in the account menu removes your account and everything stored with it. You can also write to the address on <a href="https://benbybenjacobs.com" rel="noopener">benbybenjacobs.com</a>.</li></ul>
+</article>`;
+  }
   function route() {
     const parts = location.hash.replace(/^#/, "").split("?")[0].split("/").filter(Boolean);
     header.classList.remove("hidden");
@@ -1344,6 +1367,7 @@ ${by.map((xs, n) => xs ? `<section class="block">${head(`Book ${ROMAN[n]} · ${e
     else if (parts[0] === "plates") platesView();
     else if (parts[0] === "notes") notesView();
     else if (parts[0] === "credits") creditsView();
+    else if (parts[0] === "privacy") privacyView();
     else notFound();
     scrollTo(0, 0);
     if (after) requestAnimationFrame(after);
