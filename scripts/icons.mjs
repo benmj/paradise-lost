@@ -1,4 +1,4 @@
-// Render src/icon.svg to the PNG app icons. Usage: node scripts/icons.mjs
+// Render src/icon.svg (Doré plate 13, Satan on Mount Niphates, cropped) to the PNG app icons. Usage: node scripts/icons.mjs
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
 const src = new URL("../src/", import.meta.url).pathname;
